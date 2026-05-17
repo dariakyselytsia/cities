@@ -77,8 +77,14 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [AnswerValidated] on successful ValidateAnswer',
+      'emits [GameSessionLoading, GameSessionInProgress, GameSessionInProgress, AnswerValidated] on successful ValidateAnswer',
       build: () {
+        when(
+          () => startGameSessionUseCase(
+            userId: any(named: 'userId'),
+            mode: any(named: 'mode'),
+          ),
+        ).thenAnswer((_) async => Future.value());
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
@@ -88,10 +94,19 @@ void main() {
         ).thenAnswer((_) async => true);
         return bloc;
       },
-      act: (bloc) => bloc.add(
-        ValidateAnswer(cityName: 'Kyiv', previousCity: 'Lviv', mode: 'UA'),
-      ),
-      expect: () => [isA<AnswerValidated>()],
+      act: (bloc) async {
+        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        await Future.delayed(Duration.zero); // let StartSession process
+        bloc.add(
+          ValidateAnswer(cityName: 'Kyiv', previousCity: 'Lviv', mode: 'UA'),
+        );
+      },
+      expect: () => [
+        isA<GameSessionLoading>(),
+        isA<GameSessionInProgress>(),
+        isA<GameSessionInProgress>(),
+        isA<AnswerValidated>(),
+      ],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -192,10 +207,26 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionInProgress] when TimerTick is above zero',
-      build: () => bloc,
-      act: (bloc) => bloc.add(TimerTick(secondsLeft: 10)),
-      expect: () => [isA<GameSessionInProgress>()],
+      'emits [GameSessionLoading, GameSessionInProgress, GameSessionInProgress] when TimerTick is above zero',
+      build: () {
+        when(
+          () => startGameSessionUseCase(
+            userId: any(named: 'userId'),
+            mode: any(named: 'mode'),
+          ),
+        ).thenAnswer((_) async => Future.value());
+        return bloc;
+      },
+      act: (bloc) async {
+        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        await Future.delayed(Duration.zero); // let StartSession process
+        bloc.add(TimerTick(secondsLeft: 10));
+      },
+      expect: () => [
+        isA<GameSessionLoading>(),
+        isA<GameSessionInProgress>(),
+        isA<GameSessionInProgress>(),
+      ],
     );
   });
 }

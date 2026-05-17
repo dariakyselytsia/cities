@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cities/domain/domain.dart';
+import 'dart:async';
 
 /// Events for GameSessionBloc
 abstract class GameSessionEvent {}
@@ -58,7 +59,9 @@ class GameSessionLoading extends GameSessionState {}
 
 /// State when session is in progress
 class GameSessionInProgress extends GameSessionState {
-  // Add session data fields as needed
+  final GameSession session;
+  final int timerSeconds;
+  GameSessionInProgress({required this.session, required this.timerSeconds});
 }
 
 /// State when answer is validated
@@ -87,6 +90,9 @@ class GameSessionFailure extends GameSessionState {
 
 /// BLoC for managing the lifecycle and logic of a game session.
 /// Handles session start, answer validation, timer, scoring, hints, revive, and end.
+
+/// GameSessionBloc manages the full lifecycle and logic of a game session.
+/// It exposes all session state, timer, and error handling for the UI.
 class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   final StartGameSessionUseCase startGameSessionUseCase;
   final ValidateCityAnswerUseCase validateCityAnswerUseCase;
@@ -94,11 +100,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   final ReviveSessionUseCase reviveSessionUseCase;
   final EndGameSessionUseCase endGameSessionUseCase;
 
-  // Internal session state
   GameSession? _currentSession;
   int _timerSeconds = 0;
-  // Timer management placeholder (Ticker/StreamSubscription)
-  // StreamSubscription<int>? _tickerSubscription;
+  StreamSubscription<int>? _timerSub;
 
   GameSessionBloc({
     required this.startGameSessionUseCase,
@@ -115,15 +119,16 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     on<TimerTick>(_onTimerTick);
   }
 
-  /// Handles starting a new game session.
+  /// Starts a new game session and timer.
   Future<void> _onStartSession(
     StartSession event,
     Emitter<GameSessionState> emit,
   ) async {
     emit(GameSessionLoading());
+    await _cancelTimer();
     try {
       await startGameSessionUseCase(userId: event.userId, mode: event.mode);
-      // For demo: create a dummy session (replace with real session retrieval)
+      // TODO: Replace with real session retrieval from repository/use case
       _currentSession = GameSession(
         id: 'session1',
         mode: event.mode,
@@ -133,32 +138,56 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         isActive: true,
       );
       _timerSeconds = _currentSession!.timerSeconds;
-      emit(GameSessionInProgress());
-      // TODO: Start timer (Ticker/StreamSubscription)
+      emit(
+        GameSessionInProgress(
+          session: _currentSession!,
+          timerSeconds: _timerSeconds,
+        ),
+      );
+      _startTimer();
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to start session: $e'));
     }
   }
 
-  /// Handles validating a city answer.
+  /// Validates a city answer and updates session state.
   Future<void> _onValidateAnswer(
     ValidateAnswer event,
     Emitter<GameSessionState> emit,
   ) async {
+    if (_currentSession == null) {
+      emit(GameSessionFailure(message: 'No active session.'));
+      return;
+    }
     try {
       final isCorrect = await validateCityAnswerUseCase(
         cityName: event.cityName,
         previousCity: event.previousCity,
         mode: event.mode,
       );
+      if (isCorrect) {
+        // Update session state (add city to used list)
+        final updated = GameSession(
+          id: _currentSession!.id,
+          mode: _currentSession!.mode,
+          language: _currentSession!.language,
+          usedCityIds: List<int>.from(_currentSession!.usedCityIds)
+            ..add(event.cityName.hashCode),
+          timerSeconds: _timerSeconds,
+          isActive: true,
+        );
+        _currentSession = updated;
+        emit(
+          GameSessionInProgress(session: updated, timerSeconds: _timerSeconds),
+        );
+      }
       emit(AnswerValidated(isCorrect: isCorrect));
-      // Update session state if needed
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to validate answer: $e'));
     }
   }
 
-  /// Handles using a hint.
+  /// Uses a hint and emits the suggested city.
   Future<void> _onUseHint(UseHint event, Emitter<GameSessionState> emit) async {
     try {
       final suggestedCity = await useHintUseCase(sessionId: event.sessionId);
@@ -168,45 +197,85 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     }
   }
 
-  /// Handles reviving a session.
+  /// Revives a session and restarts the timer.
   Future<void> _onReviveSession(
     ReviveSession event,
     Emitter<GameSessionState> emit,
   ) async {
     try {
       await reviveSessionUseCase(sessionId: event.sessionId);
-      emit(SessionRevived());
-      // Optionally reset timer/session state
+      if (_currentSession != null) {
+        _timerSeconds = 30; // Example: revive gives 30 seconds
+        emit(SessionRevived());
+        emit(
+          GameSessionInProgress(
+            session: _currentSession!,
+            timerSeconds: _timerSeconds,
+          ),
+        );
+        _startTimer();
+      } else {
+        emit(SessionRevived());
+      }
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to revive session: $e'));
     }
   }
 
-  /// Handles ending a session.
+  /// Ends the session and cancels the timer.
   Future<void> _onEndSession(
     EndSession event,
     Emitter<GameSessionState> emit,
   ) async {
+    await _cancelTimer();
     try {
       await endGameSessionUseCase(sessionId: event.sessionId);
       emit(GameSessionEnded());
-      // TODO: Cancel timer if running
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to end session: $e'));
     }
   }
 
-  /// Handles timer tick events.
+  /// Handles timer tick events and session timeout.
   Future<void> _onTimerTick(
     TimerTick event,
     Emitter<GameSessionState> emit,
   ) async {
     _timerSeconds = event.secondsLeft;
     if (_timerSeconds <= 0) {
+      await _cancelTimer();
       emit(GameSessionEnded());
-      // TODO: Cancel timer
-    } else {
-      emit(GameSessionInProgress());
+    } else if (_currentSession != null) {
+      emit(
+        GameSessionInProgress(
+          session: _currentSession!,
+          timerSeconds: _timerSeconds,
+        ),
+      );
     }
+  }
+
+  /// Starts the countdown timer and emits TimerTick events.
+  void _startTimer() {
+    _timerSub?.cancel();
+    _timerSub =
+        Stream<int>.periodic(
+          const Duration(seconds: 1),
+          (x) => _timerSeconds - x - 1,
+        ).take(_timerSeconds).listen((secondsLeft) {
+          add(TimerTick(secondsLeft: secondsLeft));
+        });
+  }
+
+  /// Cancels the timer subscription.
+  Future<void> _cancelTimer() async {
+    await _timerSub?.cancel();
+    _timerSub = null;
+  }
+
+  @override
+  Future<void> close() {
+    _cancelTimer();
+    return super.close();
   }
 }
