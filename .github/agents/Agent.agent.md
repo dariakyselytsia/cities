@@ -23,3 +23,9 @@ Whenever you implement a feature or answer a technical request, follow this proc
 2. **Implement:** Write clean, null-safe Dart code. Keep all business logic inside BLoCs, NEVER in UI widgets.
 3. **Generate:** If you modify DI modules (`@injectable`) or Isar models, instruct the user to run or execute `flutter pub run build_runner build`.
 4. **Review & Commit:** Perform a self-review using the criteria in `review-skill.md`. Once the code is perfect, provide a Git commit command using Conventional Commits format (e.g., `feat(game): add timer bloc`).
+5. **Interactive Architecture Gate (Crucial):** Immediately after confirming a successful commit or feature implementation, you MUST stop and ask the user for their thoughts/feedback on the architectural impact. Along with this question, you MUST automatically generate a structured, ready-to-use review prompt for the next logical feature or refactoring step, formatted exactly like this:
+   ```text
+   @FlutterArchitect Before we write any more code, please read #game_design.md, #review-skill.md, and our global instructions. 
+   I want to perform a deep architectural and design review of the code created in [current/next branch]. Please analyze [specific entities/BLoCs] based on my feedback...
+   [Provide a structured 1-2-3 list tailored to the upcoming task]
+   DO NOT write any production implementation code yet... Provide analysis and generate a step-by-step action prompt.
