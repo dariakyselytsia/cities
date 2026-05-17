@@ -50,7 +50,6 @@ class CityRepositoryImpl implements CityRepository {
     } catch (_) {
       city = null;
     }
-    return city == null ? null : city.toDomain();
+    return city?.toDomain();
   }
-
 }
