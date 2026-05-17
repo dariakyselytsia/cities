@@ -46,6 +46,14 @@ void main() {
       expect(bloc.state, isA<GameSessionInitial>());
     });
 
+    final testSession = GameSession(
+      id: 'session1',
+      mode: 'UA',
+      language: 'en',
+      usedCityIds: [],
+      timerSeconds: 60,
+      isActive: true,
+    );
     blocTest<GameSessionBloc, GameSessionState>(
       'emits [GameSessionLoading, GameSessionInProgress] on successful StartSession',
       build: () {
@@ -54,7 +62,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => Future.value());
+        ).thenAnswer((_) async => testSession);
         return bloc;
       },
       act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: 'UA')),
@@ -84,7 +92,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => Future.value());
+        ).thenAnswer((_) async => testSession);
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
@@ -152,15 +160,15 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [SessionRevived] on successful ReviveSession',
+      'emits [SessionRevived, GameSessionInProgress] on successful ReviveSession',
       build: () {
         when(
           () => reviveSessionUseCase(sessionId: any(named: 'sessionId')),
-        ).thenAnswer((_) async => Future.value());
+        ).thenAnswer((_) async => testSession);
         return bloc;
       },
       act: (bloc) => bloc.add(ReviveSession(sessionId: 'session1')),
-      expect: () => [isA<SessionRevived>()],
+      expect: () => [isA<SessionRevived>(), isA<GameSessionInProgress>()],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -214,7 +222,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => Future.value());
+        ).thenAnswer((_) async => testSession);
         return bloc;
       },
       act: (bloc) async {

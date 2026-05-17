@@ -127,22 +127,14 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     emit(GameSessionLoading());
     await _cancelTimer();
     try {
-      await startGameSessionUseCase(userId: event.userId, mode: event.mode);
-      // TODO: Replace with real session retrieval from repository/use case
-      _currentSession = GameSession(
-        id: 'session1',
+      final session = await startGameSessionUseCase(
+        userId: event.userId,
         mode: event.mode,
-        language: 'en',
-        usedCityIds: [],
-        timerSeconds: 60,
-        isActive: true,
       );
-      _timerSeconds = _currentSession!.timerSeconds;
+      _currentSession = session;
+      _timerSeconds = session.timerSeconds;
       emit(
-        GameSessionInProgress(
-          session: _currentSession!,
-          timerSeconds: _timerSeconds,
-        ),
+        GameSessionInProgress(session: session, timerSeconds: _timerSeconds),
       );
       _startTimer();
     } catch (e) {
@@ -203,20 +195,19 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     Emitter<GameSessionState> emit,
   ) async {
     try {
-      await reviveSessionUseCase(sessionId: event.sessionId);
-      if (_currentSession != null) {
-        _timerSeconds = 30; // Example: revive gives 30 seconds
-        emit(SessionRevived());
-        emit(
-          GameSessionInProgress(
-            session: _currentSession!,
-            timerSeconds: _timerSeconds,
-          ),
-        );
-        _startTimer();
-      } else {
-        emit(SessionRevived());
-      }
+      final revivedSession = await reviveSessionUseCase(
+        sessionId: event.sessionId,
+      );
+      _currentSession = revivedSession;
+      _timerSeconds = revivedSession.timerSeconds;
+      emit(SessionRevived());
+      emit(
+        GameSessionInProgress(
+          session: revivedSession,
+          timerSeconds: _timerSeconds,
+        ),
+      );
+      _startTimer();
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to revive session: $e'));
     }
