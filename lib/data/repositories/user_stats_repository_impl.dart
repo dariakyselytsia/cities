@@ -1,6 +1,9 @@
 import 'package:isar/isar.dart';
 import '../models/user_stats_model.dart';
+
 import '../../domain/entities/user_stats.dart';
+import '../../domain/entities/game_session.dart';
+import '../../domain/entities/city.dart';
 import '../../domain/repositories/user_stats_repository.dart';
 
 /// Implementation of UserStatsRepository using Isar for local storage.
@@ -25,6 +28,26 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
       return stats.toDomain();
     }
     // Return default if not found
-    return const UserStats(highScoreUA: 0, highScoreWorld: 0, usedCityIds: []);
+    return const UserStats(
+      highScoreUA: 0,
+      highScoreWorld: 0,
+      usedCityIds: [],
+      cityUsageCount: {},
+      highScores: {},
+      usedCitiesPercent: {},
+      favoriteCountry: '',
+      longestStreak: 0,
+      sessionHistory: [],
+    );
+  }
+
+  @override
+  Future<UserStats> recalculateStatistics({
+    required GameSession session,
+    required UserStats previousStats,
+    required List<City> allCities,
+  }) async {
+    // TODO: Implement statistics recalculation logic
+    return previousStats;
   }
 }
