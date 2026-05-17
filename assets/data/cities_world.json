@@ -1,0 +1,92 @@
+[
+    {
+        "id": 101,
+        "nameUA": "Париж",
+        "nameEN": "Paris",
+        "countryCode": "FR",
+        "isCapital": true,
+        "firstLetterUA": "П",
+        "firstLetterEN": "P"
+    },
+    {
+        "id": 102,
+        "nameUA": "Лондон",
+        "nameEN": "London",
+        "countryCode": "GB",
+        "isCapital": true,
+        "firstLetterUA": "Л",
+        "firstLetterEN": "L"
+    },
+    {
+        "id": 103,
+        "nameUA": "Берлін",
+        "nameEN": "Berlin",
+        "countryCode": "DE",
+        "isCapital": true,
+        "firstLetterUA": "Б",
+        "firstLetterEN": "B"
+    },
+    {
+        "id": 104,
+        "nameUA": "Рим",
+        "nameEN": "Rome",
+        "countryCode": "IT",
+        "isCapital": true,
+        "firstLetterUA": "Р",
+        "firstLetterEN": "R"
+    },
+    {
+        "id": 105,
+        "nameUA": "Мадрид",
+        "nameEN": "Madrid",
+        "countryCode": "ES",
+        "isCapital": true,
+        "firstLetterUA": "М",
+        "firstLetterEN": "M"
+    },
+    {
+        "id": 106,
+        "nameUA": "Токіо",
+        "nameEN": "Tokyo",
+        "countryCode": "JP",
+        "isCapital": true,
+        "firstLetterUA": "Т",
+        "firstLetterEN": "T"
+    },
+    {
+        "id": 107,
+        "nameUA": "Нью-Йорк",
+        "nameEN": "New York",
+        "countryCode": "US",
+        "isCapital": false,
+        "firstLetterUA": "Н",
+        "firstLetterEN": "N"
+    },
+    {
+        "id": 108,
+        "nameUA": "Сідней",
+        "nameEN": "Sydney",
+        "countryCode": "AU",
+        "isCapital": false,
+        "firstLetterUA": "С",
+        "firstLetterEN": "S"
+    },
+    {
+        "id": 109,
+        "nameUA": "Торонто",
+        "nameEN": "Toronto",
+        "countryCode": "CA",
+        "isCapital": false,
+        "firstLetterUA": "Т",
+        "firstLetterEN": "T"
+    },
+    {
+        "id": 110,
+        "nameUA": "Каїр",
+        "nameEN": "Cairo",
+        "countryCode": "EG",
+        "isCapital": true,
+        "firstLetterUA": "К",
+        "firstLetterEN": "C"
+    }
+]
