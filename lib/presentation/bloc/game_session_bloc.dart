@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cities/domain/domain.dart';
 
 /// Events for GameSessionBloc
 abstract class GameSessionEvent {}
@@ -93,6 +94,12 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   final ReviveSessionUseCase reviveSessionUseCase;
   final EndGameSessionUseCase endGameSessionUseCase;
 
+  // Internal session state
+  GameSession? _currentSession;
+  int _timerSeconds = 0;
+  // Timer management placeholder (Ticker/StreamSubscription)
+  // StreamSubscription<int>? _tickerSubscription;
+
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
@@ -100,24 +107,106 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     required this.reviveSessionUseCase,
     required this.endGameSessionUseCase,
   }) : super(GameSessionInitial()) {
-    on<StartSession>((event, emit) async {
-      emit(GameSessionLoading());
-      // TODO: Call startGameSessionUseCase and emit GameSessionInProgress or GameSessionFailure
-    });
-    on<ValidateAnswer>((event, emit) async {
-      // TODO: Call validateCityAnswerUseCase and emit AnswerValidated or GameSessionFailure
-    });
-    on<UseHint>((event, emit) async {
-      // TODO: Call useHintUseCase and emit HintUsed or GameSessionFailure
-    });
-    on<ReviveSession>((event, emit) async {
-      // TODO: Call reviveSessionUseCase and emit SessionRevived or GameSessionFailure
-    });
-    on<EndSession>((event, emit) async {
-      // TODO: Call endGameSessionUseCase and emit GameSessionEnded or GameSessionFailure
-    });
-    on<TimerTick>((event, emit) async {
-      // TODO: Handle timer tick logic and emit updated state
-    });
+    on<StartSession>(_onStartSession);
+    on<ValidateAnswer>(_onValidateAnswer);
+    on<UseHint>(_onUseHint);
+    on<ReviveSession>(_onReviveSession);
+    on<EndSession>(_onEndSession);
+    on<TimerTick>(_onTimerTick);
+  }
+
+  /// Handles starting a new game session.
+  Future<void> _onStartSession(
+    StartSession event,
+    Emitter<GameSessionState> emit,
+  ) async {
+    emit(GameSessionLoading());
+    try {
+      await startGameSessionUseCase(userId: event.userId, mode: event.mode);
+      // For demo: create a dummy session (replace with real session retrieval)
+      _currentSession = GameSession(
+        id: 'session1',
+        mode: event.mode,
+        language: 'en',
+        usedCityIds: [],
+        timerSeconds: 60,
+        isActive: true,
+      );
+      _timerSeconds = _currentSession!.timerSeconds;
+      emit(GameSessionInProgress());
+      // TODO: Start timer (Ticker/StreamSubscription)
+    } catch (e) {
+      emit(GameSessionFailure(message: 'Failed to start session: $e'));
+    }
+  }
+
+  /// Handles validating a city answer.
+  Future<void> _onValidateAnswer(
+    ValidateAnswer event,
+    Emitter<GameSessionState> emit,
+  ) async {
+    try {
+      final isCorrect = await validateCityAnswerUseCase(
+        cityName: event.cityName,
+        previousCity: event.previousCity,
+        mode: event.mode,
+      );
+      emit(AnswerValidated(isCorrect: isCorrect));
+      // Update session state if needed
+    } catch (e) {
+      emit(GameSessionFailure(message: 'Failed to validate answer: $e'));
+    }
+  }
+
+  /// Handles using a hint.
+  Future<void> _onUseHint(UseHint event, Emitter<GameSessionState> emit) async {
+    try {
+      final suggestedCity = await useHintUseCase(sessionId: event.sessionId);
+      emit(HintUsed(suggestedCity: suggestedCity));
+    } catch (e) {
+      emit(GameSessionFailure(message: 'Failed to use hint: $e'));
+    }
+  }
+
+  /// Handles reviving a session.
+  Future<void> _onReviveSession(
+    ReviveSession event,
+    Emitter<GameSessionState> emit,
+  ) async {
+    try {
+      await reviveSessionUseCase(sessionId: event.sessionId);
+      emit(SessionRevived());
+      // Optionally reset timer/session state
+    } catch (e) {
+      emit(GameSessionFailure(message: 'Failed to revive session: $e'));
+    }
+  }
+
+  /// Handles ending a session.
+  Future<void> _onEndSession(
+    EndSession event,
+    Emitter<GameSessionState> emit,
+  ) async {
+    try {
+      await endGameSessionUseCase(sessionId: event.sessionId);
+      emit(GameSessionEnded());
+      // TODO: Cancel timer if running
+    } catch (e) {
+      emit(GameSessionFailure(message: 'Failed to end session: $e'));
+    }
+  }
+
+  /// Handles timer tick events.
+  Future<void> _onTimerTick(
+    TimerTick event,
+    Emitter<GameSessionState> emit,
+  ) async {
+    _timerSeconds = event.secondsLeft;
+    if (_timerSeconds <= 0) {
+      emit(GameSessionEnded());
+      // TODO: Cancel timer
+    } else {
+      emit(GameSessionInProgress());
+    }
   }
 }
