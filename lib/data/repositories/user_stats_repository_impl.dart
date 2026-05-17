@@ -11,7 +11,8 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
   final Isar isar;
   UserStatsRepositoryImpl(this.isar);
 
-  IsarCollection<UserStatsModel> get userStatsModels => isar.collection<UserStatsModel>();
+  IsarCollection<UserStatsModel> get userStatsModels =>
+      isar.collection<UserStatsModel>();
 
   @override
   Future<void> saveUserStats(UserStats stats) async {

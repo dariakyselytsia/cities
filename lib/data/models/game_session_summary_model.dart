@@ -23,10 +23,10 @@ class GameSessionSummaryModel {
   }
 
   GameSessionSummary toDomain() => GameSessionSummary(
-        sessionId: sessionId,
-        mode: mode,
-        score: score,
-        durationSeconds: durationSeconds,
-        uniqueCities: uniqueCities,
-      );
+    sessionId: sessionId,
+    mode: mode,
+    score: score,
+    durationSeconds: durationSeconds,
+    uniqueCities: uniqueCities,
+  );
 }

@@ -1,4 +1,3 @@
-
 import 'package:isar/isar.dart';
 import '../../domain/entities/user_stats.dart';
 import 'game_session_summary_model.dart';
@@ -32,7 +31,9 @@ class UserStatsModel {
     usedCitiesPercent = stats.usedCitiesPercent;
     favoriteCountry = stats.favoriteCountry;
     longestStreak = stats.longestStreak;
-    sessionHistory = stats.sessionHistory.map((s) => GameSessionSummaryModel.fromDomain(s)).toList();
+    sessionHistory = stats.sessionHistory
+        .map((s) => GameSessionSummaryModel.fromDomain(s))
+        .toList();
   }
 
   UserStats toDomain() => UserStats(

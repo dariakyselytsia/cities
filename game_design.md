@@ -57,6 +57,18 @@ class City {
 }
 ```
 
+
+## 5. User Statistics & Insights (NEW)
+
+At the end of every game session, the app recalculates and updates the following user statistics:
+
+- **Most Used Cities:** Top N cities the user has named most frequently.
+- **High Scores:** All-time and recent best scores per mode.
+- **Used Cities Percentage:** Progress bars showing % of all cities discovered (Ukraine, World, and per country).
+- **Favorite Country:** The country where the user has named the most unique cities.
+- **Longest Streak:** The highest number of consecutive correct answers in a session.
+- **Session History:** Recent session stats (score, mode, time, unique cities).
+
 # Future Roadmap (Do NOT build for MVP, but architect for it)
 - Interactive Map: countryCode will be used to calculate what percentage of a country`s cities have been discovered, coloring an SVG map dynamically.
 - Specific Country Modes: e.g., "France only", filtering by countryCode.
