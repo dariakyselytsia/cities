@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 
+import '../game/game_mode.dart';
 import '../game/letter_rule.dart';
 import '../repositories/city_repository.dart';
 import 'use_hint_usecase.dart';
@@ -20,11 +21,11 @@ class UseHintUseCaseImpl implements UseHintUseCase {
 
   @override
   Future<String?> call({
-    required String mode,
+    required GameMode mode,
     required List<int> usedCityIds,
     required String previousCity,
   }) async {
-    final isUkraine = mode.toUpperCase() == 'UA';
+    final isUkraine = mode.isUkraine;
     final cities = await cityRepository.loadCities(isUkraineMode: isUkraine);
     final used = usedCityIds.toSet();
 

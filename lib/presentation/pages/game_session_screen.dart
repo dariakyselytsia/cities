@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cities/domain/domain.dart';
 import '../bloc/game_session_bloc.dart';
 
 /// Main game session screen, maps BLoC state to stateless widgets.
@@ -54,7 +55,7 @@ class GameSessionStartWidget extends StatelessWidget {
         onPressed: () {
           // Example: hardcoded userId/mode for demo; replace with real input as needed
           context.read<GameSessionBloc>().add(
-            StartSession(userId: 'user1', mode: 'UA'),
+            StartSession(userId: 'user1', mode: GameMode.ukraine),
           );
         },
         child: const Text('Start Game'),
@@ -190,7 +191,7 @@ class ErrorWidget extends StatelessWidget {
           onPressed: () {
             // For demo, just restart session; in real app, retry last failed action
             context.read<GameSessionBloc>().add(
-              StartSession(userId: 'user1', mode: 'UA'),
+              StartSession(userId: 'user1', mode: GameMode.ukraine),
             );
           },
           child: const Text('Retry'),

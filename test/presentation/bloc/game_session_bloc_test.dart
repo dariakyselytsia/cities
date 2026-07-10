@@ -29,6 +29,7 @@ void main() {
 
     setUpAll(() {
       registerFallbackValue(<int>[]);
+      registerFallbackValue(GameMode.ukraine);
     });
 
     setUp(() {
@@ -52,8 +53,8 @@ void main() {
 
     final testSession = GameSession(
       id: 'session1',
-      mode: 'UA',
-      language: 'en',
+      mode: GameMode.ukraine,
+      language: AppLanguage.en,
       usedCityIds: [],
       timerSeconds: 60,
       isActive: true,
@@ -69,7 +70,7 @@ void main() {
         ).thenAnswer((_) async => testSession);
         return bloc;
       },
-      act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: 'UA')),
+      act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine)),
       expect: () => [isA<GameSessionLoading>(), isA<GameSessionInProgress>()],
     );
 
@@ -84,7 +85,7 @@ void main() {
         ).thenThrow(Exception('fail'));
         return bloc;
       },
-      act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: 'UA')),
+      act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine)),
       expect: () => [isA<GameSessionLoading>(), isA<GameSessionFailure>()],
     );
 
@@ -124,7 +125,7 @@ void main() {
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
         await Future.delayed(Duration.zero); // let StartSession process
         bloc.add(ValidateAnswer(cityName: 'Kyiv'));
       },
@@ -168,7 +169,7 @@ void main() {
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
         await Future.delayed(Duration.zero);
         bloc.add(ValidateAnswer(cityName: 'Odesa'));
       },
@@ -200,7 +201,7 @@ void main() {
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
         await Future.delayed(Duration.zero);
         bloc.add(ValidateAnswer(cityName: 'Kyiv'));
       },
@@ -230,7 +231,7 @@ void main() {
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
         await Future.delayed(Duration.zero);
         bloc.add(UseHint());
       },
@@ -315,7 +316,7 @@ void main() {
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
         await Future.delayed(Duration.zero); // let StartSession process
         bloc.add(TimerTick(secondsLeft: 10));
       },

@@ -1,3 +1,5 @@
+import '../game/game_mode.dart';
+
 /// Use case for using a hint in a game session.
 abstract class UseHintUseCase {
   /// Returns a not-yet-used city that satisfies the letter rule for
@@ -5,7 +7,7 @@ abstract class UseHintUseCase {
   /// valid suggestion exists. [usedCityIds] are the ids already named this
   /// session; [mode] selects the dataset/language.
   Future<String?> call({
-    required String mode,
+    required GameMode mode,
     required List<int> usedCityIds,
     required String previousCity,
   });

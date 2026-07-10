@@ -37,7 +37,7 @@ void main() {
       useCase(
         cityName: city,
         previousCity: previous,
-        mode: 'UA',
+        mode: GameMode.ukraine,
         usedCityIds: used,
         historicUsedCityIds: historic,
       );

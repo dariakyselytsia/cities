@@ -50,20 +50,20 @@ void main() {
   });
 
   test('opening move suggests the first unused city', () async {
-    final hint = await useCase(mode: 'UA', usedCityIds: const [], previousCity: '');
+    final hint = await useCase(mode: GameMode.ukraine, usedCityIds: const [], previousCity: '');
     expect(hint, 'Київ');
   });
 
   test('suggests a city matching the required next letter', () async {
     // "Бордо" ends in 'о' -> required next letter 'о' -> only Odesa qualifies.
     final hint =
-        await useCase(mode: 'UA', usedCityIds: const [], previousCity: 'Бордо');
+        await useCase(mode: GameMode.ukraine, usedCityIds: const [], previousCity: 'Бордо');
     expect(hint, 'Одеса');
   });
 
   test('skips already-used cities', () async {
     final hint = await useCase(
-      mode: 'UA',
+      mode: GameMode.ukraine,
       usedCityIds: const [1],
       previousCity: '',
     );
@@ -73,7 +73,7 @@ void main() {
   test('returns null when no unused city matches the required letter', () async {
     // Previous ends in 'л' -> requires 'л'; Lviv (л) is already used.
     final hint = await useCase(
-      mode: 'UA',
+      mode: GameMode.ukraine,
       usedCityIds: const [2],
       previousCity: 'Байкал',
     );

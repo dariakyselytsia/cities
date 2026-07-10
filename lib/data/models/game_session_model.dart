@@ -1,5 +1,7 @@
 import 'package:isar_community/isar.dart';
 import '../../domain/entities/game_session.dart';
+import '../../domain/game/app_language.dart';
+import '../../domain/game/game_mode.dart';
 
 part 'game_session_model.g.dart';
 
@@ -19,8 +21,8 @@ class GameSessionModel {
 
   GameSessionModel.fromDomain(GameSession session) {
     sessionId = session.id;
-    mode = session.mode;
-    language = session.language;
+    mode = session.mode.storageValue;
+    language = session.language.code;
     usedCityIds = session.usedCityIds;
     timerSeconds = session.timerSeconds;
     isActive = session.isActive;
@@ -29,8 +31,8 @@ class GameSessionModel {
 
   GameSession toDomain() => GameSession(
         id: sessionId,
-        mode: mode,
-        language: language,
+        mode: GameMode.fromStorage(mode),
+        language: AppLanguage.fromCode(language),
         usedCityIds: usedCityIds,
         timerSeconds: timerSeconds,
         isActive: isActive,

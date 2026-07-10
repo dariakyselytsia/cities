@@ -182,8 +182,13 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   (from the `ValidationOutcome`), not `cityName.hashCode`. The BLoC is also
   authoritative over the previous city (`_lastAcceptedCityName`) and accumulates
   `GameSession.score`.
-- **Introduce `GameMode` / `AppLanguage` enums** and reconcile `GameSession.id`
-  type with its Isar model.
+- ✅ **`GameMode` / `AppLanguage` enums** (`domain/game/`) replace stringly-typed
+  `mode`/`language` across the entity, events, use cases, BLoC, and UI. The Isar
+  model stores stable tokens via `storageValue`/`code` and parses back with
+  `fromStorage`/`fromCode` — the only string↔enum boundary. (`GameSession.id`
+  stays `String`, mapped to the model's `sessionId` String; Isar's int `Id` is a
+  separate internal PK — no mismatch.) Remaining: `GameSessionSummary.mode` is
+  still a `String` (unwired stats path).
 - ✅ **`Equatable`** added to BLoC events/states and the value objects they expose
   (`GameSession`, `City`, `ValidationOutcome`) via `equatable`. Tests now assert
   full state values (see the accepted-answer `blocTest`).

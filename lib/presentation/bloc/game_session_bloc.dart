@@ -14,7 +14,7 @@ abstract class GameSessionEvent extends Equatable {
 /// Event to start a new game session
 class StartSession extends GameSessionEvent {
   final String userId;
-  final String mode;
+  final GameMode mode;
   const StartSession({required this.userId, required this.mode});
 
   @override

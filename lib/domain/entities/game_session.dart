@@ -1,15 +1,18 @@
 import 'package:equatable/equatable.dart';
 
+import '../game/app_language.dart';
+import '../game/game_mode.dart';
+
 /// Domain entity representing an active or historic game session.
 class GameSession extends Equatable {
   /// Unique session ID
   final String id;
 
-  /// Game mode (e.g., 'UA', 'WORLD', 'CAPITALS')
-  final String mode;
+  /// Game mode (Ukraine / World).
+  final GameMode mode;
 
-  /// Language used in this session
-  final String language;
+  /// Language used in this session.
+  final AppLanguage language;
 
   /// List of used city IDs in this session
   final List<int> usedCityIds;

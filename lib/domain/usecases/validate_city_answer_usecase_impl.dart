@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 
+import '../game/game_mode.dart';
 import '../game/letter_rule.dart';
 import '../game/validation_outcome.dart';
 import '../repositories/city_repository.dart';
@@ -19,11 +20,11 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
   Future<ValidationOutcome> call({
     required String cityName,
     required String previousCity,
-    required String mode,
+    required GameMode mode,
     required List<int> usedCityIds,
     Set<int>? historicUsedCityIds,
   }) async {
-    final isUA = mode.toUpperCase() == 'UA';
+    final isUA = mode.isUkraine;
     final answer = cityName.trim();
     if (answer.isEmpty) {
       return const ValidationOutcome.rejected(AnswerStatus.notFound);

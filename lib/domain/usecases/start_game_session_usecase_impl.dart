@@ -1,6 +1,8 @@
 import 'package:injectable/injectable.dart';
 
 import '../entities/game_session.dart';
+import '../game/app_language.dart';
+import '../game/game_mode.dart';
 import '../repositories/city_repository.dart';
 import '../repositories/game_session_repository.dart';
 import 'start_game_session_usecase.dart';
@@ -20,16 +22,15 @@ class StartGameSessionUseCaseImpl implements StartGameSessionUseCase {
   @override
   Future<GameSession> call({
     required String userId,
-    required String mode,
+    required GameMode mode,
   }) async {
-    final isUkraine = mode.toUpperCase() == 'UA';
     // Warm the local Isar cache so gameplay lookups are hot.
-    await cityRepository.loadCities(isUkraineMode: isUkraine);
+    await cityRepository.loadCities(isUkraineMode: mode.isUkraine);
 
     final session = GameSession(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       mode: mode,
-      language: isUkraine ? 'uk' : 'en',
+      language: mode.isUkraine ? AppLanguage.ua : AppLanguage.en,
       usedCityIds: const [],
       timerSeconds: kDefaultTimerSeconds,
       isActive: true,

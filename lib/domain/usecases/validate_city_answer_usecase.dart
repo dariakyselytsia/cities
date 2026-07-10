@@ -1,3 +1,4 @@
+import '../game/game_mode.dart';
 import '../game/validation_outcome.dart';
 
 /// Use case for validating a city answer during a game session.
@@ -14,7 +15,7 @@ abstract class ValidateCityAnswerUseCase {
   Future<ValidationOutcome> call({
     required String cityName,
     required String previousCity,
-    required String mode,
+    required GameMode mode,
     required List<int> usedCityIds,
     Set<int>? historicUsedCityIds,
   });
