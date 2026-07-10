@@ -27,6 +27,10 @@ void main() {
     late MockEndGameSessionUseCase endGameSessionUseCase;
     late GameSessionBloc bloc;
 
+    setUpAll(() {
+      registerFallbackValue(<int>[]);
+    });
+
     setUp(() {
       startGameSessionUseCase = MockStartGameSessionUseCase();
       validateCityAnswerUseCase = MockValidateCityAnswerUseCase();
@@ -84,8 +88,18 @@ void main() {
       expect: () => [isA<GameSessionLoading>(), isA<GameSessionFailure>()],
     );
 
+    const testCity = City(
+      id: 2,
+      nameUA: 'Київ',
+      nameEN: 'Kyiv',
+      countryCode: 'UA',
+      isCapital: true,
+      firstLetterUA: 'К',
+      firstLetterEN: 'K',
+    );
+
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionLoading, GameSessionInProgress, GameSessionInProgress, AnswerValidated] on successful ValidateAnswer',
+      'accepted ValidateAnswer adds the real city id and awards points',
       build: () {
         when(
           () => startGameSessionUseCase(
@@ -98,41 +112,97 @@ void main() {
             cityName: any(named: 'cityName'),
             previousCity: any(named: 'previousCity'),
             mode: any(named: 'mode'),
+            usedCityIds: any(named: 'usedCityIds'),
+            historicUsedCityIds: any(named: 'historicUsedCityIds'),
           ),
-        ).thenAnswer((_) async => true);
+        ).thenAnswer(
+          (_) async => const ValidationOutcome.accepted(
+            city: testCity,
+            points: kBasePoints,
+          ),
+        );
         return bloc;
       },
       act: (bloc) async {
         bloc.add(StartSession(userId: 'user1', mode: 'UA'));
         await Future.delayed(Duration.zero); // let StartSession process
-        bloc.add(
-          ValidateAnswer(cityName: 'Kyiv', previousCity: 'Lviv', mode: 'UA'),
-        );
+        bloc.add(ValidateAnswer(cityName: 'Kyiv'));
       },
       expect: () => [
         isA<GameSessionLoading>(),
         isA<GameSessionInProgress>(),
-        isA<GameSessionInProgress>(),
-        isA<AnswerValidated>(),
+        isA<GameSessionInProgress>()
+            .having((s) => s.session.score, 'score', kBasePoints)
+            .having((s) => s.session.usedCityIds, 'usedCityIds', [testCity.id]),
+        isA<AnswerValidated>().having((s) => s.isCorrect, 'isCorrect', true),
       ],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionFailure] on failed ValidateAnswer',
+      'rejected ValidateAnswer emits only AnswerValidated (no score change)',
       build: () {
+        when(
+          () => startGameSessionUseCase(
+            userId: any(named: 'userId'),
+            mode: any(named: 'mode'),
+          ),
+        ).thenAnswer((_) async => testSession);
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
             previousCity: any(named: 'previousCity'),
             mode: any(named: 'mode'),
+            usedCityIds: any(named: 'usedCityIds'),
+            historicUsedCityIds: any(named: 'historicUsedCityIds'),
+          ),
+        ).thenAnswer(
+          (_) async =>
+              const ValidationOutcome.rejected(AnswerStatus.wrongLetter),
+        );
+        return bloc;
+      },
+      act: (bloc) async {
+        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        await Future.delayed(Duration.zero);
+        bloc.add(ValidateAnswer(cityName: 'Odesa'));
+      },
+      expect: () => [
+        isA<GameSessionLoading>(),
+        isA<GameSessionInProgress>(),
+        isA<AnswerValidated>().having((s) => s.isCorrect, 'isCorrect', false),
+      ],
+    );
+
+    blocTest<GameSessionBloc, GameSessionState>(
+      'emits [GameSessionLoading, GameSessionFailure] when validation throws',
+      build: () {
+        when(
+          () => startGameSessionUseCase(
+            userId: any(named: 'userId'),
+            mode: any(named: 'mode'),
+          ),
+        ).thenAnswer((_) async => testSession);
+        when(
+          () => validateCityAnswerUseCase(
+            cityName: any(named: 'cityName'),
+            previousCity: any(named: 'previousCity'),
+            mode: any(named: 'mode'),
+            usedCityIds: any(named: 'usedCityIds'),
+            historicUsedCityIds: any(named: 'historicUsedCityIds'),
           ),
         ).thenThrow(Exception('fail'));
         return bloc;
       },
-      act: (bloc) => bloc.add(
-        ValidateAnswer(cityName: 'Kyiv', previousCity: 'Lviv', mode: 'UA'),
-      ),
-      expect: () => [isA<GameSessionFailure>()],
+      act: (bloc) async {
+        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        await Future.delayed(Duration.zero);
+        bloc.add(ValidateAnswer(cityName: 'Kyiv'));
+      },
+      expect: () => [
+        isA<GameSessionLoading>(),
+        isA<GameSessionInProgress>(),
+        isA<GameSessionFailure>(),
+      ],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(

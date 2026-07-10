@@ -24,18 +24,19 @@ const GameSessionModelSchema = CollectionSchema(
       type: IsarType.string,
     ),
     r'mode': PropertySchema(id: 2, name: r'mode', type: IsarType.string),
+    r'score': PropertySchema(id: 3, name: r'score', type: IsarType.long),
     r'sessionId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'sessionId',
       type: IsarType.string,
     ),
     r'timerSeconds': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'timerSeconds',
       type: IsarType.long,
     ),
     r'usedCityIds': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'usedCityIds',
       type: IsarType.longList,
     ),
@@ -78,9 +79,10 @@ void _gameSessionModelSerialize(
   writer.writeBool(offsets[0], object.isActive);
   writer.writeString(offsets[1], object.language);
   writer.writeString(offsets[2], object.mode);
-  writer.writeString(offsets[3], object.sessionId);
-  writer.writeLong(offsets[4], object.timerSeconds);
-  writer.writeLongList(offsets[5], object.usedCityIds);
+  writer.writeLong(offsets[3], object.score);
+  writer.writeString(offsets[4], object.sessionId);
+  writer.writeLong(offsets[5], object.timerSeconds);
+  writer.writeLongList(offsets[6], object.usedCityIds);
 }
 
 GameSessionModel _gameSessionModelDeserialize(
@@ -94,9 +96,10 @@ GameSessionModel _gameSessionModelDeserialize(
   object.isActive = reader.readBool(offsets[0]);
   object.language = reader.readString(offsets[1]);
   object.mode = reader.readString(offsets[2]);
-  object.sessionId = reader.readString(offsets[3]);
-  object.timerSeconds = reader.readLong(offsets[4]);
-  object.usedCityIds = reader.readLongList(offsets[5]) ?? [];
+  object.score = reader.readLong(offsets[3]);
+  object.sessionId = reader.readString(offsets[4]);
+  object.timerSeconds = reader.readLong(offsets[5]);
+  object.usedCityIds = reader.readLongList(offsets[6]) ?? [];
   return object;
 }
 
@@ -114,10 +117,12 @@ P _gameSessionModelDeserializeProp<P>(
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
-    case 4:
       return (reader.readLong(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readLongList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -568,6 +573,61 @@ extension GameSessionModelQueryFilter
   }
 
   QueryBuilder<GameSessionModel, GameSessionModel, QAfterFilterCondition>
+  scoreEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'score', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterFilterCondition>
+  scoreGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'score',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterFilterCondition>
+  scoreLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'score',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterFilterCondition>
+  scoreBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'score',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterFilterCondition>
   sessionIdEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -921,6 +981,19 @@ extension GameSessionModelQuerySortBy
     });
   }
 
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterSortBy> sortByScore() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'score', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterSortBy>
+  sortByScoreDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'score', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameSessionModel, GameSessionModel, QAfterSortBy>
   sortBySessionId() {
     return QueryBuilder.apply(this, (query) {
@@ -1006,6 +1079,19 @@ extension GameSessionModelQuerySortThenBy
     });
   }
 
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterSortBy> thenByScore() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'score', Sort.asc);
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QAfterSortBy>
+  thenByScoreDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'score', Sort.desc);
+    });
+  }
+
   QueryBuilder<GameSessionModel, GameSessionModel, QAfterSortBy>
   thenBySessionId() {
     return QueryBuilder.apply(this, (query) {
@@ -1060,6 +1146,13 @@ extension GameSessionModelQueryWhereDistinct
   }
 
   QueryBuilder<GameSessionModel, GameSessionModel, QDistinct>
+  distinctByScore() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'score');
+    });
+  }
+
+  QueryBuilder<GameSessionModel, GameSessionModel, QDistinct>
   distinctBySessionId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sessionId', caseSensitive: caseSensitive);
@@ -1104,6 +1197,12 @@ extension GameSessionModelQueryProperty
   QueryBuilder<GameSessionModel, String, QQueryOperations> modeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mode');
+    });
+  }
+
+  QueryBuilder<GameSessionModel, int, QQueryOperations> scoreProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'score');
     });
   }
 

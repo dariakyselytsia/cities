@@ -161,10 +161,14 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 
 ### P1 — correctness & modeling
 
-- **Implement the full core game algorithm** (the P0 use cases are baselines):
-  last-valid-letter rule with ь/и soft-sign backtracking, per-session uniqueness,
-  scoring + absolute-new-city bonus (needs persisted historic `usedCityIds`).
-  Lives in `validate_city_answer_usecase_impl.dart` / `use_hint_usecase_impl.dart`.
+- ✅ **Core game algorithm implemented.** `domain/game/letter_rule.dart` does the
+  last-valid-letter rule with dataset-driven ь/и backtracking (unit-tested);
+  `ValidateCityAnswerUseCase` now returns a `ValidationOutcome`
+  (`domain/game/validation_outcome.dart`) covering existence, per-session
+  uniqueness, the letter rule, and base scoring. Remaining: the absolute-new-city
+  bonus is wired but gated on `historicUsedCityIds` — it stays off until the
+  User/UserStats history below is persisted. `use_hint_usecase_impl.dart` still
+  ignores the required next letter (returns first unused city).
 - **Fix User/UserStats persistence.** `Map` fields and the `UserModel.stats`
   `@Collection`-as-field were `@ignore`d to unblock codegen — they are NOT
   persisted. Model them properly: serialize maps (JSON string or embedded list)
@@ -173,8 +177,10 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   `city_repository_impl.getCityByName` and
   `game_session_repository_impl.getSession/getSessionsForUser` (see Coding
   standards → Indexed Isar queries).
-- **Stop fabricating IDs.** `game_session_bloc.dart` uses `cityName.hashCode` as a
-  used-city id — carry the real `City.id`.
+- ✅ **Real IDs.** `game_session_bloc.dart` now stores the matched `City.id`
+  (from the `ValidationOutcome`), not `cityName.hashCode`. The BLoC is also
+  authoritative over the previous city (`_lastAcceptedCityName`) and accumulates
+  `GameSession.score`.
 - **Introduce `GameMode` / `AppLanguage` enums** and reconcile `GameSession.id`
   type with its Isar model.
 - **Add `Equatable`** to BLoC events/states, then strengthen tests to assert

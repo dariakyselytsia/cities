@@ -13,6 +13,7 @@ class GameSessionModel {
   late List<int> usedCityIds;
   late int timerSeconds;
   late bool isActive;
+  int score = 0;
 
   GameSessionModel();
 
@@ -23,6 +24,7 @@ class GameSessionModel {
     usedCityIds = session.usedCityIds;
     timerSeconds = session.timerSeconds;
     isActive = session.isActive;
+    score = session.score;
   }
 
   GameSession toDomain() => GameSession(
@@ -32,5 +34,6 @@ class GameSessionModel {
         usedCityIds: usedCityIds,
         timerSeconds: timerSeconds,
         isActive: isActive,
+        score: score,
       );
 }

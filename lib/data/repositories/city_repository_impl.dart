@@ -41,6 +41,18 @@ class CityRepositoryImpl implements CityRepository {
   }
 
   @override
+  Future<Set<String>> availableFirstLetters({
+    required bool isUkraineMode,
+  }) async {
+    final cities = await loadCities(isUkraineMode: isUkraineMode);
+    return cities
+        .map((c) =>
+            (isUkraineMode ? c.firstLetterUA : c.firstLetterEN).toLowerCase())
+        .where((letter) => letter.isNotEmpty)
+        .toSet();
+  }
+
+  @override
   Future<City?> getCityByName(String name, {required bool isUA}) async {
     // Fallback: manual filtering if codegen is not available
     final allCities = await cityModels.where().findAll();

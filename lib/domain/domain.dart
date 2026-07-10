@@ -1,5 +1,7 @@
 export 'entities/game_session.dart';
 export 'entities/city.dart';
+export 'game/letter_rule.dart';
+export 'game/validation_outcome.dart';
 export 'entities/user.dart';
 export 'entities/user_stats.dart';
 export 'repositories/game_session_repository.dart';

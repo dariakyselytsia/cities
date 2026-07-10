@@ -102,7 +102,7 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Game in progress: ${widget.timer} s'),
+          Text('Score: ${widget.session.score}   •   ${widget.timer} s'),
           const SizedBox(height: 16),
           TextField(
             controller: _answerController,
@@ -115,12 +115,9 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
               ElevatedButton(
                 onPressed: () {
                   context.read<GameSessionBloc>().add(
-                    ValidateAnswer(
-                      cityName: _answerController.text,
-                      previousCity: '', // TODO: wire real previous city
-                      mode: widget.session.mode,
-                    ),
+                    ValidateAnswer(cityName: _answerController.text),
                   );
+                  _answerController.clear();
                 },
                 child: const Text('Submit'),
               ),

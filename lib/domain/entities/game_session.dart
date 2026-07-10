@@ -18,6 +18,9 @@ class GameSession {
   /// Whether the session is active or completed
   final bool isActive;
 
+  /// Accumulated score for this session.
+  final int score;
+
   const GameSession({
     required this.id,
     required this.mode,
@@ -25,5 +28,6 @@ class GameSession {
     required this.usedCityIds,
     required this.timerSeconds,
     required this.isActive,
+    this.score = 0,
   });
 }

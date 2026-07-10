@@ -12,16 +12,11 @@ class StartSession extends GameSessionEvent {
   StartSession({required this.userId, required this.mode});
 }
 
-/// Event to validate a city answer
+/// Event to validate a city answer. The BLoC is authoritative over the previous
+/// city and mode, so callers only supply the typed answer.
 class ValidateAnswer extends GameSessionEvent {
   final String cityName;
-  final String previousCity;
-  final String mode;
-  ValidateAnswer({
-    required this.cityName,
-    required this.previousCity,
-    required this.mode,
-  });
+  ValidateAnswer({required this.cityName});
 }
 
 /// Event to use a hint
@@ -64,10 +59,13 @@ class GameSessionInProgress extends GameSessionState {
   GameSessionInProgress({required this.session, required this.timerSeconds});
 }
 
-/// State when answer is validated
+/// State when an answer is validated, carrying the full outcome (verdict,
+/// matched city, and points).
 class AnswerValidated extends GameSessionState {
-  final bool isCorrect;
-  AnswerValidated({required this.isCorrect});
+  final ValidationOutcome outcome;
+  AnswerValidated({required this.outcome});
+
+  bool get isCorrect => outcome.isAccepted;
 }
 
 /// State when a hint is used
@@ -104,6 +102,10 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   int _timerSeconds = 0;
   StreamSubscription<int>? _timerSub;
 
+  /// Last accepted city name — the BLoC is authoritative over the "previous
+  /// city" the letter rule is checked against.
+  String? _lastAcceptedCityName;
+
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
@@ -133,6 +135,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       );
       _currentSession = session;
       _timerSeconds = session.timerSeconds;
+      _lastAcceptedCityName = null;
       emit(
         GameSessionInProgress(session: session, timerSeconds: _timerSeconds),
       );
@@ -147,33 +150,36 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     ValidateAnswer event,
     Emitter<GameSessionState> emit,
   ) async {
-    if (_currentSession == null) {
+    final session = _currentSession;
+    if (session == null) {
       emit(GameSessionFailure(message: 'No active session.'));
       return;
     }
     try {
-      final isCorrect = await validateCityAnswerUseCase(
+      final outcome = await validateCityAnswerUseCase(
         cityName: event.cityName,
-        previousCity: event.previousCity,
-        mode: event.mode,
+        previousCity: _lastAcceptedCityName ?? '',
+        mode: session.mode,
+        usedCityIds: session.usedCityIds,
       );
-      if (isCorrect) {
-        // Update session state (add city to used list)
+      if (outcome.isAccepted) {
+        final city = outcome.city!;
         final updated = GameSession(
-          id: _currentSession!.id,
-          mode: _currentSession!.mode,
-          language: _currentSession!.language,
-          usedCityIds: List<int>.from(_currentSession!.usedCityIds)
-            ..add(event.cityName.hashCode),
+          id: session.id,
+          mode: session.mode,
+          language: session.language,
+          usedCityIds: [...session.usedCityIds, city.id],
           timerSeconds: _timerSeconds,
           isActive: true,
+          score: session.score + outcome.points,
         );
         _currentSession = updated;
+        _lastAcceptedCityName = event.cityName.trim();
         emit(
           GameSessionInProgress(session: updated, timerSeconds: _timerSeconds),
         );
       }
-      emit(AnswerValidated(isCorrect: isCorrect));
+      emit(AnswerValidated(outcome: outcome));
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to validate answer: $e'));
     }
