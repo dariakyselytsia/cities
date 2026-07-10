@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 import '../entities/city.dart';
 
 /// Base points awarded for a valid city.
@@ -25,7 +27,7 @@ enum AnswerStatus {
 
 /// Result of validating a submitted city answer: the verdict, the matched
 /// [City] (when one was found), and the points earned.
-class ValidationOutcome {
+class ValidationOutcome extends Equatable {
   final AnswerStatus status;
   final City? city;
   final int points;
@@ -55,4 +57,7 @@ class ValidationOutcome {
     : this(status: status, city: city);
 
   bool get isAccepted => status == AnswerStatus.accepted;
+
+  @override
+  List<Object?> get props => [status, city, points, isNewToPlayer];
 }

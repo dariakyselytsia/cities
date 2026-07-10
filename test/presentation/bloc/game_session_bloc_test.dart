@@ -134,7 +134,13 @@ void main() {
         isA<GameSessionInProgress>()
             .having((s) => s.session.score, 'score', kBasePoints)
             .having((s) => s.session.usedCityIds, 'usedCityIds', [testCity.id]),
-        isA<AnswerValidated>().having((s) => s.isCorrect, 'isCorrect', true),
+        // Full value equality, enabled by Equatable on states + value objects.
+        const AnswerValidated(
+          outcome: ValidationOutcome.accepted(
+            city: testCity,
+            points: kBasePoints,
+          ),
+        ),
       ],
     );
 
@@ -206,26 +212,39 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [HintUsed] on successful UseHint',
+      'emits [HintUsed] on successful UseHint with an active session',
       build: () {
         when(
-          () => useHintUseCase(sessionId: any(named: 'sessionId')),
+          () => startGameSessionUseCase(
+            userId: any(named: 'userId'),
+            mode: any(named: 'mode'),
+          ),
+        ).thenAnswer((_) async => testSession);
+        when(
+          () => useHintUseCase(
+            mode: any(named: 'mode'),
+            usedCityIds: any(named: 'usedCityIds'),
+            previousCity: any(named: 'previousCity'),
+          ),
         ).thenAnswer((_) async => 'Odesa');
         return bloc;
       },
-      act: (bloc) => bloc.add(UseHint(sessionId: 'session1')),
-      expect: () => [isA<HintUsed>()],
+      act: (bloc) async {
+        bloc.add(StartSession(userId: 'user1', mode: 'UA'));
+        await Future.delayed(Duration.zero);
+        bloc.add(UseHint());
+      },
+      expect: () => [
+        isA<GameSessionLoading>(),
+        isA<GameSessionInProgress>(),
+        isA<HintUsed>().having((s) => s.suggestedCity, 'suggestedCity', 'Odesa'),
+      ],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionFailure] on failed UseHint',
-      build: () {
-        when(
-          () => useHintUseCase(sessionId: any(named: 'sessionId')),
-        ).thenThrow(Exception('fail'));
-        return bloc;
-      },
-      act: (bloc) => bloc.add(UseHint(sessionId: 'session1')),
+      'emits [GameSessionFailure] when UseHint has no active session',
+      build: () => bloc,
+      act: (bloc) => bloc.add(UseHint()),
       expect: () => [isA<GameSessionFailure>()],
     );
 

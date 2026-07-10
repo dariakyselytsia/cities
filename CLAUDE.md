@@ -167,8 +167,9 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   (`domain/game/validation_outcome.dart`) covering existence, per-session
   uniqueness, the letter rule, and base scoring. Remaining: the absolute-new-city
   bonus is wired but gated on `historicUsedCityIds` — it stays off until the
-  User/UserStats history below is persisted. `use_hint_usecase_impl.dart` still
-  ignores the required next letter (returns first unused city).
+  User/UserStats history below is persisted. ✅ `use_hint_usecase_impl.dart` now
+  honors the required next letter (dataset-driven backtracking, same `LetterRule`)
+  and only suggests unused cities.
 - **Fix User/UserStats persistence.** `Map` fields and the `UserModel.stats`
   `@Collection`-as-field were `@ignore`d to unblock codegen — they are NOT
   persisted. Model them properly: serialize maps (JSON string or embedded list)
@@ -183,8 +184,9 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   `GameSession.score`.
 - **Introduce `GameMode` / `AppLanguage` enums** and reconcile `GameSession.id`
   type with its Isar model.
-- **Add `Equatable`** to BLoC events/states, then strengthen tests to assert
-  values.
+- ✅ **`Equatable`** added to BLoC events/states and the value objects they expose
+  (`GameSession`, `City`, `ValidationOutcome`) via `equatable`. Tests now assert
+  full state values (see the accepted-answer `blocTest`).
 - **Simplify the state model** — a correct answer currently double-emits
   `GameSessionInProgress` + `AnswerValidated` (the latter carries no session).
   Prefer one source-of-truth in-progress state carrying the last result.
@@ -194,7 +196,7 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 
 - ✅ Moved `build_runner` to `dev_dependencies` (P0).
 - ✅ Removed the dead `test/widget_test.dart` counter template (P0).
-- Remove the duplicate doc-comment block on `GameSessionBloc`.
+- ✅ Removed the duplicate doc-comment block on `GameSessionBloc`.
 - Import the `domain.dart` barrel in `main.dart` instead of each use case.
 
 ### Not yet wired (expected at this stage)

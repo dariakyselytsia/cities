@@ -1,5 +1,7 @@
+import 'package:equatable/equatable.dart';
+
 /// Domain entity representing a City for the Cities game.
-class City {
+class City extends Equatable {
   final int id;
   final String nameUA;
   final String nameEN;
@@ -17,4 +19,8 @@ class City {
     required this.firstLetterUA,
     required this.firstLetterEN,
   });
+
+  @override
+  List<Object?> get props =>
+      [id, nameUA, nameEN, countryCode, isCapital, firstLetterUA, firstLetterEN];
 }

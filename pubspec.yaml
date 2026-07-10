@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_bloc: ^8.1.5
+  equatable: ^2.0.5
   get_it: ^7.6.7
   injectable: ^2.3.2
   # Community fork of the abandoned Isar 3.x — drop-in, same API, modern-analyzer generator.

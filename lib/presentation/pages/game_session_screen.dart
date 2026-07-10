@@ -124,9 +124,7 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
               const SizedBox(width: 16),
               ElevatedButton(
                 onPressed: () {
-                  context.read<GameSessionBloc>().add(
-                    UseHint(sessionId: widget.session.id),
-                  );
+                  context.read<GameSessionBloc>().add(UseHint());
                 },
                 child: const Text('Hint'),
               ),

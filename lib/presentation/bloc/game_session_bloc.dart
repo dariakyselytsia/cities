@@ -1,95 +1,141 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:cities/domain/domain.dart';
 import 'dart:async';
 
 /// Events for GameSessionBloc
-abstract class GameSessionEvent {}
+abstract class GameSessionEvent extends Equatable {
+  const GameSessionEvent();
+
+  @override
+  List<Object?> get props => [];
+}
 
 /// Event to start a new game session
 class StartSession extends GameSessionEvent {
   final String userId;
   final String mode;
-  StartSession({required this.userId, required this.mode});
+  const StartSession({required this.userId, required this.mode});
+
+  @override
+  List<Object?> get props => [userId, mode];
 }
 
 /// Event to validate a city answer. The BLoC is authoritative over the previous
 /// city and mode, so callers only supply the typed answer.
 class ValidateAnswer extends GameSessionEvent {
   final String cityName;
-  ValidateAnswer({required this.cityName});
+  const ValidateAnswer({required this.cityName});
+
+  @override
+  List<Object?> get props => [cityName];
 }
 
-/// Event to use a hint
+/// Event to use a hint for the active session.
 class UseHint extends GameSessionEvent {
-  final String sessionId;
-  UseHint({required this.sessionId});
+  const UseHint();
 }
 
 /// Event to revive a session
 class ReviveSession extends GameSessionEvent {
   final String sessionId;
-  ReviveSession({required this.sessionId});
+  const ReviveSession({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
 }
 
 /// Event to end the session
 class EndSession extends GameSessionEvent {
   final String sessionId;
-  EndSession({required this.sessionId});
+  const EndSession({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
 }
 
 /// Event for timer tick
 class TimerTick extends GameSessionEvent {
   final int secondsLeft;
-  TimerTick({required this.secondsLeft});
+  const TimerTick({required this.secondsLeft});
+
+  @override
+  List<Object?> get props => [secondsLeft];
 }
 
 /// States for GameSessionBloc
-abstract class GameSessionState {}
+abstract class GameSessionState extends Equatable {
+  const GameSessionState();
+
+  @override
+  List<Object?> get props => [];
+}
 
 /// Initial state
-class GameSessionInitial extends GameSessionState {}
+class GameSessionInitial extends GameSessionState {
+  const GameSessionInitial();
+}
 
 /// State when loading (e.g., starting session)
-class GameSessionLoading extends GameSessionState {}
+class GameSessionLoading extends GameSessionState {
+  const GameSessionLoading();
+}
 
 /// State when session is in progress
 class GameSessionInProgress extends GameSessionState {
   final GameSession session;
   final int timerSeconds;
-  GameSessionInProgress({required this.session, required this.timerSeconds});
+  const GameSessionInProgress({
+    required this.session,
+    required this.timerSeconds,
+  });
+
+  @override
+  List<Object?> get props => [session, timerSeconds];
 }
 
 /// State when an answer is validated, carrying the full outcome (verdict,
 /// matched city, and points).
 class AnswerValidated extends GameSessionState {
   final ValidationOutcome outcome;
-  AnswerValidated({required this.outcome});
+  const AnswerValidated({required this.outcome});
 
   bool get isCorrect => outcome.isAccepted;
+
+  @override
+  List<Object?> get props => [outcome];
 }
 
 /// State when a hint is used
 class HintUsed extends GameSessionState {
   final String? suggestedCity;
-  HintUsed({this.suggestedCity});
+  const HintUsed({this.suggestedCity});
+
+  @override
+  List<Object?> get props => [suggestedCity];
 }
 
 /// State when session is revived
-class SessionRevived extends GameSessionState {}
+class SessionRevived extends GameSessionState {
+  const SessionRevived();
+}
 
 /// State when session ends
-class GameSessionEnded extends GameSessionState {}
+class GameSessionEnded extends GameSessionState {
+  const GameSessionEnded();
+}
 
 /// State for errors/failures
 class GameSessionFailure extends GameSessionState {
   final String message;
-  GameSessionFailure({required this.message});
+  const GameSessionFailure({required this.message});
+
+  @override
+  List<Object?> get props => [message];
 }
 
-/// BLoC for managing the lifecycle and logic of a game session.
-/// Handles session start, answer validation, timer, scoring, hints, revive, and end.
-
-/// GameSessionBloc manages the full lifecycle and logic of a game session.
+/// GameSessionBloc manages the full lifecycle and logic of a game session:
+/// session start, answer validation, timer, scoring, hints, revive, and end.
 /// It exposes all session state, timer, and error handling for the UI.
 class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   final StartGameSessionUseCase startGameSessionUseCase;
@@ -187,8 +233,17 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
 
   /// Uses a hint and emits the suggested city.
   Future<void> _onUseHint(UseHint event, Emitter<GameSessionState> emit) async {
+    final session = _currentSession;
+    if (session == null) {
+      emit(GameSessionFailure(message: 'No active session.'));
+      return;
+    }
     try {
-      final suggestedCity = await useHintUseCase(sessionId: event.sessionId);
+      final suggestedCity = await useHintUseCase(
+        mode: session.mode,
+        usedCityIds: session.usedCityIds,
+        previousCity: _lastAcceptedCityName ?? '',
+      );
       emit(HintUsed(suggestedCity: suggestedCity));
     } catch (e) {
       emit(GameSessionFailure(message: 'Failed to use hint: $e'));

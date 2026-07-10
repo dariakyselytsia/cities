@@ -71,6 +71,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i163.EndGameSessionUseCase>(
       () => _i388.EndGameSessionUseCaseImpl(gh<_i255.GameSessionRepository>()),
     );
+    gh.lazySingleton<_i196.UseHintUseCase>(
+      () => _i164.UseHintUseCaseImpl(gh<_i385.CityRepository>()),
+    );
     gh.lazySingleton<_i399.ReviveSessionUseCase>(
       () => _i193.ReviveSessionUseCaseImpl(gh<_i255.GameSessionRepository>()),
     );
@@ -78,12 +81,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i681.StartGameSessionUseCaseImpl(
         gh<_i385.CityRepository>(),
         gh<_i255.GameSessionRepository>(),
-      ),
-    );
-    gh.lazySingleton<_i196.UseHintUseCase>(
-      () => _i164.UseHintUseCaseImpl(
-        gh<_i255.GameSessionRepository>(),
-        gh<_i385.CityRepository>(),
       ),
     );
     return this;

@@ -1,5 +1,7 @@
+import 'package:equatable/equatable.dart';
+
 /// Domain entity representing an active or historic game session.
-class GameSession {
+class GameSession extends Equatable {
   /// Unique session ID
   final String id;
 
@@ -30,4 +32,8 @@ class GameSession {
     required this.isActive,
     this.score = 0,
   });
+
+  @override
+  List<Object?> get props =>
+      [id, mode, language, usedCityIds, timerSeconds, isActive, score];
 }
