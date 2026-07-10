@@ -249,12 +249,13 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   /// Starts the countdown timer and emits TimerTick events.
   void _startTimer() {
     _timerSub?.cancel();
+    int secondsLeft = _timerSeconds;
     _timerSub =
-        Stream<int>.periodic(
+        Stream.periodic(
           const Duration(seconds: 1),
-          (x) => _timerSeconds - x - 1,
-        ).take(_timerSeconds).listen((secondsLeft) {
-          add(TimerTick(secondsLeft: secondsLeft));
+          (_) => --secondsLeft,
+        ).take(_timerSeconds).listen((s) {
+          add(TimerTick(secondsLeft: s));
         });
   }
 

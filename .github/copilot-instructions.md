@@ -49,7 +49,7 @@ For every feature or task you are assigned, you MUST execute the following steps
 - After completing a step/commit, you must NOT proceed to the next coding task autonomously.
 - You must ask for the user's feedback and automatically output a new tailored prompt for the next feature. This prompt must follow the exact structure:
   ```text
-  @FlutterArchitect Before we write any more code, please read #game_design.md, #review-skill.md, and our global instructions.
+  @FlutterArchitect Before we write any more code, please read #game_design.md, .claude/skills/flutter-review/SKILL.md, and our global instructions.
   I want to perform a deep architectural and design review of...
   [Tailor points 1, 2, and 3 to the next task like BLoC initialization, UI flow, or Supabase connection]
   DO NOT write any production implementation code yet...

@@ -4,8 +4,10 @@ import 'package:isar/isar.dart';
 import '../models/city_model.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/repositories/city_repository.dart';
+import 'package:injectable/injectable.dart';
 
 /// Implementation of CityRepository using Isar for local storage.
+@LazySingleton(as: CityRepository)
 class CityRepositoryImpl implements CityRepository {
   final Isar isar;
   CityRepositoryImpl(this.isar);

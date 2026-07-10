@@ -1,9 +1,10 @@
 import 'package:isar/isar.dart';
+import 'package:injectable/injectable.dart';
 import '../models/game_session_model.dart';
 import '../../domain/entities/game_session.dart';
 import '../../domain/repositories/game_session_repository.dart';
 
-/// Implementation of GameSessionRepository using Isar for local storage.
+@LazySingleton(as: GameSessionRepository)
 class GameSessionRepositoryImpl implements GameSessionRepository {
   final Isar isar;
   GameSessionRepositoryImpl(this.isar);

@@ -1,9 +1,10 @@
 import 'package:isar/isar.dart';
+import 'package:injectable/injectable.dart';
 import '../models/user_model.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/user_repository.dart';
 
-/// Implementation of UserRepository using Isar for local storage.
+@LazySingleton(as: UserRepository)
 class UserRepositoryImpl implements UserRepository {
   final Isar isar;
   UserRepositoryImpl(this.isar);
