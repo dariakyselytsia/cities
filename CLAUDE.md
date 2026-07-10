@@ -174,10 +174,14 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   `@Collection`-as-field were `@ignore`d to unblock codegen — they are NOT
   persisted. Model them properly: serialize maps (JSON string or embedded list)
   and link `User`↔`UserStats` via `IsarLink`.
-- **Replace full-table scans with indexed queries** in
-  `city_repository_impl.getCityByName` and
-  `game_session_repository_impl.getSession/getSessionsForUser` (see Coding
-  standards → Indexed Isar queries).
+- ✅ **Indexed queries replace full-table scans.** Added `@Index()` on
+  `CityModel.nameUA/nameEN`, `GameSessionModel.sessionId`, `UserModel.userId`;
+  the repos now use `where().<field>EqualTo(...).findFirst()` instead of
+  `.where().findAll()` + Dart `firstWhere`. `saveSession`/`saveUser` now **upsert
+  by business key** (reuse the existing Isar id) instead of duplicating on every
+  save. Still O(n) by design: `getSessionsForUser` (needs an indexed `userId` on
+  the session model) and `CityRepository.loadCities`/`availableFirstLetters`
+  (re-read the asset each call — a caching cleanup for later).
 - ✅ **Real IDs.** `game_session_bloc.dart` now stores the matched `City.id`
   (from the `ValidationOutcome`), not `cityName.hashCode`. The BLoC is also
   authoritative over the previous city (`_lastAcceptedCityName`) and accumulates

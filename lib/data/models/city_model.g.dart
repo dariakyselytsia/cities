@@ -47,6 +47,32 @@ const CityModelSchema = CollectionSchema(
   deserializeProp: _cityModelDeserializeProp,
   idName: r'id',
   indexes: {
+    r'nameUA': IndexSchema(
+      id: -90422192905996934,
+      name: r'nameUA',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'nameUA',
+          type: IndexType.hash,
+          caseSensitive: true,
+        ),
+      ],
+    ),
+    r'nameEN': IndexSchema(
+      id: -2175834221958601112,
+      name: r'nameEN',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'nameEN',
+          type: IndexType.hash,
+          caseSensitive: true,
+        ),
+      ],
+    ),
     r'firstLetterUA': IndexSchema(
       id: -2057832643227154729,
       name: r'firstLetterUA',
@@ -240,6 +266,114 @@ extension CityModelQueryWhere
           includeUpper: includeUpper,
         ),
       );
+    });
+  }
+
+  QueryBuilder<CityModel, CityModel, QAfterWhereClause> nameUAEqualTo(
+    String nameUA,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'nameUA', value: [nameUA]),
+      );
+    });
+  }
+
+  QueryBuilder<CityModel, CityModel, QAfterWhereClause> nameUANotEqualTo(
+    String nameUA,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameUA',
+                lower: [],
+                upper: [nameUA],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameUA',
+                lower: [nameUA],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameUA',
+                lower: [nameUA],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameUA',
+                lower: [],
+                upper: [nameUA],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<CityModel, CityModel, QAfterWhereClause> nameENEqualTo(
+    String nameEN,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'nameEN', value: [nameEN]),
+      );
+    });
+  }
+
+  QueryBuilder<CityModel, CityModel, QAfterWhereClause> nameENNotEqualTo(
+    String nameEN,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameEN',
+                lower: [],
+                upper: [nameEN],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameEN',
+                lower: [nameEN],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameEN',
+                lower: [nameEN],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nameEN',
+                lower: [],
+                upper: [nameEN],
+                includeUpper: false,
+              ),
+            );
+      }
     });
   }
 

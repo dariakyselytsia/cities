@@ -8,7 +8,9 @@ part 'city_model.g.dart';
 class CityModel {
   Id id = Isar.autoIncrement;
 
+  @Index()
   late String nameUA;
+  @Index()
   late String nameEN;
   late String countryCode;
   late bool isCapital;

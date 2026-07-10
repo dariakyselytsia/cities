@@ -9,6 +9,7 @@ part 'user_model.g.dart';
 @Collection()
 class UserModel {
   Id id = Isar.autoIncrement;
+  @Index()
   late String userId;
   late String languagePreference;
 

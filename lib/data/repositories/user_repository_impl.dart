@@ -13,21 +13,20 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<void> saveUser(User user) async {
-    final model = UserModel.fromDomain(user);
     await isar.writeTxn(() async {
+      // Upsert by business key (userId), reusing the existing Isar id.
+      final existing =
+          await userModels.where().userIdEqualTo(user.id).findFirst();
+      final model = UserModel.fromDomain(user);
+      if (existing != null) model.id = existing.id;
       await userModels.put(model);
     });
   }
 
   @override
   Future<User?> getUser(String id) async {
-    final allUsers = await userModels.where().findAll();
-    UserModel? user;
-    try {
-      user = allUsers.firstWhere((u) => u.userId == id);
-    } catch (_) {
-      user = null;
-    }
-    return user?.toDomain();
+    // Indexed lookup on UserModel.userId (see @Index).
+    final model = await userModels.where().userIdEqualTo(id).findFirst();
+    return model?.toDomain();
   }
 }

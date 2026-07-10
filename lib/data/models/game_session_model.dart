@@ -9,6 +9,7 @@ part 'game_session_model.g.dart';
 @Collection()
 class GameSessionModel {
   Id id = Isar.autoIncrement;
+  @Index()
   late String sessionId;
   late String mode;
   late String language;

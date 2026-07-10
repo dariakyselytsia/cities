@@ -54,16 +54,10 @@ class CityRepositoryImpl implements CityRepository {
 
   @override
   Future<City?> getCityByName(String name, {required bool isUA}) async {
-    // Fallback: manual filtering if codegen is not available
-    final allCities = await cityModels.where().findAll();
-    CityModel? city;
-    try {
-      city = isUA
-          ? allCities.firstWhere((c) => c.nameUA == name)
-          : allCities.firstWhere((c) => c.nameEN == name);
-    } catch (_) {
-      city = null;
-    }
-    return city?.toDomain();
+    // Indexed lookup on the name field (see @Index on CityModel.nameUA/nameEN).
+    final model = isUA
+        ? await cityModels.where().nameUAEqualTo(name).findFirst()
+        : await cityModels.where().nameENEqualTo(name).findFirst();
+    return model?.toDomain();
   }
 }

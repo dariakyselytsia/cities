@@ -14,28 +14,28 @@ class GameSessionRepositoryImpl implements GameSessionRepository {
 
   @override
   Future<void> saveSession(GameSession session) async {
-    final model = GameSessionModel.fromDomain(session);
     await isar.writeTxn(() async {
+      // Upsert by business key: reuse the Isar id of an existing record with the
+      // same sessionId so repeated saves update in place instead of duplicating.
+      final existing =
+          await sessionModels.where().sessionIdEqualTo(session.id).findFirst();
+      final model = GameSessionModel.fromDomain(session);
+      if (existing != null) model.id = existing.id;
       await sessionModels.put(model);
     });
   }
 
   @override
   Future<GameSession?> getSession(String id) async {
-    final allSessions = await sessionModels.where().findAll();
-    GameSessionModel? session;
-    try {
-      session = allSessions.firstWhere((s) => s.sessionId == id);
-    } catch (_) {
-      session = null;
-    }
-    return session?.toDomain();
+    // Indexed lookup on GameSessionModel.sessionId (see @Index).
+    final model = await sessionModels.where().sessionIdEqualTo(id).findFirst();
+    return model?.toDomain();
   }
 
   @override
   Future<List<GameSession>> getSessionsForUser(String userId) async {
-    // This assumes you add a userId field to GameSessionModel if needed
-    // For now, returns all sessions (to be refined as needed)
+    // NOTE: GameSessionModel has no userId yet, so this still returns all
+    // sessions. Add an indexed userId field to filter (P1 stats work).
     final sessions = await sessionModels.where().findAll();
     return sessions.map((s) => s.toDomain()).toList();
   }
