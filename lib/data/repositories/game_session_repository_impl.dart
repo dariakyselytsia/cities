@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:injectable/injectable.dart';
 import '../models/game_session_model.dart';
 import '../../domain/entities/game_session.dart';

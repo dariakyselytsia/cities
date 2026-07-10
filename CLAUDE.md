@@ -21,7 +21,10 @@ open to them.
 - **Framework:** Flutter (Dart SDK `^3.11.5`)
 - **State management:** `flutter_bloc ^8.1.5`
 - **DI:** `get_it ^7.6.7` + `injectable ^2.3.2` (codegen)
-- **Local DB:** `isar ^3.1.0+1` (+ `isar_flutter_libs`) — offline city search & records
+- **Local DB:** `isar_community ^3.3.2` (+ `isar_community_flutter_libs`) —
+  maintained drop-in fork of the abandoned Isar 3; same API, modern-analyzer
+  codegen. Import `package:isar_community/isar.dart`. Opened once via an
+  injectable `@module` (`lib/di/register_module.dart`) using `path_provider`.
 - **Remote (BaaS):** `supabase_flutter ^2.5.2` — global leaderboards, anon auth
 - **Ads:** `google_mobile_ads ^5.1.0` — rewarded (hints/revive) + banner
 - **Localization:** `easy_localization ^3.0.3` — Ukrainian & English
@@ -137,27 +140,35 @@ This is an **early scaffold**. The Clean Architecture layering, Isar model↔dom
 mapping, `GameSessionBloc`, and its test suite are structurally sound — the plan
 is to **improve, not rewrite**. Execute the roadmap below in priority order.
 
-### P0 — the app cannot run yet ("make it run")
+### P0 — make it run ✅ DONE
 
-- **DI is a non-functional stub.** `lib/di/injectable_config.dart` has an empty
-  `init()` and `lib/di/di.dart` calls `getIt.init()` — an injectable-generated
-  extension that was never generated; `getIt` is also declared twice. `main.dart`
-  resolves 5 use cases that are never registered → instant crash on launch.
-  Fix: annotate real registrations, add an injectable `@module` that provides the
-  `Isar` instance via `Isar.open([...Schema])`, run `build_runner`, and delete the
-  hand-written stub / duplicate `getIt`.
-- **No concrete use-case implementations.** All 11 `usecases/*` are abstract
-  interfaces. The **core game algorithm is unimplemented**: last-valid-letter
-  rule, ь/и (soft-sign) backtracking, per-session uniqueness, scoring, and the
-  absolute-new-city bonus (needs a persisted historic `usedCityIds`). Implement
-  concrete classes and register them.
-- **Isar never opened/registered** — see the DI `@module` fix above.
-- **Assets undeclared.** Add `assets/data/cities_ua.json` /
-  `cities_world.json` under `flutter: assets:` in `pubspec.yaml`, or
-  `rootBundle.loadString` throws at runtime.
+- ✅ **DI wired & generated.** `lib/di/di.dart` (`@InjectableInit`) +
+  `lib/di/register_module.dart` (`@module`, `@preResolve` `Isar` via `Isar.open` +
+  `path_provider`) now generate a real `lib/di/di.config.dart`. The stub and the
+  duplicate `getIt` are gone. `flutter analyze` is error-free; the 13 BLoC tests
+  pass.
+- ✅ **5 game use cases implemented & registered** (`*_usecase_impl.dart`:
+  start / validate / hint / revive / end). NOTE: these are baseline
+  implementations — the **full core game algorithm is still P1** (see below):
+  ь/и soft-sign backtracking, per-session uniqueness, scoring, and the
+  absolute-new-city bonus are not done yet. The 6 user/stats use cases remain
+  interface-only (not on the P0 path).
+- ✅ **Isar opened/registered** via the `@module` above.
+- ✅ **Assets declared** under `flutter: assets:` in `pubspec.yaml`.
+- ✅ **Migrated `isar` → `isar_community`** (the original Isar 3 was abandoned and
+  its generator is incompatible with this Flutter's analyzer). Import swapped
+  across all models/repos.
 
 ### P1 — correctness & modeling
 
+- **Implement the full core game algorithm** (the P0 use cases are baselines):
+  last-valid-letter rule with ь/и soft-sign backtracking, per-session uniqueness,
+  scoring + absolute-new-city bonus (needs persisted historic `usedCityIds`).
+  Lives in `validate_city_answer_usecase_impl.dart` / `use_hint_usecase_impl.dart`.
+- **Fix User/UserStats persistence.** `Map` fields and the `UserModel.stats`
+  `@Collection`-as-field were `@ignore`d to unblock codegen — they are NOT
+  persisted. Model them properly: serialize maps (JSON string or embedded list)
+  and link `User`↔`UserStats` via `IsarLink`.
 - **Replace full-table scans with indexed queries** in
   `city_repository_impl.getCityByName` and
   `game_session_repository_impl.getSession/getSessionsForUser` (see Coding
@@ -175,10 +186,10 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 
 ### P2 — hygiene
 
-- Move `build_runner` from `dependencies` to `dev_dependencies`.
+- ✅ Moved `build_runner` to `dev_dependencies` (P0).
+- ✅ Removed the dead `test/widget_test.dart` counter template (P0).
 - Remove the duplicate doc-comment block on `GameSessionBloc`.
 - Import the `domain.dart` barrel in `main.dart` instead of each use case.
-- Replace `test/widget_test.dart` (still the counter template).
 
 ### Not yet wired (expected at this stage)
 

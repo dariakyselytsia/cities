@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import '../../domain/entities/game_session.dart';
 
 part 'game_session_model.g.dart';

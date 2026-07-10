@@ -9,7 +9,6 @@ import 'domain/usecases/validate_city_answer_usecase.dart';
 import 'domain/usecases/use_hint_usecase.dart';
 import 'domain/usecases/revive_session_usecase.dart';
 import 'domain/usecases/end_game_session_usecase.dart';
-import 'domain/entities/game_session.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

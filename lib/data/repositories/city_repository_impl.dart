@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import '../models/city_model.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/repositories/city_repository.dart';

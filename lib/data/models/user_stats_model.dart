@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import '../../domain/entities/user_stats.dart';
 import 'game_session_summary_model.dart';
 
@@ -13,9 +13,15 @@ class UserStatsModel {
   late int highScoreWorld;
   late List<int> usedCityIds;
 
-  late Map<int, int> cityUsageCount;
-  late Map<String, int> highScores;
-  late Map<String, double> usedCitiesPercent;
+  // Isar cannot persist Map types directly. These are @ignore for now;
+  // serializing them (JSON string or embedded list) is a P1 data-modeling task.
+  @ignore
+  Map<int, int> cityUsageCount = <int, int>{};
+  @ignore
+  Map<String, int> highScores = <String, int>{};
+  @ignore
+  Map<String, double> usedCitiesPercent = <String, double>{};
+
   late String favoriteCountry;
   late int longestStreak;
   late List<GameSessionSummaryModel> sessionHistory;
