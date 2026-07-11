@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "nameUA": "Київ",
+        "nameEN": "Kyiv",
+        "countryCode": "UA",
+        "isCapital": true,
+        "firstLetterUA": "К",
+        "firstLetterEN": "K"
+    },
+    {
+        "id": 2,
+        "nameUA": "Львів",
+        "nameEN": "Lviv",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "Л",
+        "firstLetterEN": "L"
+    },
+    {
+        "id": 3,
+        "nameUA": "Одеса",
+        "nameEN": "Odesa",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "О",
+        "firstLetterEN": "O"
+    },
+    {
+        "id": 4,
+        "nameUA": "Харків",
+        "nameEN": "Kharkiv",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "Х",
+        "firstLetterEN": "K"
+    },
+    {
+        "id": 5,
+        "nameUA": "Дніпро",
+        "nameEN": "Dnipro",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "Д",
+        "firstLetterEN": "D"
+    },
+    {
+        "id": 6,
+        "nameUA": "Запоріжжя",
+        "nameEN": "Zaporizhzhia",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "З",
+        "firstLetterEN": "Z"
+    },
+    {
+        "id": 7,
+        "nameUA": "Вінниця",
+        "nameEN": "Vinnytsia",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "В",
+        "firstLetterEN": "V"
+    },
+    {
+        "id": 8,
+        "nameUA": "Чернівці",
+        "nameEN": "Chernivtsi",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "Ч",
+        "firstLetterEN": "C"
+    },
+    {
+        "id": 9,
+        "nameUA": "Полтава",
+        "nameEN": "Poltava",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "П",
+        "firstLetterEN": "P"
+    },
+    {
+        "id": 10,
+        "nameUA": "Суми",
+        "nameEN": "Sumy",
+        "countryCode": "UA",
+        "isCapital": false,
+        "firstLetterUA": "С",
+        "firstLetterEN": "S"
+    }
+]
