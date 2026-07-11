@@ -8,21 +8,38 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "mode": "Mode",
-    "ukraine": "Ukraine",
-    "world": "World"
+    "city_list": "City list",
+    "world_cities": "World Cities",
+    "world_cities_desc": "all countries, ~3,000 cities",
+    "ukrainian_cities": "Ukrainian Cities",
+    "ukrainian_cities_desc": "Ukraine-only, ~150 cities",
+    "city_list_hint": "Select one or both — matches use cities pulled from checked lists.",
+    "gameplay": "Gameplay",
+    "sound_effects": "Sound effects",
+    "turn_timer": "Turn timer"
   },
   "game": {
     "score": "Score",
     "hint": "Hint",
     "surrender": "Give Up",
-    "enter_city": "Enter a city",
-    "submit": "Submit"
+    "enter_city": "Enter a city…",
+    "submit": "Submit",
+    "your_turn": "Your turn",
+    "opening": "Name any city to begin",
+    "not_found": "No such city — try again",
+    "wrong_letter": "Wrong starting letter",
+    "already_used": "Already used — try another city",
+    "game_over": "Game over",
+    "final_score": "Final score",
+    "play_again": "Play Again",
+    "home": "Home"
   },
   "leaderboard": {
     "title": "Leaderboard",
-    "ukraine_tab": "Ukraine",
-    "world_tab": "World",
-    "your_high_score": "Your High Score"
+    "weekly": "Weekly",
+    "global": "Global",
+    "friends": "Friends",
+    "you": "You",
+    "footer_top": "you're #1 this week, keep it up!"
   }
 }

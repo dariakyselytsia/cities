@@ -248,11 +248,27 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   `GameSessionBloc` (built from DI use cases) so it's created on entry and
   disposed on exit. `easy_localization` is set up with `uk`/`en` under
   `assets/translations/` (fallback `en`).
-- **Screens are structural placeholders** (`home_screen`, `settings_screen`,
-  `leaderboard_screen`, plus the existing `game_session_screen`) — navigation +
-  localization wiring is real; **visuals await the shared design**. Settings
-  language toggle drives `context.setLocale`; mode toggle + leaderboard data are
-  not yet bound.
+- ✅ **Theme built to the shared design** (`lib/core/theme.dart`): "vibrant"
+  palette (`AppColors` — coral `#FF6B5B`, teal `#17B0A6`, yellow, purple, cream
+  `#FBF7F0`, ink `#22303A`, colored glows), `AppRadii`, Baloo 2 + Poppins via
+  `google_fonts`, and rounded component themes. (Offline-first caveat: fonts
+  fetch on first run — bundle the `.ttf`s before release.)
+- ✅ **Four screens styled to the design:** Home (hero + coral/teal glow CTAs),
+  Settings (language radios [live], city-list checks, gameplay toggles),
+  Leaderboard (Weekly/Global/Friends pills, podium, list), and the **Game chat
+  screen** (right-aligned coral city bubbles, timer badge, score, hint chip,
+  rejection banner, input bar). The game route auto-starts a Ukraine session.
+- ✅ **BLoC exposes chat history.** `GameSessionInProgress.history` (`List<String>`
+  of accepted city names, session-language) accumulates in the BLoC; preserved
+  across a revive, cleared on start. Test updated.
+- **Design vs. MVP scope deltas (design is richer — kept to MVP, flag before
+  building):** the design shows a **CityBot opponent** + **Play Online**
+  (multiplayer — roadmap, not MVP), a **Statistics** screen and **Win/Lose**
+  screens (not yet built), a **3rd language (Español)** (app is UA/EN only), and
+  **city-list multi-select** (domain models a single `GameMode`). Settings
+  city-list/gameplay toggles + all leaderboard data are **UI-only stubs** (not
+  persisted/fetched). The game's authoritative **"next required letter"** cue
+  from the design is not shown yet (needs the letter exposed from the domain).
 
 ### Not yet wired (expected at this stage)
 

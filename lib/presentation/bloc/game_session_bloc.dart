@@ -89,6 +89,10 @@ class GameSessionInProgress extends GameSessionState {
   final GameSession session;
   final int timerSeconds;
 
+  /// Display names of the cities accepted this session, in play order — the
+  /// chat history the game screen renders.
+  final List<String> history;
+
   /// The most recent answer verdict (accepted/rejected, with points and matched
   /// city), or null before the first answer this session.
   final ValidationOutcome? lastOutcome;
@@ -99,6 +103,7 @@ class GameSessionInProgress extends GameSessionState {
   const GameSessionInProgress({
     required this.session,
     required this.timerSeconds,
+    this.history = const [],
     this.lastOutcome,
     this.hint,
   });
@@ -107,7 +112,7 @@ class GameSessionInProgress extends GameSessionState {
   bool get lastAnswerCorrect => lastOutcome?.isAccepted ?? false;
 
   @override
-  List<Object?> get props => [session, timerSeconds, lastOutcome, hint];
+  List<Object?> get props => [session, timerSeconds, history, lastOutcome, hint];
 }
 
 /// State when session is revived
@@ -157,6 +162,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   ValidationOutcome? _lastOutcome;
   String? _lastHint;
 
+  /// Accepted city display names, in play order (the chat history).
+  final List<String> _history = [];
+
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
@@ -189,6 +197,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _lastAcceptedCityName = null;
         _lastOutcome = null;
         _lastHint = null;
+        _history.clear();
         _emitInProgress(emit);
         _startTimer();
       case ResultFailure(:final failure):
@@ -230,6 +239,8 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
             score: session.score + value.points,
           );
           _lastAcceptedCityName = event.cityName.trim();
+          // Store the canonical city name (in the session's language) for chat.
+          _history.add(session.mode.isUkraine ? city.nameUA : city.nameEN);
         }
         _emitInProgress(emit);
       case ResultFailure(:final failure):
@@ -278,6 +289,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         emit(SessionRevived());
         _emitInProgress(emit);
         _startTimer();
+        // NOTE: history is intentionally preserved across a revive (same round).
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -344,6 +356,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       GameSessionInProgress(
         session: session,
         timerSeconds: _timerSeconds,
+        history: List<String>.of(_history),
         lastOutcome: _lastOutcome,
         hint: _lastHint,
       ),

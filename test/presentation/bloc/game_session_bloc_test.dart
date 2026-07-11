@@ -147,6 +147,8 @@ void main() {
             score: kBasePoints,
           ),
           timerSeconds: 60,
+          // Ukraine mode → canonical UA name is added to the chat history.
+          history: ['Київ'],
           lastOutcome: ValidationOutcome.accepted(
             city: testCity,
             points: kBasePoints,

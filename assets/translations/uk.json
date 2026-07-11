@@ -8,21 +8,38 @@
   "settings": {
     "title": "Налаштування",
     "language": "Мова",
-    "mode": "Режим",
-    "ukraine": "Україна",
-    "world": "Світ"
+    "city_list": "Список міст",
+    "world_cities": "Міста світу",
+    "world_cities_desc": "усі країни, ~3 000 міст",
+    "ukrainian_cities": "Міста України",
+    "ukrainian_cities_desc": "лише Україна, ~150 міст",
+    "city_list_hint": "Оберіть один або обидва — гра бере міста з позначених списків.",
+    "gameplay": "Гра",
+    "sound_effects": "Звукові ефекти",
+    "turn_timer": "Таймер ходу"
   },
   "game": {
     "score": "Рахунок",
     "hint": "Підказка",
     "surrender": "Здатися",
-    "enter_city": "Введіть місто",
-    "submit": "Надіслати"
+    "enter_city": "Введіть місто…",
+    "submit": "Надіслати",
+    "your_turn": "Ваш хід",
+    "opening": "Назвіть будь-яке місто, щоб почати",
+    "not_found": "Такого міста немає — спробуйте ще",
+    "wrong_letter": "Неправильна початкова літера",
+    "already_used": "Вже використано — інше місто",
+    "game_over": "Гру закінчено",
+    "final_score": "Фінальний рахунок",
+    "play_again": "Ще раз",
+    "home": "Головна"
   },
   "leaderboard": {
     "title": "Таблиця лідерів",
-    "ukraine_tab": "Україна",
-    "world_tab": "Світ",
-    "your_high_score": "Ваш рекорд"
+    "weekly": "Тиждень",
+    "global": "Світ",
+    "friends": "Друзі",
+    "you": "Ви",
+    "footer_top": "ви #1 цього тижня, так тримати!"
   }
 }
