@@ -17,35 +17,56 @@ const UserStatsModelSchema = CollectionSchema(
   name: r'UserStatsModel',
   id: 272209145262056414,
   properties: {
-    r'favoriteCountry': PropertySchema(
+    r'cityUsageCount': PropertySchema(
       id: 0,
+      name: r'cityUsageCount',
+      type: IsarType.objectList,
+
+      target: r'IntIntEntry',
+    ),
+    r'favoriteCountry': PropertySchema(
+      id: 1,
       name: r'favoriteCountry',
       type: IsarType.string,
     ),
     r'highScoreUA': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'highScoreUA',
       type: IsarType.long,
     ),
     r'highScoreWorld': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'highScoreWorld',
       type: IsarType.long,
     ),
+    r'highScores': PropertySchema(
+      id: 4,
+      name: r'highScores',
+      type: IsarType.objectList,
+
+      target: r'StringIntEntry',
+    ),
     r'longestStreak': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'longestStreak',
       type: IsarType.long,
     ),
     r'sessionHistory': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'sessionHistory',
       type: IsarType.objectList,
 
       target: r'GameSessionSummaryModel',
     ),
+    r'usedCitiesPercent': PropertySchema(
+      id: 7,
+      name: r'usedCitiesPercent',
+      type: IsarType.objectList,
+
+      target: r'StringDoubleEntry',
+    ),
     r'usedCityIds': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'usedCityIds',
       type: IsarType.longList,
     ),
@@ -58,7 +79,12 @@ const UserStatsModelSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'GameSessionSummaryModel': GameSessionSummaryModelSchema},
+  embeddedSchemas: {
+    r'IntIntEntry': IntIntEntrySchema,
+    r'StringIntEntry': StringIntEntrySchema,
+    r'StringDoubleEntry': StringDoubleEntrySchema,
+    r'GameSessionSummaryModel': GameSessionSummaryModelSchema,
+  },
 
   getId: _userStatsModelGetId,
   getLinks: _userStatsModelGetLinks,
@@ -72,13 +98,45 @@ int _userStatsModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.cityUsageCount.length * 3;
+  {
+    final offsets = allOffsets[IntIntEntry]!;
+    for (var i = 0; i < object.cityUsageCount.length; i++) {
+      final value = object.cityUsageCount[i];
+      bytesCount += IntIntEntrySchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
   bytesCount += 3 + object.favoriteCountry.length * 3;
+  bytesCount += 3 + object.highScores.length * 3;
+  {
+    final offsets = allOffsets[StringIntEntry]!;
+    for (var i = 0; i < object.highScores.length; i++) {
+      final value = object.highScores[i];
+      bytesCount += StringIntEntrySchema.estimateSize(
+        value,
+        offsets,
+        allOffsets,
+      );
+    }
+  }
   bytesCount += 3 + object.sessionHistory.length * 3;
   {
     final offsets = allOffsets[GameSessionSummaryModel]!;
     for (var i = 0; i < object.sessionHistory.length; i++) {
       final value = object.sessionHistory[i];
       bytesCount += GameSessionSummaryModelSchema.estimateSize(
+        value,
+        offsets,
+        allOffsets,
+      );
+    }
+  }
+  bytesCount += 3 + object.usedCitiesPercent.length * 3;
+  {
+    final offsets = allOffsets[StringDoubleEntry]!;
+    for (var i = 0; i < object.usedCitiesPercent.length; i++) {
+      final value = object.usedCitiesPercent[i];
+      bytesCount += StringDoubleEntrySchema.estimateSize(
         value,
         offsets,
         allOffsets,
@@ -95,17 +153,35 @@ void _userStatsModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.favoriteCountry);
-  writer.writeLong(offsets[1], object.highScoreUA);
-  writer.writeLong(offsets[2], object.highScoreWorld);
-  writer.writeLong(offsets[3], object.longestStreak);
-  writer.writeObjectList<GameSessionSummaryModel>(
+  writer.writeObjectList<IntIntEntry>(
+    offsets[0],
+    allOffsets,
+    IntIntEntrySchema.serialize,
+    object.cityUsageCount,
+  );
+  writer.writeString(offsets[1], object.favoriteCountry);
+  writer.writeLong(offsets[2], object.highScoreUA);
+  writer.writeLong(offsets[3], object.highScoreWorld);
+  writer.writeObjectList<StringIntEntry>(
     offsets[4],
+    allOffsets,
+    StringIntEntrySchema.serialize,
+    object.highScores,
+  );
+  writer.writeLong(offsets[5], object.longestStreak);
+  writer.writeObjectList<GameSessionSummaryModel>(
+    offsets[6],
     allOffsets,
     GameSessionSummaryModelSchema.serialize,
     object.sessionHistory,
   );
-  writer.writeLongList(offsets[5], object.usedCityIds);
+  writer.writeObjectList<StringDoubleEntry>(
+    offsets[7],
+    allOffsets,
+    StringDoubleEntrySchema.serialize,
+    object.usedCitiesPercent,
+  );
+  writer.writeLongList(offsets[8], object.usedCityIds);
 }
 
 UserStatsModel _userStatsModelDeserialize(
@@ -115,20 +191,44 @@ UserStatsModel _userStatsModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserStatsModel();
-  object.favoriteCountry = reader.readString(offsets[0]);
-  object.highScoreUA = reader.readLong(offsets[1]);
-  object.highScoreWorld = reader.readLong(offsets[2]);
+  object.cityUsageCount =
+      reader.readObjectList<IntIntEntry>(
+        offsets[0],
+        IntIntEntrySchema.deserialize,
+        allOffsets,
+        IntIntEntry(),
+      ) ??
+      [];
+  object.favoriteCountry = reader.readString(offsets[1]);
+  object.highScoreUA = reader.readLong(offsets[2]);
+  object.highScoreWorld = reader.readLong(offsets[3]);
+  object.highScores =
+      reader.readObjectList<StringIntEntry>(
+        offsets[4],
+        StringIntEntrySchema.deserialize,
+        allOffsets,
+        StringIntEntry(),
+      ) ??
+      [];
   object.id = id;
-  object.longestStreak = reader.readLong(offsets[3]);
+  object.longestStreak = reader.readLong(offsets[5]);
   object.sessionHistory =
       reader.readObjectList<GameSessionSummaryModel>(
-        offsets[4],
+        offsets[6],
         GameSessionSummaryModelSchema.deserialize,
         allOffsets,
         GameSessionSummaryModel(),
       ) ??
       [];
-  object.usedCityIds = reader.readLongList(offsets[5]) ?? [];
+  object.usedCitiesPercent =
+      reader.readObjectList<StringDoubleEntry>(
+        offsets[7],
+        StringDoubleEntrySchema.deserialize,
+        allOffsets,
+        StringDoubleEntry(),
+      ) ??
+      [];
+  object.usedCityIds = reader.readLongList(offsets[8]) ?? [];
   return object;
 }
 
@@ -140,14 +240,32 @@ P _userStatsModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectList<IntIntEntry>(
+                offset,
+                IntIntEntrySchema.deserialize,
+                allOffsets,
+                IntIntEntry(),
+              ) ??
+              [])
+          as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readLong(offset)) as P;
     case 4:
+      return (reader.readObjectList<StringIntEntry>(
+                offset,
+                StringIntEntrySchema.deserialize,
+                allOffsets,
+                StringIntEntry(),
+              ) ??
+              [])
+          as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readObjectList<GameSessionSummaryModel>(
                 offset,
                 GameSessionSummaryModelSchema.deserialize,
@@ -156,7 +274,16 @@ P _userStatsModelDeserializeProp<P>(
               ) ??
               [])
           as P;
-    case 5:
+    case 7:
+      return (reader.readObjectList<StringDoubleEntry>(
+                offset,
+                StringDoubleEntrySchema.deserialize,
+                allOffsets,
+                StringDoubleEntry(),
+              ) ??
+              [])
+          as P;
+    case 8:
       return (reader.readLongList(offset) ?? []) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -265,6 +392,59 @@ extension UserStatsModelQueryWhere
 
 extension UserStatsModelQueryFilter
     on QueryBuilder<UserStatsModel, UserStatsModel, QFilterCondition> {
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'cityUsageCount', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'cityUsageCount', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'cityUsageCount', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'cityUsageCount', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'cityUsageCount', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cityUsageCount',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
   favoriteCountryEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -516,6 +696,59 @@ extension UserStatsModelQueryFilter
     });
   }
 
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'highScores',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition> idEqualTo(
     Id value,
   ) {
@@ -680,6 +913,65 @@ extension UserStatsModelQueryFilter
   }
 
   QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'usedCitiesPercent', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'usedCitiesPercent', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'usedCitiesPercent', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'usedCitiesPercent', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedCitiesPercent',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'usedCitiesPercent',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
   usedCityIdsElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -791,9 +1083,30 @@ extension UserStatsModelQueryFilter
 extension UserStatsModelQueryObject
     on QueryBuilder<UserStatsModel, UserStatsModel, QFilterCondition> {
   QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  cityUsageCountElement(FilterQuery<IntIntEntry> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'cityUsageCount');
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  highScoresElement(FilterQuery<StringIntEntry> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'highScores');
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
   sessionHistoryElement(FilterQuery<GameSessionSummaryModel> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'sessionHistory');
+    });
+  }
+
+  QueryBuilder<UserStatsModel, UserStatsModel, QAfterFilterCondition>
+  usedCitiesPercentElement(FilterQuery<StringDoubleEntry> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'usedCitiesPercent');
     });
   }
 }
@@ -980,6 +1293,13 @@ extension UserStatsModelQueryProperty
     });
   }
 
+  QueryBuilder<UserStatsModel, List<IntIntEntry>, QQueryOperations>
+  cityUsageCountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'cityUsageCount');
+    });
+  }
+
   QueryBuilder<UserStatsModel, String, QQueryOperations>
   favoriteCountryProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -999,6 +1319,13 @@ extension UserStatsModelQueryProperty
     });
   }
 
+  QueryBuilder<UserStatsModel, List<StringIntEntry>, QQueryOperations>
+  highScoresProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'highScores');
+    });
+  }
+
   QueryBuilder<UserStatsModel, int, QQueryOperations> longestStreakProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'longestStreak');
@@ -1009,6 +1336,13 @@ extension UserStatsModelQueryProperty
   sessionHistoryProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sessionHistory');
+    });
+  }
+
+  QueryBuilder<UserStatsModel, List<StringDoubleEntry>, QQueryOperations>
+  usedCitiesPercentProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'usedCitiesPercent');
     });
   }
 

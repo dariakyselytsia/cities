@@ -1,6 +1,7 @@
 import 'package:isar_community/isar.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/user_stats.dart';
+import 'stat_entries.dart';
 import 'user_stats_model.dart';
 
 part 'user_model.g.dart';
@@ -13,33 +14,33 @@ class UserModel {
   late String userId;
   late String languagePreference;
 
-  // Isar cannot persist Map types directly. @ignore for now (serialize in P1).
-  @ignore
-  Map<String, int> highScores = <String, int>{};
+  // Domain `Map<String,int>` persisted as an embedded key/value list.
+  late List<StringIntEntry> highScores;
 
-  // A @Collection cannot be stored inline in another @Collection. Not persisted
-  // yet — model the User↔UserStats relationship via IsarLink in P1.
-  @ignore
-  UserStatsModel? stats;
+  // User↔UserStats relationship via IsarLink. The repository persists the
+  // linked stats row and saves/loads the link (see UserRepositoryImpl).
+  final IsarLink<UserStatsModel> stats = IsarLink<UserStatsModel>();
 
   UserModel();
 
   UserModel.fromDomain(User user) {
     userId = user.id;
     languagePreference = user.languagePreference;
-    highScores = user.highScores;
-    stats = UserStatsModel.fromDomain(user.stats);
+    highScores = user.highScores.entries
+        .map((e) => StringIntEntry.of(e.key, e.value))
+        .toList();
+    stats.value = UserStatsModel.fromDomain(user.stats);
   }
 
   User toDomain() => User(
     id: userId,
     languagePreference: languagePreference,
-    highScores: highScores,
-    stats: stats?.toDomain() ?? _emptyStats,
+    highScores: {for (final e in highScores) e.key: e.value},
+    stats: stats.value?.toDomain() ?? _emptyStats,
   );
 }
 
-/// Fallback used when a persisted [UserModel] has no linked stats yet (P1 link).
+/// Fallback used when a persisted [UserModel] has no linked stats yet.
 const UserStats _emptyStats = UserStats(
   highScoreUA: 0,
   highScoreWorld: 0,

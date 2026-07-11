@@ -170,10 +170,20 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   User/UserStats history below is persisted. ✅ `use_hint_usecase_impl.dart` now
   honors the required next letter (dataset-driven backtracking, same `LetterRule`)
   and only suggests unused cities.
-- **Fix User/UserStats persistence.** `Map` fields and the `UserModel.stats`
-  `@Collection`-as-field were `@ignore`d to unblock codegen — they are NOT
-  persisted. Model them properly: serialize maps (JSON string or embedded list)
-  and link `User`↔`UserStats` via `IsarLink`.
+- ✅ **User/UserStats persistence fixed.** The `@ignore`d `Map` fields now
+  persist as Isar **embedded key/value lists** (`data/models/stat_entries.dart`:
+  `IntIntEntry`, `StringIntEntry`, `StringDoubleEntry`) — fully typed, no
+  `dynamic`/JSON-string round-tripping. `UserModel.highScores` and all three
+  `UserStatsModel` maps (`cityUsageCount`, `highScores`, `usedCitiesPercent`)
+  convert map⇄list at the `fromDomain`/`toDomain` boundary. `User`↔`UserStats`
+  is a real **`IsarLink`**; `UserRepositoryImpl.saveUser` puts the stats row,
+  the user, then saves the link, and `getUser` `.load()`s it before mapping.
+  Round-trip mapping tests lock the conversion (incl. empty-map and
+  independent-`UserStatsModel` cases). Remaining: `GameSessionSummary.mode` is
+  still a `String` (unwired stats path); a `UserStatsRepository` impl and the
+  end-of-session `recalculateStatistics` wiring are still stubs, so the
+  absolute-new-city bonus stays gated until the BLoC actually reads/writes
+  lifetime history.
 - ✅ **Indexed queries replace full-table scans.** Added `@Index()` on
   `CityModel.nameUA/nameEN`, `GameSessionModel.sessionId`, `UserModel.userId`;
   the repos now use `where().<field>EqualTo(...).findFirst()` instead of

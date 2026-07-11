@@ -17,12 +17,19 @@ const UserModelSchema = CollectionSchema(
   name: r'UserModel',
   id: 7195426469378571114,
   properties: {
-    r'languagePreference': PropertySchema(
+    r'highScores': PropertySchema(
       id: 0,
+      name: r'highScores',
+      type: IsarType.objectList,
+
+      target: r'StringIntEntry',
+    ),
+    r'languagePreference': PropertySchema(
+      id: 1,
       name: r'languagePreference',
       type: IsarType.string,
     ),
-    r'userId': PropertySchema(id: 1, name: r'userId', type: IsarType.string),
+    r'userId': PropertySchema(id: 2, name: r'userId', type: IsarType.string),
   },
 
   estimateSize: _userModelEstimateSize,
@@ -45,8 +52,15 @@ const UserModelSchema = CollectionSchema(
       ],
     ),
   },
-  links: {},
-  embeddedSchemas: {},
+  links: {
+    r'stats': LinkSchema(
+      id: -2388945500202600116,
+      name: r'stats',
+      target: r'UserStatsModel',
+      single: true,
+    ),
+  },
+  embeddedSchemas: {r'StringIntEntry': StringIntEntrySchema},
 
   getId: _userModelGetId,
   getLinks: _userModelGetLinks,
@@ -60,6 +74,18 @@ int _userModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.highScores.length * 3;
+  {
+    final offsets = allOffsets[StringIntEntry]!;
+    for (var i = 0; i < object.highScores.length; i++) {
+      final value = object.highScores[i];
+      bytesCount += StringIntEntrySchema.estimateSize(
+        value,
+        offsets,
+        allOffsets,
+      );
+    }
+  }
   bytesCount += 3 + object.languagePreference.length * 3;
   bytesCount += 3 + object.userId.length * 3;
   return bytesCount;
@@ -71,8 +97,14 @@ void _userModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.languagePreference);
-  writer.writeString(offsets[1], object.userId);
+  writer.writeObjectList<StringIntEntry>(
+    offsets[0],
+    allOffsets,
+    StringIntEntrySchema.serialize,
+    object.highScores,
+  );
+  writer.writeString(offsets[1], object.languagePreference);
+  writer.writeString(offsets[2], object.userId);
 }
 
 UserModel _userModelDeserialize(
@@ -82,9 +114,17 @@ UserModel _userModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserModel();
+  object.highScores =
+      reader.readObjectList<StringIntEntry>(
+        offsets[0],
+        StringIntEntrySchema.deserialize,
+        allOffsets,
+        StringIntEntry(),
+      ) ??
+      [];
   object.id = id;
-  object.languagePreference = reader.readString(offsets[0]);
-  object.userId = reader.readString(offsets[1]);
+  object.languagePreference = reader.readString(offsets[1]);
+  object.userId = reader.readString(offsets[2]);
   return object;
 }
 
@@ -96,8 +136,17 @@ P _userModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectList<StringIntEntry>(
+                offset,
+                StringIntEntrySchema.deserialize,
+                allOffsets,
+                StringIntEntry(),
+              ) ??
+              [])
+          as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -109,11 +158,12 @@ Id _userModelGetId(UserModel object) {
 }
 
 List<IsarLinkBase<dynamic>> _userModelGetLinks(UserModel object) {
-  return [];
+  return [object.stats];
 }
 
 void _userModelAttach(IsarCollection<dynamic> col, Id id, UserModel object) {
   object.id = id;
+  object.stats.attach(col, col.isar.collection<UserStatsModel>(), r'stats', id);
 }
 
 extension UserModelQueryWhereSort
@@ -252,6 +302,59 @@ extension UserModelQueryWhere
 
 extension UserModelQueryFilter
     on QueryBuilder<UserModel, UserModel, QFilterCondition> {
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition>
+  highScoresLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition>
+  highScoresIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition>
+  highScoresIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition>
+  highScoresLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition>
+  highScoresLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'highScores', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition>
+  highScoresLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'highScores',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<UserModel, UserModel, QAfterFilterCondition> idEqualTo(
     Id value,
   ) {
@@ -600,10 +703,32 @@ extension UserModelQueryFilter
 }
 
 extension UserModelQueryObject
-    on QueryBuilder<UserModel, UserModel, QFilterCondition> {}
+    on QueryBuilder<UserModel, UserModel, QFilterCondition> {
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition> highScoresElement(
+    FilterQuery<StringIntEntry> q,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'highScores');
+    });
+  }
+}
 
 extension UserModelQueryLinks
-    on QueryBuilder<UserModel, UserModel, QFilterCondition> {}
+    on QueryBuilder<UserModel, UserModel, QFilterCondition> {
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition> stats(
+    FilterQuery<UserStatsModel> q,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'stats');
+    });
+  }
+
+  QueryBuilder<UserModel, UserModel, QAfterFilterCondition> statsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'stats', 0, true, 0, true);
+    });
+  }
+}
 
 extension UserModelQuerySortBy on QueryBuilder<UserModel, UserModel, QSortBy> {
   QueryBuilder<UserModel, UserModel, QAfterSortBy> sortByLanguagePreference() {
@@ -699,6 +824,13 @@ extension UserModelQueryProperty
   QueryBuilder<UserModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<UserModel, List<StringIntEntry>, QQueryOperations>
+  highScoresProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'highScores');
     });
   }
 

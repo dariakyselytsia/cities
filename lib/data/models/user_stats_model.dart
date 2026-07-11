@@ -1,6 +1,7 @@
 import 'package:isar_community/isar.dart';
 import '../../domain/entities/user_stats.dart';
 import 'game_session_summary_model.dart';
+import 'stat_entries.dart';
 
 part 'user_stats_model.g.dart';
 
@@ -13,14 +14,11 @@ class UserStatsModel {
   late int highScoreWorld;
   late List<int> usedCityIds;
 
-  // Isar cannot persist Map types directly. These are @ignore for now;
-  // serializing them (JSON string or embedded list) is a P1 data-modeling task.
-  @ignore
-  Map<int, int> cityUsageCount = <int, int>{};
-  @ignore
-  Map<String, int> highScores = <String, int>{};
-  @ignore
-  Map<String, double> usedCitiesPercent = <String, double>{};
+  // Domain `Map`s persisted as embedded key/value lists (Isar cannot store
+  // maps directly). Converted back to maps in [toDomain].
+  late List<IntIntEntry> cityUsageCount;
+  late List<StringIntEntry> highScores;
+  late List<StringDoubleEntry> usedCitiesPercent;
 
   late String favoriteCountry;
   late int longestStreak;
@@ -32,9 +30,15 @@ class UserStatsModel {
     highScoreUA = stats.highScoreUA;
     highScoreWorld = stats.highScoreWorld;
     usedCityIds = stats.usedCityIds;
-    cityUsageCount = stats.cityUsageCount;
-    highScores = stats.highScores;
-    usedCitiesPercent = stats.usedCitiesPercent;
+    cityUsageCount = stats.cityUsageCount.entries
+        .map((e) => IntIntEntry.of(e.key, e.value))
+        .toList();
+    highScores = stats.highScores.entries
+        .map((e) => StringIntEntry.of(e.key, e.value))
+        .toList();
+    usedCitiesPercent = stats.usedCitiesPercent.entries
+        .map((e) => StringDoubleEntry.of(e.key, e.value))
+        .toList();
     favoriteCountry = stats.favoriteCountry;
     longestStreak = stats.longestStreak;
     sessionHistory = stats.sessionHistory
@@ -46,9 +50,9 @@ class UserStatsModel {
     highScoreUA: highScoreUA,
     highScoreWorld: highScoreWorld,
     usedCityIds: usedCityIds,
-    cityUsageCount: cityUsageCount,
-    highScores: highScores,
-    usedCitiesPercent: usedCitiesPercent,
+    cityUsageCount: {for (final e in cityUsageCount) e.key: e.value},
+    highScores: {for (final e in highScores) e.key: e.value},
+    usedCitiesPercent: {for (final e in usedCitiesPercent) e.key: e.value},
     favoriteCountry: favoriteCountry,
     longestStreak: longestStreak,
     sessionHistory: sessionHistory.map((s) => s.toDomain()).toList(),
