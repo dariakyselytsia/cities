@@ -75,6 +75,26 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
+      'does not start the countdown when timerEnabled is false',
+      build: () {
+        when(
+          () => startGameSessionUseCase(
+            userId: any(named: 'userId'),
+            mode: any(named: 'mode'),
+          ),
+        ).thenAnswer((_) async => Success(testSession));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(
+        StartSession(userId: 'user1', mode: GameMode.ukraine, timerEnabled: false),
+      ),
+      // Past one tick interval: a running timer would emit an extra
+      // GameSessionInProgress; an untimed round must not.
+      wait: const Duration(milliseconds: 1100),
+      expect: () => [isA<GameSessionLoading>(), isA<GameSessionInProgress>()],
+    );
+
+    blocTest<GameSessionBloc, GameSessionState>(
       'emits [GameSessionLoading, GameSessionFailure(DataFailure)] on failed StartSession',
       build: () {
         when(

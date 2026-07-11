@@ -15,10 +15,18 @@ abstract class GameSessionEvent extends Equatable {
 class StartSession extends GameSessionEvent {
   final String userId;
   final GameMode mode;
-  const StartSession({required this.userId, required this.mode});
+
+  /// When false, the round is untimed (no countdown) — the "Turn timer" setting.
+  final bool timerEnabled;
+
+  const StartSession({
+    required this.userId,
+    required this.mode,
+    this.timerEnabled = true,
+  });
 
   @override
-  List<Object?> get props => [userId, mode];
+  List<Object?> get props => [userId, mode, timerEnabled];
 }
 
 /// Event to validate a city answer. The BLoC is authoritative over the previous
@@ -179,6 +187,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   /// Letter the next city must start with (uppercase); null on the opening move.
   String? _requiredLetter;
 
+  /// Whether the countdown timer runs this session (the "Turn timer" setting).
+  bool _timerEnabled = true;
+
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
@@ -212,9 +223,10 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _lastOutcome = null;
         _lastHint = null;
         _requiredLetter = null;
+        _timerEnabled = event.timerEnabled;
         _history.clear();
         _emitInProgress(emit);
-        _startTimer();
+        if (_timerEnabled) _startTimer();
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -305,7 +317,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _lastHint = null;
         emit(SessionRevived());
         _emitInProgress(emit);
-        _startTimer();
+        if (_timerEnabled) _startTimer();
         // NOTE: history is intentionally preserved across a revive (same round).
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));

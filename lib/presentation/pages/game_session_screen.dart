@@ -7,6 +7,7 @@ import 'package:cities/domain/domain.dart';
 import '../../core/router.dart';
 import '../../core/theme.dart';
 import '../bloc/game_session_bloc.dart';
+import '../bloc/settings_cubit.dart';
 
 /// Game screen — a chat-style history of named cities with a fixed input,
 /// timer, and score (game_design.md §3). Styled to the shared design.
@@ -21,13 +22,26 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
 
+  /// Whether this round is timed — captured from settings at start so mid-game
+  /// setting changes don't affect the running round.
+  bool _timed = true;
+
   @override
   void initState() {
     super.initState();
-    // Auto-start a session on entry (MVP: Ukraine mode; mode/city-list
-    // selection from Settings is a later wiring step).
+    _start();
+  }
+
+  /// Starts a round using the current Settings (city-list → mode, turn timer).
+  void _start() {
+    final settings = context.read<SettingsCubit>().state;
+    _timed = settings.timerEnabled;
     context.read<GameSessionBloc>().add(
-      const StartSession(userId: 'local', mode: GameMode.ukraine),
+      StartSession(
+        userId: 'local',
+        mode: settings.mode,
+        timerEnabled: settings.timerEnabled,
+      ),
     );
   }
 
@@ -81,9 +95,7 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
     );
   }
 
-  void _restart() => context.read<GameSessionBloc>().add(
-    const StartSession(userId: 'local', mode: GameMode.ukraine),
-  );
+  void _restart() => _start();
 
   Widget _buildBoard(BuildContext context, GameSessionInProgress state) {
     return Column(
@@ -91,6 +103,7 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
         _GameHeader(
           score: state.session.score,
           seconds: state.timerSeconds,
+          timed: _timed,
           onSurrender: () => context.read<GameSessionBloc>().add(
             EndSession(sessionId: state.session.id),
           ),
@@ -137,10 +150,12 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
 class _GameHeader extends StatelessWidget {
   final int score;
   final int seconds;
+  final bool timed;
   final VoidCallback onSurrender;
   const _GameHeader({
     required this.score,
     required this.seconds,
+    required this.timed,
     required this.onSurrender,
   });
 
@@ -177,9 +192,33 @@ class _GameHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          _TimerBadge(seconds: seconds),
+          if (timed)
+            _TimerBadge(seconds: seconds)
+          else
+            const _UntimedBadge(),
         ],
       ),
+    );
+  }
+}
+
+/// Shown in place of the countdown when the round is untimed.
+class _UntimedBadge extends StatelessWidget {
+  const _UntimedBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.card,
+        border: Border.all(color: AppColors.teal, width: 2),
+      ),
+      alignment: Alignment.center,
+      child: const Icon(Icons.all_inclusive_rounded,
+          size: 20, color: AppColors.teal),
     );
   }
 }

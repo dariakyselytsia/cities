@@ -269,14 +269,24 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - ✅ **Game-over shows the final score.** `GameSessionEnded.score` carries the
   score on timeout/surrender; the game screen has a **Surrender** action and a
   game-over view with Play Again / Home.
+- ✅ **Settings wired into gameplay.** An app-wide `SettingsCubit`
+  (`presentation/bloc/settings_cubit.dart`, provided above the router) holds the
+  city-list selection, turn-timer, and sound prefs. The game route reads it at
+  start: city-list → `GameMode` (Ukraine-only → ukraine, else world;
+  `StartSession` carries `timerEnabled`), and the **Turn timer** toggle
+  enables/disables the countdown (untimed shows an ∞ badge). Sound flag is held
+  but not consumed (no audio yet). In-memory only — **not persisted across
+  launches** (shared_preferences/Isar is a later step). Cubit + timer-off
+  behavior unit-tested.
 - **Design vs. MVP scope deltas (design is richer — kept to MVP, flag before
   building):** the design shows a **CityBot opponent** + **Play Online**
   (multiplayer — roadmap, not MVP), a **Statistics** screen and **Win/Lose**
   screens (not yet built), a **3rd language (Español)** (app is UA/EN only), and
-  **city-list multi-select** (domain models a single `GameMode`). Settings
-  city-list/gameplay toggles + all leaderboard data are **UI-only stubs** (not
-  persisted/fetched). The design's full **Win/Lose** screens (streak, new-best,
-  "cities added to atlas") are simplified to a single game-over view for now.
+  **city-list multi-select** (domain models a single `GameMode`, so "both"
+  currently plays World). Leaderboard data is a **UI-only stub** (not fetched),
+  and Settings prefs are **not persisted across launches**. The design's full
+  **Win/Lose** screens (streak, new-best, "cities added to atlas") are simplified
+  to a single game-over view for now.
 
 ### Not yet wired (expected at this stage)
 

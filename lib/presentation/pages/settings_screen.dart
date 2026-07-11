@@ -1,32 +1,26 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/theme.dart';
+import '../bloc/settings_cubit.dart';
 import '../widgets/settings_widgets.dart';
 
 /// Settings screen (game_design.md §3), styled to the design: language,
 /// city-list selection, and gameplay toggles.
 ///
-/// SCOPE NOTE: language toggle is wired to easy_localization and is live. The
-/// city-list selection and gameplay toggles are UI-only local state for now —
-/// they are not yet persisted to a domain preference (that lands with the
-/// User settings use cases / a SettingsBloc).
-class SettingsScreen extends StatefulWidget {
+/// Language is wired to easy_localization; the city-list and gameplay toggles
+/// are held in [SettingsCubit] and drive the next game round. (Not yet persisted
+/// across launches — that's a later step.)
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
-
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _worldCities = true;
-  bool _ukrainianCities = true;
-  bool _soundEffects = true;
-  bool _turnTimer = true;
 
   @override
   Widget build(BuildContext context) {
     final isUk = context.locale.languageCode == 'uk';
+    final cubit = context.read<SettingsCubit>();
+    final settings = context.watch<SettingsCubit>().state;
+
     return Scaffold(
       appBar: AppBar(title: Text('settings.title'.tr())),
       body: SafeArea(
@@ -51,23 +45,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
 
-            // CITY LIST — multi-select, teal checks.
+            // CITY LIST — multi-select, teal checks; drives the game mode.
             SettingsSectionLabel('settings.city_list'.tr()),
             SettingsCard(
               children: [
                 SettingsRow(
                   title: 'settings.world_cities'.tr(),
                   subtitle: 'settings.world_cities_desc'.tr(),
-                  trailing: TealCheck(checked: _worldCities),
-                  onTap: () => setState(() => _worldCities = !_worldCities),
+                  trailing: TealCheck(checked: settings.worldList),
+                  onTap: cubit.toggleWorldList,
                 ),
                 const Divider(height: 1),
                 SettingsRow(
                   title: 'settings.ukrainian_cities'.tr(),
                   subtitle: 'settings.ukrainian_cities_desc'.tr(),
-                  trailing: TealCheck(checked: _ukrainianCities),
-                  onTap: () =>
-                      setState(() => _ukrainianCities = !_ukrainianCities),
+                  trailing: TealCheck(checked: settings.ukraineList),
+                  onTap: cubit.toggleUkraineList,
                 ),
               ],
             ),
@@ -86,18 +79,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SettingsRow(
                   title: 'settings.sound_effects'.tr(),
                   trailing: Switch(
-                    value: _soundEffects,
+                    value: settings.soundEnabled,
                     activeThumbColor: AppColors.coral,
-                    onChanged: (v) => setState(() => _soundEffects = v),
+                    onChanged: cubit.setSoundEnabled,
                   ),
                 ),
                 const Divider(height: 1),
                 SettingsRow(
                   title: 'settings.turn_timer'.tr(),
                   trailing: Switch(
-                    value: _turnTimer,
+                    value: settings.timerEnabled,
                     activeThumbColor: AppColors.coral,
-                    onChanged: (v) => setState(() => _turnTimer = v),
+                    onChanged: cubit.setTimerEnabled,
                   ),
                 ),
               ],
