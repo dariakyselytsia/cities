@@ -30,6 +30,8 @@ class ReviveSessionUseCaseImpl implements ReviveSessionUseCase {
         usedCityIds: session.usedCityIds,
         timerSeconds: kDefaultTimerSeconds,
         isActive: true,
+        // Preserve the accumulated score across a revive.
+        score: session.score,
       );
       await gameSessionRepository.saveSession(revived);
       return Result.success(revived);

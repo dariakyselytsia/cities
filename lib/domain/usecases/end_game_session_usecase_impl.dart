@@ -27,6 +27,8 @@ class EndGameSessionUseCaseImpl implements EndGameSessionUseCase {
         usedCityIds: session.usedCityIds,
         timerSeconds: 0,
         isActive: false,
+        // Preserve the final score on the persisted, completed session.
+        score: session.score,
       );
       await gameSessionRepository.saveSession(ended);
       return const Result.success(null);

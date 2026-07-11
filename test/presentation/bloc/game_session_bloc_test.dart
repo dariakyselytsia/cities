@@ -134,12 +134,20 @@ void main() {
       expect: () => [
         isA<GameSessionLoading>(),
         isA<GameSessionInProgress>(),
-        isA<GameSessionInProgress>()
-            .having((s) => s.session.score, 'score', kBasePoints)
-            .having((s) => s.session.usedCityIds, 'usedCityIds', [testCity.id]),
-        // Full value equality, enabled by Equatable on states + value objects.
-        const AnswerValidated(
-          outcome: ValidationOutcome.accepted(
+        // One in-progress emission carries the updated session AND the verdict —
+        // no separate transient state. Full value equality via Equatable.
+        const GameSessionInProgress(
+          session: GameSession(
+            id: 'session1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.en,
+            usedCityIds: [2],
+            timerSeconds: 60,
+            isActive: true,
+            score: kBasePoints,
+          ),
+          timerSeconds: 60,
+          lastOutcome: ValidationOutcome.accepted(
             city: testCity,
             points: kBasePoints,
           ),
@@ -148,7 +156,7 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'rejected ValidateAnswer emits only AnswerValidated (no score change)',
+      'rejected ValidateAnswer re-emits the board with the verdict, no score change',
       build: () {
         when(
           () => startGameSessionUseCase(
@@ -178,7 +186,14 @@ void main() {
       expect: () => [
         isA<GameSessionLoading>(),
         isA<GameSessionInProgress>(),
-        isA<AnswerValidated>().having((s) => s.isCorrect, 'isCorrect', false),
+        // Session unchanged (same score/used cities); verdict carried inline.
+        GameSessionInProgress(
+          session: testSession,
+          timerSeconds: 60,
+          lastOutcome: const ValidationOutcome.rejected(
+            AnswerStatus.wrongLetter,
+          ),
+        ),
       ],
     );
 
@@ -215,7 +230,7 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [HintUsed] on successful UseHint with an active session',
+      'UseHint re-emits the board carrying the hint suggestion',
       build: () {
         when(
           () => startGameSessionUseCase(
@@ -240,7 +255,7 @@ void main() {
       expect: () => [
         isA<GameSessionLoading>(),
         isA<GameSessionInProgress>(),
-        isA<HintUsed>().having((s) => s.suggestedCity, 'suggestedCity', 'Odesa'),
+        GameSessionInProgress(session: testSession, timerSeconds: 60, hint: 'Odesa'),
       ],
     );
 

@@ -5,7 +5,7 @@ import '../bloc/game_session_bloc.dart';
 
 /// Main game session screen, maps BLoC state to stateless widgets.
 class GameSessionScreen extends StatelessWidget {
-  const GameSessionScreen({Key? key}) : super(key: key);
+  const GameSessionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +17,8 @@ class GameSessionScreen extends StatelessWidget {
           } else if (state is GameSessionLoading) {
             return const LoadingWidget();
           } else if (state is GameSessionInProgress) {
-            return GameBoardWidget(
-              session: state.session,
-              timer: state.timerSeconds,
-            );
-          } else if (state is AnswerValidated) {
-            return AnswerFeedbackWidget(isCorrect: state.isCorrect);
-          } else if (state is HintUsed) {
-            return HintWidget(suggestedCity: state.suggestedCity);
+            // Single board state: score, timer, and the last verdict/hint inline.
+            return GameBoardWidget(state: state);
           } else if (state is SessionRevived) {
             return const SessionRevivedWidget();
           } else if (state is GameSessionEnded) {
@@ -47,7 +41,7 @@ class GameSessionScreen extends StatelessWidget {
 
 /// Placeholder stateless widgets for each state.
 class GameSessionStartWidget extends StatelessWidget {
-  const GameSessionStartWidget({Key? key}) : super(key: key);
+  const GameSessionStartWidget({super.key});
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -65,17 +59,15 @@ class GameSessionStartWidget extends StatelessWidget {
 }
 
 class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({Key? key}) : super(key: key);
+  const LoadingWidget({super.key});
   @override
   Widget build(BuildContext context) =>
-      Center(child: CircularProgressIndicator());
+      const Center(child: CircularProgressIndicator());
 }
 
 class GameBoardWidget extends StatefulWidget {
-  final dynamic session;
-  final int timer;
-  const GameBoardWidget({Key? key, required this.session, required this.timer})
-    : super(key: key);
+  final GameSessionInProgress state;
+  const GameBoardWidget({super.key, required this.state});
 
   @override
   State<GameBoardWidget> createState() => _GameBoardWidgetState();
@@ -96,14 +88,40 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
     super.dispose();
   }
 
+  /// Short inline feedback for the last answer verdict.
+  String _feedbackFor(ValidationOutcome outcome) {
+    switch (outcome.status) {
+      case AnswerStatus.accepted:
+        return 'Correct! +${outcome.points}';
+      case AnswerStatus.notFound:
+        return 'No such city';
+      case AnswerStatus.wrongLetter:
+        return 'Wrong starting letter';
+      case AnswerStatus.alreadyUsed:
+        return 'Already used this round';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final GameSession session = widget.state.session;
+    final ValidationOutcome? outcome = widget.state.lastOutcome;
+    final String? hint = widget.state.hint;
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Score: ${widget.session.score}   •   ${widget.timer} s'),
+          Text('Score: ${session.score}   •   ${widget.state.timerSeconds} s'),
+          if (outcome != null) ...[
+            const SizedBox(height: 8),
+            Text(_feedbackFor(outcome)),
+          ],
+          if (hint != null) ...[
+            const SizedBox(height: 8),
+            Text('Hint: $hint'),
+          ],
           const SizedBox(height: 16),
           TextField(
             controller: _answerController,
@@ -125,7 +143,7 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
               const SizedBox(width: 16),
               ElevatedButton(
                 onPressed: () {
-                  context.read<GameSessionBloc>().add(UseHint());
+                  context.read<GameSessionBloc>().add(const UseHint());
                 },
                 child: const Text('Hint'),
               ),
@@ -133,7 +151,7 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
               ElevatedButton(
                 onPressed: () {
                   context.read<GameSessionBloc>().add(
-                    EndSession(sessionId: widget.session.id),
+                    EndSession(sessionId: session.id),
                   );
                 },
                 child: const Text('End'),
@@ -146,40 +164,24 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
   }
 }
 
-class AnswerFeedbackWidget extends StatelessWidget {
-  final bool isCorrect;
-  const AnswerFeedbackWidget({Key? key, required this.isCorrect})
-    : super(key: key);
-  @override
-  Widget build(BuildContext context) =>
-      Center(child: Text(isCorrect ? 'Correct!' : 'Wrong!'));
-}
-
-class HintWidget extends StatelessWidget {
-  final String? suggestedCity;
-  const HintWidget({Key? key, this.suggestedCity}) : super(key: key);
-  @override
-  Widget build(BuildContext context) =>
-      Center(child: Text('Hint: ${suggestedCity ?? "-"}'));
-}
-
 class SessionRevivedWidget extends StatelessWidget {
-  const SessionRevivedWidget({Key? key}) : super(key: key);
+  const SessionRevivedWidget({super.key});
   @override
-  Widget build(BuildContext context) => Center(child: Text('Session Revived!'));
+  Widget build(BuildContext context) =>
+      const Center(child: Text('Session Revived!'));
 }
 
 class EndSessionWidget extends StatelessWidget {
-  const EndSessionWidget({Key? key}) : super(key: key);
+  const EndSessionWidget({super.key});
   @override
-  Widget build(BuildContext context) => Center(child: Text('Session Ended'));
+  Widget build(BuildContext context) =>
+      const Center(child: Text('Session Ended'));
 }
 
 class ErrorWidget extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
-  const ErrorWidget({Key? key, required this.message, required this.onRetry})
-    : super(key: key);
+  const ErrorWidget({super.key, required this.message, required this.onRetry});
   @override
   Widget build(BuildContext context) => Center(
     child: Column(

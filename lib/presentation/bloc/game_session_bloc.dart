@@ -81,38 +81,33 @@ class GameSessionLoading extends GameSessionState {
   const GameSessionLoading();
 }
 
-/// State when session is in progress
+/// The single in-progress "board" state and source of truth while a session is
+/// active. It carries the last answer verdict and the last hint inline instead
+/// of emitting separate transient states that would replace the board in the
+/// UI (and strand the player with no way back to it).
 class GameSessionInProgress extends GameSessionState {
   final GameSession session;
   final int timerSeconds;
+
+  /// The most recent answer verdict (accepted/rejected, with points and matched
+  /// city), or null before the first answer this session.
+  final ValidationOutcome? lastOutcome;
+
+  /// The most recent hint suggestion currently shown, or null when none.
+  final String? hint;
+
   const GameSessionInProgress({
     required this.session,
     required this.timerSeconds,
+    this.lastOutcome,
+    this.hint,
   });
 
-  @override
-  List<Object?> get props => [session, timerSeconds];
-}
-
-/// State when an answer is validated, carrying the full outcome (verdict,
-/// matched city, and points).
-class AnswerValidated extends GameSessionState {
-  final ValidationOutcome outcome;
-  const AnswerValidated({required this.outcome});
-
-  bool get isCorrect => outcome.isAccepted;
+  /// Convenience: whether the last answer was accepted.
+  bool get lastAnswerCorrect => lastOutcome?.isAccepted ?? false;
 
   @override
-  List<Object?> get props => [outcome];
-}
-
-/// State when a hint is used
-class HintUsed extends GameSessionState {
-  final String? suggestedCity;
-  const HintUsed({this.suggestedCity});
-
-  @override
-  List<Object?> get props => [suggestedCity];
+  List<Object?> get props => [session, timerSeconds, lastOutcome, hint];
 }
 
 /// State when session is revived
@@ -156,6 +151,12 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   /// city" the letter rule is checked against.
   String? _lastAcceptedCityName;
 
+  /// Last answer verdict and last hint, carried on every [GameSessionInProgress]
+  /// emission so the board remains the single source of truth. A new user action
+  /// (answer / hint) replaces them; a timer tick preserves them.
+  ValidationOutcome? _lastOutcome;
+  String? _lastHint;
+
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
@@ -186,9 +187,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _currentSession = value;
         _timerSeconds = value.timerSeconds;
         _lastAcceptedCityName = null;
-        emit(
-          GameSessionInProgress(session: value, timerSeconds: _timerSeconds),
-        );
+        _lastOutcome = null;
+        _lastHint = null;
+        _emitInProgress(emit);
         _startTimer();
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
@@ -215,9 +216,11 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     );
     switch (result) {
       case Success(:final value):
+        _lastOutcome = value;
+        _lastHint = null;
         if (value.isAccepted && value.city != null) {
           final city = value.city!;
-          final updated = GameSession(
+          _currentSession = GameSession(
             id: session.id,
             mode: session.mode,
             language: session.language,
@@ -226,16 +229,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
             isActive: true,
             score: session.score + value.points,
           );
-          _currentSession = updated;
           _lastAcceptedCityName = event.cityName.trim();
-          emit(
-            GameSessionInProgress(
-              session: updated,
-              timerSeconds: _timerSeconds,
-            ),
-          );
         }
-        emit(AnswerValidated(outcome: value));
+        _emitInProgress(emit);
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -257,7 +253,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     );
     switch (result) {
       case Success(:final value):
-        emit(HintUsed(suggestedCity: value));
+        _lastHint = value;
+        _lastOutcome = null;
+        _emitInProgress(emit);
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -275,10 +273,10 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       case Success(:final value):
         _currentSession = value;
         _timerSeconds = value.timerSeconds;
+        _lastOutcome = null;
+        _lastHint = null;
         emit(SessionRevived());
-        emit(
-          GameSessionInProgress(session: value, timerSeconds: _timerSeconds),
-        );
+        _emitInProgress(emit);
         _startTimer();
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
@@ -312,12 +310,8 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       await _cancelTimer();
       emit(GameSessionEnded());
     } else if (_currentSession != null) {
-      emit(
-        GameSessionInProgress(
-          session: _currentSession!,
-          timerSeconds: _timerSeconds,
-        ),
-      );
+      // Preserve the last verdict/hint across ticks — the board is unchanged.
+      _emitInProgress(emit);
     }
   }
 
@@ -338,6 +332,22 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   Future<void> _cancelTimer() async {
     await _timerSub?.cancel();
     _timerSub = null;
+  }
+
+  /// Emits the current board state from the BLoC's own fields, so every
+  /// in-progress emission (answer, hint, timer tick) is built the same way and
+  /// carries the latest verdict/hint. No-op if there is no active session.
+  void _emitInProgress(Emitter<GameSessionState> emit) {
+    final session = _currentSession;
+    if (session == null) return;
+    emit(
+      GameSessionInProgress(
+        session: session,
+        timerSeconds: _timerSeconds,
+        lastOutcome: _lastOutcome,
+        hint: _lastHint,
+      ),
+    );
   }
 
   /// Runs a use-case call and normalizes any *unexpected* thrown error into a

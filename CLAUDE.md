@@ -196,9 +196,18 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - ✅ **`Equatable`** added to BLoC events/states and the value objects they expose
   (`GameSession`, `City`, `ValidationOutcome`) via `equatable`. Tests now assert
   full state values (see the accepted-answer `blocTest`).
-- **Simplify the state model** — a correct answer currently double-emits
-  `GameSessionInProgress` + `AnswerValidated` (the latter carries no session).
-  Prefer one source-of-truth in-progress state carrying the last result.
+- ✅ **State model simplified to one source of truth.** `GameSessionInProgress`
+  is now the single "board" state; it carries the last verdict (`lastOutcome`)
+  and last `hint` inline. The transient `AnswerValidated` / `HintUsed` states are
+  gone — they were rendered by `BlocBuilder` and *replaced* the board, stranding
+  the player with no way back. Every in-progress emission (answer, hint, timer
+  tick) goes through one `_emitInProgress` helper reading BLoC fields
+  (`_lastOutcome`/`_lastHint`); a new action replaces them, a timer tick
+  preserves them. UI updated (board shows verdict/hint inline; `session` field
+  is now `GameSession`, not `dynamic`). Adding the missing start/revive/end
+  use-case unit tests surfaced and fixed a real bug: **revive and end rebuilt the
+  session without `score`, silently resetting it to 0** — the final score is now
+  preserved on both.
 - ✅ **Sealed `Failure`** replaces `try/catch`-into-message-string. A sealed
   `Failure` hierarchy (`domain/core/failure.dart`: `DataFailure`, `AssetFailure`,
   `SessionNotFoundFailure`, `NoActiveSessionFailure`, `UnknownFailure`) and a
