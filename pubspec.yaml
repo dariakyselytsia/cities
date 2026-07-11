@@ -78,6 +78,7 @@ flutter:
   assets:
     - assets/data/cities_ua.json
     - assets/data/cities_world.json
+    - assets/translations/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

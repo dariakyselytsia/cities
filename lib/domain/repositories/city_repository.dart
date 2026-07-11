@@ -1,6 +1,6 @@
-/// Abstract repository for city data operations.
 import '../entities/city.dart';
 
+/// Abstract repository for city data operations.
 abstract class CityRepository {
   /// Loads cities from a JSON asset based on the selected game mode.
   Future<List<City>> loadCities({required bool isUkraineMode});

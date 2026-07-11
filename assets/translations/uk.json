@@ -1,0 +1,28 @@
+{
+  "app_title": "Міста",
+  "home": {
+    "play": "Грати",
+    "leaderboard": "Таблиця лідерів",
+    "settings": "Налаштування"
+  },
+  "settings": {
+    "title": "Налаштування",
+    "language": "Мова",
+    "mode": "Режим",
+    "ukraine": "Україна",
+    "world": "Світ"
+  },
+  "game": {
+    "score": "Рахунок",
+    "hint": "Підказка",
+    "surrender": "Здатися",
+    "enter_city": "Введіть місто",
+    "submit": "Надіслати"
+  },
+  "leaderboard": {
+    "title": "Таблиця лідерів",
+    "ukraine_tab": "Україна",
+    "world_tab": "Світ",
+    "your_high_score": "Ваш рекорд"
+  }
+}

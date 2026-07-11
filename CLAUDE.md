@@ -239,9 +239,23 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - ✅ Removed the duplicate doc-comment block on `GameSessionBloc`.
 - Import the `domain.dart` barrel in `main.dart` instead of each use case.
 
+### UI / app shell (in progress)
+
+- ✅ **App shell wired.** `main.dart` now runs `EasyLocalization` →
+  `MaterialApp.router` with `buildAppTheme()` (`lib/core/theme.dart`, placeholder
+  palette) and `appRouter` (`lib/core/router.dart`). Four `go_router` routes
+  (`/`, `/settings`, `/game`, `/leaderboard`); the game route scopes its
+  `GameSessionBloc` (built from DI use cases) so it's created on entry and
+  disposed on exit. `easy_localization` is set up with `uk`/`en` under
+  `assets/translations/` (fallback `en`).
+- **Screens are structural placeholders** (`home_screen`, `settings_screen`,
+  `leaderboard_screen`, plus the existing `game_session_screen`) — navigation +
+  localization wiring is real; **visuals await the shared design**. Settings
+  language toggle drives `context.setLocale`; mode toggle + leaderboard data are
+  not yet bound.
+
 ### Not yet wired (expected at this stage)
 
-`go_router`, `easy_localization`, `google_mobile_ads`, `supabase_flutter` are
-declared but unintegrated; `main.dart` uses a plain
-`MaterialApp(home: GameSessionScreen())`. `user_profile_bloc` /
-`user_stats_bloc` are empty stubs.
+`google_mobile_ads` and `supabase_flutter` are declared but unintegrated (ads,
+global leaderboard). `user_profile_bloc` / `user_stats_bloc` are empty stubs; no
+`UserStatsRepository` impl yet, so the absolute-new-city bonus stays gated.

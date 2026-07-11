@@ -1,29 +1,39 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'di/di.dart';
 
-import 'presentation/pages/game_session_screen.dart';
-import 'presentation/bloc/game_session_bloc.dart';
-import 'domain/usecases/start_game_session_usecase.dart';
-import 'domain/usecases/validate_city_answer_usecase.dart';
-import 'domain/usecases/use_hint_usecase.dart';
-import 'domain/usecases/revive_session_usecase.dart';
-import 'domain/usecases/end_game_session_usecase.dart';
+import 'core/router.dart';
+import 'core/theme.dart';
+import 'di/di.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await configureDependencies();
 
   runApp(
-    BlocProvider(
-      create: (_) => GameSessionBloc(
-        startGameSessionUseCase: getIt<StartGameSessionUseCase>(),
-        validateCityAnswerUseCase: getIt<ValidateCityAnswerUseCase>(),
-        useHintUseCase: getIt<UseHintUseCase>(),
-        reviveSessionUseCase: getIt<ReviveSessionUseCase>(),
-        endGameSessionUseCase: getIt<EndGameSessionUseCase>(),
-      ),
-      child: const MaterialApp(home: GameSessionScreen()),
+    EasyLocalization(
+      supportedLocales: const [Locale('uk'), Locale('en')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const CitiesApp(),
     ),
   );
+}
+
+/// Root widget: wires localization, theme, and the go_router configuration.
+class CitiesApp extends StatelessWidget {
+  const CitiesApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      onGenerateTitle: (context) => 'app_title'.tr(),
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      theme: buildAppTheme(),
+      routerConfig: appRouter,
+    );
+  }
 }

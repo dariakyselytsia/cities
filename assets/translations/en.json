@@ -1,0 +1,28 @@
+{
+  "app_title": "Cities",
+  "home": {
+    "play": "Play",
+    "leaderboard": "Leaderboard",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "mode": "Mode",
+    "ukraine": "Ukraine",
+    "world": "World"
+  },
+  "game": {
+    "score": "Score",
+    "hint": "Hint",
+    "surrender": "Give Up",
+    "enter_city": "Enter a city",
+    "submit": "Submit"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "ukraine_tab": "Ukraine",
+    "world_tab": "World",
+    "your_high_score": "Your High Score"
+  }
+}
