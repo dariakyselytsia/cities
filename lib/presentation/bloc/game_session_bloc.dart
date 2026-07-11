@@ -125,13 +125,17 @@ class GameSessionEnded extends GameSessionState {
   const GameSessionEnded();
 }
 
-/// State for errors/failures
+/// State for errors/failures, carrying a typed [Failure] from the domain layer.
 class GameSessionFailure extends GameSessionState {
-  final String message;
-  const GameSessionFailure({required this.message});
+  final Failure failure;
+  const GameSessionFailure(this.failure);
+
+  /// Developer-facing description. The UI should map [failure] subtypes to
+  /// localized copy once localization is wired; this bridges until then.
+  String get message => failure.message;
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [failure];
 }
 
 /// GameSessionBloc manages the full lifecycle and logic of a game session:
@@ -174,20 +178,20 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   ) async {
     emit(GameSessionLoading());
     await _cancelTimer();
-    try {
-      final session = await startGameSessionUseCase(
-        userId: event.userId,
-        mode: event.mode,
-      );
-      _currentSession = session;
-      _timerSeconds = session.timerSeconds;
-      _lastAcceptedCityName = null;
-      emit(
-        GameSessionInProgress(session: session, timerSeconds: _timerSeconds),
-      );
-      _startTimer();
-    } catch (e) {
-      emit(GameSessionFailure(message: 'Failed to start session: $e'));
+    final result = await _guard(
+      () => startGameSessionUseCase(userId: event.userId, mode: event.mode),
+    );
+    switch (result) {
+      case Success(:final value):
+        _currentSession = value;
+        _timerSeconds = value.timerSeconds;
+        _lastAcceptedCityName = null;
+        emit(
+          GameSessionInProgress(session: value, timerSeconds: _timerSeconds),
+        );
+        _startTimer();
+      case ResultFailure(:final failure):
+        emit(GameSessionFailure(failure));
     }
   }
 
@@ -198,36 +202,42 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   ) async {
     final session = _currentSession;
     if (session == null) {
-      emit(GameSessionFailure(message: 'No active session.'));
+      emit(const GameSessionFailure(NoActiveSessionFailure()));
       return;
     }
-    try {
-      final outcome = await validateCityAnswerUseCase(
+    final result = await _guard(
+      () => validateCityAnswerUseCase(
         cityName: event.cityName,
         previousCity: _lastAcceptedCityName ?? '',
         mode: session.mode,
         usedCityIds: session.usedCityIds,
-      );
-      if (outcome.isAccepted) {
-        final city = outcome.city!;
-        final updated = GameSession(
-          id: session.id,
-          mode: session.mode,
-          language: session.language,
-          usedCityIds: [...session.usedCityIds, city.id],
-          timerSeconds: _timerSeconds,
-          isActive: true,
-          score: session.score + outcome.points,
-        );
-        _currentSession = updated;
-        _lastAcceptedCityName = event.cityName.trim();
-        emit(
-          GameSessionInProgress(session: updated, timerSeconds: _timerSeconds),
-        );
-      }
-      emit(AnswerValidated(outcome: outcome));
-    } catch (e) {
-      emit(GameSessionFailure(message: 'Failed to validate answer: $e'));
+      ),
+    );
+    switch (result) {
+      case Success(:final value):
+        if (value.isAccepted && value.city != null) {
+          final city = value.city!;
+          final updated = GameSession(
+            id: session.id,
+            mode: session.mode,
+            language: session.language,
+            usedCityIds: [...session.usedCityIds, city.id],
+            timerSeconds: _timerSeconds,
+            isActive: true,
+            score: session.score + value.points,
+          );
+          _currentSession = updated;
+          _lastAcceptedCityName = event.cityName.trim();
+          emit(
+            GameSessionInProgress(
+              session: updated,
+              timerSeconds: _timerSeconds,
+            ),
+          );
+        }
+        emit(AnswerValidated(outcome: value));
+      case ResultFailure(:final failure):
+        emit(GameSessionFailure(failure));
     }
   }
 
@@ -235,18 +245,21 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   Future<void> _onUseHint(UseHint event, Emitter<GameSessionState> emit) async {
     final session = _currentSession;
     if (session == null) {
-      emit(GameSessionFailure(message: 'No active session.'));
+      emit(const GameSessionFailure(NoActiveSessionFailure()));
       return;
     }
-    try {
-      final suggestedCity = await useHintUseCase(
+    final result = await _guard(
+      () => useHintUseCase(
         mode: session.mode,
         usedCityIds: session.usedCityIds,
         previousCity: _lastAcceptedCityName ?? '',
-      );
-      emit(HintUsed(suggestedCity: suggestedCity));
-    } catch (e) {
-      emit(GameSessionFailure(message: 'Failed to use hint: $e'));
+      ),
+    );
+    switch (result) {
+      case Success(:final value):
+        emit(HintUsed(suggestedCity: value));
+      case ResultFailure(:final failure):
+        emit(GameSessionFailure(failure));
     }
   }
 
@@ -255,22 +268,20 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     ReviveSession event,
     Emitter<GameSessionState> emit,
   ) async {
-    try {
-      final revivedSession = await reviveSessionUseCase(
-        sessionId: event.sessionId,
-      );
-      _currentSession = revivedSession;
-      _timerSeconds = revivedSession.timerSeconds;
-      emit(SessionRevived());
-      emit(
-        GameSessionInProgress(
-          session: revivedSession,
-          timerSeconds: _timerSeconds,
-        ),
-      );
-      _startTimer();
-    } catch (e) {
-      emit(GameSessionFailure(message: 'Failed to revive session: $e'));
+    final result = await _guard(
+      () => reviveSessionUseCase(sessionId: event.sessionId),
+    );
+    switch (result) {
+      case Success(:final value):
+        _currentSession = value;
+        _timerSeconds = value.timerSeconds;
+        emit(SessionRevived());
+        emit(
+          GameSessionInProgress(session: value, timerSeconds: _timerSeconds),
+        );
+        _startTimer();
+      case ResultFailure(:final failure):
+        emit(GameSessionFailure(failure));
     }
   }
 
@@ -280,11 +291,14 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     Emitter<GameSessionState> emit,
   ) async {
     await _cancelTimer();
-    try {
-      await endGameSessionUseCase(sessionId: event.sessionId);
-      emit(GameSessionEnded());
-    } catch (e) {
-      emit(GameSessionFailure(message: 'Failed to end session: $e'));
+    final result = await _guard(
+      () => endGameSessionUseCase(sessionId: event.sessionId),
+    );
+    switch (result) {
+      case Success():
+        emit(GameSessionEnded());
+      case ResultFailure(:final failure):
+        emit(GameSessionFailure(failure));
     }
   }
 
@@ -324,6 +338,18 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   Future<void> _cancelTimer() async {
     await _timerSub?.cancel();
     _timerSub = null;
+  }
+
+  /// Runs a use-case call and normalizes any *unexpected* thrown error into a
+  /// typed [UnknownFailure]. Use cases already return a [Result]; this is
+  /// defense-in-depth so an errant throw surfaces as a failure state instead of
+  /// crashing the BLoC.
+  Future<Result<T>> _guard<T>(Future<Result<T>> Function() action) async {
+    try {
+      return await action();
+    } catch (_) {
+      return ResultFailure<T>(const UnknownFailure());
+    }
   }
 
   @override

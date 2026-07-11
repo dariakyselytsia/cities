@@ -28,19 +28,23 @@ void main() {
         )).thenAnswer((_) async => {'к', 'л', 'а', 'в', 'о'});
   });
 
+  // Unwraps the Success branch: every case here is a valid game outcome
+  // (accepted or rejected), never an infrastructure failure.
   Future<ValidationOutcome> validate({
     String city = 'Kyiv',
     String previous = '',
     List<int> used = const [],
     Set<int>? historic,
-  }) =>
-      useCase(
-        cityName: city,
-        previousCity: previous,
-        mode: GameMode.ukraine,
-        usedCityIds: used,
-        historicUsedCityIds: historic,
-      );
+  }) async {
+    final result = await useCase(
+      cityName: city,
+      previousCity: previous,
+      mode: GameMode.ukraine,
+      usedCityIds: used,
+      historicUsedCityIds: historic,
+    );
+    return (result as Success<ValidationOutcome>).value;
+  }
 
   test('empty answer is notFound', () async {
     final outcome = await validate(city: '   ');
@@ -95,5 +99,19 @@ void main() {
     expect(outcome.isAccepted, isTrue);
     expect(outcome.isNewToPlayer, isTrue);
     expect(outcome.points, kBasePoints + kNewCityBonus);
+  });
+
+  test('a data read error surfaces as Result.failure(DataFailure)', () async {
+    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+        .thenThrow(Exception('db unavailable'));
+    final result = await useCase(
+      cityName: 'Kyiv',
+      previousCity: '',
+      mode: GameMode.ukraine,
+      usedCityIds: const [],
+    );
+    expect(result, isA<ResultFailure<ValidationOutcome>>());
+    expect((result as ResultFailure<ValidationOutcome>).failure,
+        isA<DataFailure>());
   });
 }

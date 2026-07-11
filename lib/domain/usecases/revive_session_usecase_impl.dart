@@ -1,5 +1,7 @@
 import 'package:injectable/injectable.dart';
 
+import '../core/failure.dart';
+import '../core/result.dart';
 import '../entities/game_session.dart';
 import '../repositories/game_session_repository.dart';
 import 'revive_session_usecase.dart';
@@ -14,21 +16,25 @@ class ReviveSessionUseCaseImpl implements ReviveSessionUseCase {
   ReviveSessionUseCaseImpl(this.gameSessionRepository);
 
   @override
-  Future<GameSession> call({required String sessionId}) async {
-    final session = await gameSessionRepository.getSession(sessionId);
-    if (session == null) {
-      throw StateError('Cannot revive unknown session: $sessionId');
-    }
+  Future<Result<GameSession>> call({required String sessionId}) async {
+    try {
+      final session = await gameSessionRepository.getSession(sessionId);
+      if (session == null) {
+        return const Result.failure(SessionNotFoundFailure());
+      }
 
-    final revived = GameSession(
-      id: session.id,
-      mode: session.mode,
-      language: session.language,
-      usedCityIds: session.usedCityIds,
-      timerSeconds: kDefaultTimerSeconds,
-      isActive: true,
-    );
-    await gameSessionRepository.saveSession(revived);
-    return revived;
+      final revived = GameSession(
+        id: session.id,
+        mode: session.mode,
+        language: session.language,
+        usedCityIds: session.usedCityIds,
+        timerSeconds: kDefaultTimerSeconds,
+        isActive: true,
+      );
+      await gameSessionRepository.saveSession(revived);
+      return Result.success(revived);
+    } catch (_) {
+      return const Result.failure(DataFailure());
+    }
   }
 }

@@ -199,7 +199,19 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - **Simplify the state model** — a correct answer currently double-emits
   `GameSessionInProgress` + `AnswerValidated` (the latter carries no session).
   Prefer one source-of-truth in-progress state carrying the last result.
-- **Sealed `Failure`** instead of `try/catch`-into-message-string.
+- ✅ **Sealed `Failure`** replaces `try/catch`-into-message-string. A sealed
+  `Failure` hierarchy (`domain/core/failure.dart`: `DataFailure`, `AssetFailure`,
+  `SessionNotFoundFailure`, `NoActiveSessionFailure`, `UnknownFailure`) and a
+  sealed `Result<T>` (`domain/core/result.dart`: `Success` / `ResultFailure`)
+  are returned by all five game use cases instead of throwing across the
+  domain↔presentation boundary. The BLoC pattern-matches `Result` and emits
+  `GameSessionFailure(Failure)` (typed, `Equatable`); a `_guard` helper maps any
+  unexpected throw to `UnknownFailure` (defense-in-depth). Rejections
+  (wrong-letter / not-found / already-used) stay `Success(ValidationOutcome)` —
+  only infra errors are failures. Tests assert exact failure values. Remaining:
+  the interface-only user/stats use cases still return raw types (unwired path);
+  the UI keeps a `GameSessionFailure.message` bridge until localization maps
+  `Failure` subtypes to copy.
 
 ### P2 — hygiene
 

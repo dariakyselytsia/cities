@@ -1,3 +1,5 @@
+export 'core/failure.dart';
+export 'core/result.dart';
 export 'entities/game_session.dart';
 export 'entities/city.dart';
 export 'game/game_mode.dart';

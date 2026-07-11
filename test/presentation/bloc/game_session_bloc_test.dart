@@ -67,7 +67,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         return bloc;
       },
       act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine)),
@@ -75,18 +75,21 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionLoading, GameSessionFailure] on failed StartSession',
+      'emits [GameSessionLoading, GameSessionFailure(DataFailure)] on failed StartSession',
       build: () {
         when(
           () => startGameSessionUseCase(
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenThrow(Exception('fail'));
+        ).thenAnswer((_) async => const ResultFailure(DataFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine)),
-      expect: () => [isA<GameSessionLoading>(), isA<GameSessionFailure>()],
+      expect: () => [
+        isA<GameSessionLoading>(),
+        const GameSessionFailure(DataFailure()),
+      ],
     );
 
     const testCity = City(
@@ -107,7 +110,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
@@ -117,9 +120,8 @@ void main() {
             historicUsedCityIds: any(named: 'historicUsedCityIds'),
           ),
         ).thenAnswer(
-          (_) async => const ValidationOutcome.accepted(
-            city: testCity,
-            points: kBasePoints,
+          (_) async => const Success(
+            ValidationOutcome.accepted(city: testCity, points: kBasePoints),
           ),
         );
         return bloc;
@@ -153,7 +155,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
@@ -164,7 +166,7 @@ void main() {
           ),
         ).thenAnswer(
           (_) async =>
-              const ValidationOutcome.rejected(AnswerStatus.wrongLetter),
+              const Success(ValidationOutcome.rejected(AnswerStatus.wrongLetter)),
         );
         return bloc;
       },
@@ -181,14 +183,14 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionLoading, GameSessionFailure] when validation throws',
+      'emits GameSessionFailure(UnknownFailure) when validation throws unexpectedly',
       build: () {
         when(
           () => startGameSessionUseCase(
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
@@ -208,7 +210,7 @@ void main() {
       expect: () => [
         isA<GameSessionLoading>(),
         isA<GameSessionInProgress>(),
-        isA<GameSessionFailure>(),
+        const GameSessionFailure(UnknownFailure()),
       ],
     );
 
@@ -220,14 +222,14 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         when(
           () => useHintUseCase(
             mode: any(named: 'mode'),
             usedCityIds: any(named: 'usedCityIds'),
             previousCity: any(named: 'previousCity'),
           ),
-        ).thenAnswer((_) async => 'Odesa');
+        ).thenAnswer((_) async => const Success<String?>('Odesa'));
         return bloc;
       },
       act: (bloc) async {
@@ -243,10 +245,10 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionFailure] when UseHint has no active session',
+      'emits GameSessionFailure(NoActiveSessionFailure) when UseHint has no active session',
       build: () => bloc,
       act: (bloc) => bloc.add(UseHint()),
-      expect: () => [isA<GameSessionFailure>()],
+      expect: () => [const GameSessionFailure(NoActiveSessionFailure())],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -254,7 +256,7 @@ void main() {
       build: () {
         when(
           () => reviveSessionUseCase(sessionId: any(named: 'sessionId')),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         return bloc;
       },
       act: (bloc) => bloc.add(ReviveSession(sessionId: 'session1')),
@@ -262,15 +264,15 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionFailure] on failed ReviveSession',
+      'emits GameSessionFailure(SessionNotFoundFailure) on failed ReviveSession',
       build: () {
         when(
           () => reviveSessionUseCase(sessionId: any(named: 'sessionId')),
-        ).thenThrow(Exception('fail'));
+        ).thenAnswer((_) async => const ResultFailure(SessionNotFoundFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(ReviveSession(sessionId: 'session1')),
-      expect: () => [isA<GameSessionFailure>()],
+      expect: () => [const GameSessionFailure(SessionNotFoundFailure())],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -278,7 +280,7 @@ void main() {
       build: () {
         when(
           () => endGameSessionUseCase(sessionId: any(named: 'sessionId')),
-        ).thenAnswer((_) async => Future.value());
+        ).thenAnswer((_) async => const Success<void>(null));
         return bloc;
       },
       act: (bloc) => bloc.add(EndSession(sessionId: 'session1')),
@@ -286,15 +288,15 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionFailure] on failed EndSession',
+      'emits GameSessionFailure(DataFailure) on failed EndSession',
       build: () {
         when(
           () => endGameSessionUseCase(sessionId: any(named: 'sessionId')),
-        ).thenThrow(Exception('fail'));
+        ).thenAnswer((_) async => const ResultFailure(DataFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(EndSession(sessionId: 'session1')),
-      expect: () => [isA<GameSessionFailure>()],
+      expect: () => [const GameSessionFailure(DataFailure())],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -312,7 +314,7 @@ void main() {
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
           ),
-        ).thenAnswer((_) async => testSession);
+        ).thenAnswer((_) async => Success(testSession));
         return bloc;
       },
       act: (bloc) async {

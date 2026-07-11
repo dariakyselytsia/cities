@@ -1,5 +1,7 @@
 import 'package:injectable/injectable.dart';
 
+import '../core/failure.dart';
+import '../core/result.dart';
 import '../game/game_mode.dart';
 import '../game/letter_rule.dart';
 import '../repositories/city_repository.dart';
@@ -20,32 +22,37 @@ class UseHintUseCaseImpl implements UseHintUseCase {
   UseHintUseCaseImpl(this.cityRepository);
 
   @override
-  Future<String?> call({
+  Future<Result<String?>> call({
     required GameMode mode,
     required List<int> usedCityIds,
     required String previousCity,
   }) async {
     final isUkraine = mode.isUkraine;
-    final cities = await cityRepository.loadCities(isUkraineMode: isUkraine);
-    final used = usedCityIds.toSet();
+    try {
+      final cities = await cityRepository.loadCities(isUkraineMode: isUkraine);
+      final used = usedCityIds.toSet();
 
-    String? requiredLetter;
-    if (previousCity.trim().isNotEmpty) {
-      final available =
-          await cityRepository.availableFirstLetters(isUkraineMode: isUkraine);
-      requiredLetter = LetterRule.requiredNextLetter(previousCity, available);
-      // Previous city is a dead end — no valid hint exists.
-      if (requiredLetter == null) return null;
-    }
-
-    for (final city in cities) {
-      if (used.contains(city.id)) continue;
-      final firstLetter =
-          (isUkraine ? city.firstLetterUA : city.firstLetterEN).toLowerCase();
-      if (requiredLetter == null || firstLetter == requiredLetter) {
-        return isUkraine ? city.nameUA : city.nameEN;
+      String? requiredLetter;
+      if (previousCity.trim().isNotEmpty) {
+        final available = await cityRepository.availableFirstLetters(
+          isUkraineMode: isUkraine,
+        );
+        requiredLetter = LetterRule.requiredNextLetter(previousCity, available);
+        // Previous city is a dead end — no valid hint exists.
+        if (requiredLetter == null) return const Result.success(null);
       }
+
+      for (final city in cities) {
+        if (used.contains(city.id)) continue;
+        final firstLetter =
+            (isUkraine ? city.firstLetterUA : city.firstLetterEN).toLowerCase();
+        if (requiredLetter == null || firstLetter == requiredLetter) {
+          return Result.success(isUkraine ? city.nameUA : city.nameEN);
+        }
+      }
+      return const Result.success(null);
+    } catch (_) {
+      return const Result.failure(AssetFailure());
     }
-    return null;
   }
 }

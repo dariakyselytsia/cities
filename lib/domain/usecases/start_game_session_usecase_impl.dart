@@ -1,5 +1,7 @@
 import 'package:injectable/injectable.dart';
 
+import '../core/failure.dart';
+import '../core/result.dart';
 import '../entities/game_session.dart';
 import '../game/app_language.dart';
 import '../game/game_mode.dart';
@@ -20,12 +22,16 @@ class StartGameSessionUseCaseImpl implements StartGameSessionUseCase {
   StartGameSessionUseCaseImpl(this.cityRepository, this.gameSessionRepository);
 
   @override
-  Future<GameSession> call({
+  Future<Result<GameSession>> call({
     required String userId,
     required GameMode mode,
   }) async {
     // Warm the local Isar cache so gameplay lookups are hot.
-    await cityRepository.loadCities(isUkraineMode: mode.isUkraine);
+    try {
+      await cityRepository.loadCities(isUkraineMode: mode.isUkraine);
+    } catch (_) {
+      return const Result.failure(AssetFailure());
+    }
 
     final session = GameSession(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -35,7 +41,11 @@ class StartGameSessionUseCaseImpl implements StartGameSessionUseCase {
       timerSeconds: kDefaultTimerSeconds,
       isActive: true,
     );
-    await gameSessionRepository.saveSession(session);
-    return session;
+    try {
+      await gameSessionRepository.saveSession(session);
+    } catch (_) {
+      return const Result.failure(DataFailure());
+    }
+    return Result.success(session);
   }
 }

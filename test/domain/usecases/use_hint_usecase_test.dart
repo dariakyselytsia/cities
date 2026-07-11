@@ -49,34 +49,44 @@ void main() {
         )).thenAnswer((_) async => {'к', 'л', 'о', 'а'});
   });
 
+  // Unwraps the Success branch for the happy-path suggestion tests.
+  Future<String?> hint({List<int> used = const [], String previous = ''}) async {
+    final result = await useCase(
+      mode: GameMode.ukraine,
+      usedCityIds: used,
+      previousCity: previous,
+    );
+    return (result as Success<String?>).value;
+  }
+
   test('opening move suggests the first unused city', () async {
-    final hint = await useCase(mode: GameMode.ukraine, usedCityIds: const [], previousCity: '');
-    expect(hint, 'Київ');
+    expect(await hint(), 'Київ');
   });
 
   test('suggests a city matching the required next letter', () async {
     // "Бордо" ends in 'о' -> required next letter 'о' -> only Odesa qualifies.
-    final hint =
-        await useCase(mode: GameMode.ukraine, usedCityIds: const [], previousCity: 'Бордо');
-    expect(hint, 'Одеса');
+    expect(await hint(previous: 'Бордо'), 'Одеса');
   });
 
   test('skips already-used cities', () async {
-    final hint = await useCase(
-      mode: GameMode.ukraine,
-      usedCityIds: const [1],
-      previousCity: '',
-    );
-    expect(hint, 'Львів');
+    expect(await hint(used: const [1]), 'Львів');
   });
 
   test('returns null when no unused city matches the required letter', () async {
     // Previous ends in 'л' -> requires 'л'; Lviv (л) is already used.
-    final hint = await useCase(
+    expect(await hint(used: const [2], previous: 'Байкал'), isNull);
+  });
+
+  test('an asset load error surfaces as Result.failure(AssetFailure)', () async {
+    when(() => cityRepository.loadCities(
+          isUkraineMode: any(named: 'isUkraineMode'),
+        )).thenThrow(Exception('asset missing'));
+    final result = await useCase(
       mode: GameMode.ukraine,
-      usedCityIds: const [2],
-      previousCity: 'Байкал',
+      usedCityIds: const [],
+      previousCity: '',
     );
-    expect(hint, isNull);
+    expect(result, isA<ResultFailure<String?>>());
+    expect((result as ResultFailure<String?>).failure, isA<AssetFailure>());
   });
 }

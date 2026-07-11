@@ -1,5 +1,7 @@
 import 'package:injectable/injectable.dart';
 
+import '../core/failure.dart';
+import '../core/result.dart';
 import '../entities/game_session.dart';
 import '../repositories/game_session_repository.dart';
 import 'end_game_session_usecase.dart';
@@ -13,18 +15,23 @@ class EndGameSessionUseCaseImpl implements EndGameSessionUseCase {
   EndGameSessionUseCaseImpl(this.gameSessionRepository);
 
   @override
-  Future<void> call({required String sessionId}) async {
-    final session = await gameSessionRepository.getSession(sessionId);
-    if (session == null) return;
+  Future<Result<void>> call({required String sessionId}) async {
+    try {
+      final session = await gameSessionRepository.getSession(sessionId);
+      if (session == null) return const Result.success(null);
 
-    final ended = GameSession(
-      id: session.id,
-      mode: session.mode,
-      language: session.language,
-      usedCityIds: session.usedCityIds,
-      timerSeconds: 0,
-      isActive: false,
-    );
-    await gameSessionRepository.saveSession(ended);
+      final ended = GameSession(
+        id: session.id,
+        mode: session.mode,
+        language: session.language,
+        usedCityIds: session.usedCityIds,
+        timerSeconds: 0,
+        isActive: false,
+      );
+      await gameSessionRepository.saveSession(ended);
+      return const Result.success(null);
+    } catch (_) {
+      return const Result.failure(DataFailure());
+    }
   }
 }
