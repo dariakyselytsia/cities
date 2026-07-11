@@ -93,6 +93,11 @@ class GameSessionInProgress extends GameSessionState {
   /// chat history the game screen renders.
   final List<String> history;
 
+  /// The letter the next city must start with (uppercase), or null on the
+  /// opening move (any city allowed). Sourced from the last accepted answer and
+  /// preserved across rejected attempts.
+  final String? requiredLetter;
+
   /// The most recent answer verdict (accepted/rejected, with points and matched
   /// city), or null before the first answer this session.
   final ValidationOutcome? lastOutcome;
@@ -104,6 +109,7 @@ class GameSessionInProgress extends GameSessionState {
     required this.session,
     required this.timerSeconds,
     this.history = const [],
+    this.requiredLetter,
     this.lastOutcome,
     this.hint,
   });
@@ -112,7 +118,8 @@ class GameSessionInProgress extends GameSessionState {
   bool get lastAnswerCorrect => lastOutcome?.isAccepted ?? false;
 
   @override
-  List<Object?> get props => [session, timerSeconds, history, lastOutcome, hint];
+  List<Object?> get props =>
+      [session, timerSeconds, history, requiredLetter, lastOutcome, hint];
 }
 
 /// State when session is revived
@@ -120,9 +127,13 @@ class SessionRevived extends GameSessionState {
   const SessionRevived();
 }
 
-/// State when session ends
+/// State when the session ends (timeout or surrender), carrying the final score.
 class GameSessionEnded extends GameSessionState {
-  const GameSessionEnded();
+  final int score;
+  const GameSessionEnded({this.score = 0});
+
+  @override
+  List<Object?> get props => [score];
 }
 
 /// State for errors/failures, carrying a typed [Failure] from the domain layer.
@@ -165,6 +176,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   /// Accepted city display names, in play order (the chat history).
   final List<String> _history = [];
 
+  /// Letter the next city must start with (uppercase); null on the opening move.
+  String? _requiredLetter;
+
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
@@ -197,6 +211,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _lastAcceptedCityName = null;
         _lastOutcome = null;
         _lastHint = null;
+        _requiredLetter = null;
         _history.clear();
         _emitInProgress(emit);
         _startTimer();
@@ -241,6 +256,8 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
           _lastAcceptedCityName = event.cityName.trim();
           // Store the canonical city name (in the session's language) for chat.
           _history.add(session.mode.isUkraine ? city.nameUA : city.nameEN);
+          // Update the required next letter from the accepted answer.
+          _requiredLetter = value.nextLetter;
         }
         _emitInProgress(emit);
       case ResultFailure(:final failure):
@@ -306,7 +323,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     );
     switch (result) {
       case Success():
-        emit(GameSessionEnded());
+        emit(GameSessionEnded(score: _currentSession?.score ?? 0));
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -320,7 +337,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     _timerSeconds = event.secondsLeft;
     if (_timerSeconds <= 0) {
       await _cancelTimer();
-      emit(GameSessionEnded());
+      emit(GameSessionEnded(score: _currentSession?.score ?? 0));
     } else if (_currentSession != null) {
       // Preserve the last verdict/hint across ticks — the board is unchanged.
       _emitInProgress(emit);
@@ -357,6 +374,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         session: session,
         timerSeconds: _timerSeconds,
         history: List<String>.of(_history),
+        requiredLetter: _requiredLetter,
         lastOutcome: _lastOutcome,
         hint: _lastHint,
       ),

@@ -101,6 +101,15 @@ void main() {
     expect(outcome.points, kBasePoints + kNewCityBonus);
   });
 
+  test('accepted answer reports the next required letter (uppercase)', () async {
+    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+        .thenAnswer((_) async => kyiv);
+    // 'Київ' ends in 'в', which is present in the available set → next letter В.
+    final outcome = await validate();
+    expect(outcome.isAccepted, isTrue);
+    expect(outcome.nextLetter, 'В');
+  });
+
   test('a data read error surfaces as Result.failure(DataFailure)', () async {
     when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
         .thenThrow(Exception('db unavailable'));

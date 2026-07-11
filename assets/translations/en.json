@@ -25,6 +25,7 @@
     "enter_city": "Enter a city…",
     "submit": "Submit",
     "your_turn": "Your turn",
+    "start_with": "start with",
     "opening": "Name any city to begin",
     "not_found": "No such city — try again",
     "wrong_letter": "Wrong starting letter",

@@ -48,9 +48,10 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
         );
       }
 
+      final available =
+          await cityRepository.availableFirstLetters(isUkraineMode: isUA);
+
       if (previousCity.trim().isNotEmpty) {
-        final available =
-            await cityRepository.availableFirstLetters(isUkraineMode: isUA);
         final firstLetter = isUA ? city.firstLetterUA : city.firstLetterEN;
         final valid = LetterRule.isValidNext(
           previousCity: previousCity,
@@ -67,11 +68,17 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
       final isNew =
           historicUsedCityIds != null && !historicUsedCityIds.contains(city.id);
       final points = kBasePoints + (isNew ? kNewCityBonus : 0);
+      // The letter the next city must start with, derived from this accepted
+      // city's canonical name (same backtracking rule used for validation).
+      final acceptedName = isUA ? city.nameUA : city.nameEN;
+      final nextLetter =
+          LetterRule.requiredNextLetter(acceptedName, available)?.toUpperCase();
       return Result.success(
         ValidationOutcome.accepted(
           city: city,
           points: points,
           isNewToPlayer: isNew,
+          nextLetter: nextLetter,
         ),
       );
     } catch (_) {

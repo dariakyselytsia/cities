@@ -261,14 +261,22 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - ✅ **BLoC exposes chat history.** `GameSessionInProgress.history` (`List<String>`
   of accepted city names, session-language) accumulates in the BLoC; preserved
   across a revive, cleared on start. Test updated.
+- ✅ **"Start with «X»" cue wired end-to-end.** `ValidationOutcome.nextLetter`
+  (computed in `ValidateCityAnswerUseCaseImpl` from the accepted city via the
+  same `LetterRule` backtracking) → BLoC `_requiredLetter` →
+  `GameSessionInProgress.requiredLetter` → the game screen's turn banner
+  (opening move shows "name any city"). Unit-tested.
+- ✅ **Game-over shows the final score.** `GameSessionEnded.score` carries the
+  score on timeout/surrender; the game screen has a **Surrender** action and a
+  game-over view with Play Again / Home.
 - **Design vs. MVP scope deltas (design is richer — kept to MVP, flag before
   building):** the design shows a **CityBot opponent** + **Play Online**
   (multiplayer — roadmap, not MVP), a **Statistics** screen and **Win/Lose**
   screens (not yet built), a **3rd language (Español)** (app is UA/EN only), and
   **city-list multi-select** (domain models a single `GameMode`). Settings
   city-list/gameplay toggles + all leaderboard data are **UI-only stubs** (not
-  persisted/fetched). The game's authoritative **"next required letter"** cue
-  from the design is not shown yet (needs the letter exposed from the domain).
+  persisted/fetched). The design's full **Win/Lose** screens (streak, new-best,
+  "cities added to atlas") are simplified to a single game-over view for now.
 
 ### Not yet wired (expected at this stage)
 

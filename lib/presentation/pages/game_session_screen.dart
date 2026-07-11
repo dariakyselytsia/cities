@@ -69,7 +69,7 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
               return _buildBoard(context, state);
             }
             if (state is GameSessionEnded) {
-              return _GameOverView(onPlayAgain: _restart);
+              return _GameOverView(score: state.score, onPlayAgain: _restart);
             }
             if (state is GameSessionFailure) {
               return _ErrorView(message: state.message, onRetry: _restart);
@@ -88,15 +88,17 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   Widget _buildBoard(BuildContext context, GameSessionInProgress state) {
     return Column(
       children: [
-        _GameHeader(score: state.session.score, seconds: state.timerSeconds),
+        _GameHeader(
+          score: state.session.score,
+          seconds: state.timerSeconds,
+          onSurrender: () => context.read<GameSessionBloc>().add(
+            EndSession(sessionId: state.session.id),
+          ),
+        ),
+        _TurnBanner(requiredLetter: state.requiredLetter),
         Expanded(
           child: state.history.isEmpty
-              ? Center(
-                  child: Text(
-                    'game.opening'.tr(),
-                    style: const TextStyle(color: AppColors.inkSoft),
-                  ),
-                )
+              ? const SizedBox.expand()
               : ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
@@ -131,11 +133,16 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   }
 }
 
-/// Top bar: back button, score, and a circular timer badge.
+/// Top bar: back button, score, surrender, and a circular timer badge.
 class _GameHeader extends StatelessWidget {
   final int score;
   final int seconds;
-  const _GameHeader({required this.score, required this.seconds});
+  final VoidCallback onSurrender;
+  const _GameHeader({
+    required this.score,
+    required this.seconds,
+    required this.onSurrender,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +169,55 @@ class _GameHeader extends StatelessWidget {
             ),
           ),
           const Spacer(),
+          TextButton(
+            onPressed: onSurrender,
+            child: Text(
+              'game.surrender'.tr(),
+              style: const TextStyle(color: AppColors.inkSoft),
+            ),
+          ),
+          const SizedBox(width: 4),
           _TimerBadge(seconds: seconds),
+        ],
+      ),
+    );
+  }
+}
+
+/// The turn cue: "Your turn — start with «X»", or an opening prompt when any
+/// city is allowed.
+class _TurnBanner extends StatelessWidget {
+  final String? requiredLetter;
+  const _TurnBanner({required this.requiredLetter});
+
+  @override
+  Widget build(BuildContext context) {
+    final text = requiredLetter == null
+        ? 'game.opening'.tr()
+        : '${'game.your_turn'.tr()} — ${'game.start_with'.tr()} «$requiredLetter»';
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.yellow,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.bolt_rounded, size: 18, color: AppColors.ink),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.ink,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -341,8 +396,9 @@ class _InputBar extends StatelessWidget {
 }
 
 class _GameOverView extends StatelessWidget {
+  final int score;
   final VoidCallback onPlayAgain;
-  const _GameOverView({required this.onPlayAgain});
+  const _GameOverView({required this.score, required this.onPlayAgain});
 
   @override
   Widget build(BuildContext context) {
@@ -356,6 +412,15 @@ class _GameOverView extends StatelessWidget {
             const Icon(Icons.flag_rounded, size: 72, color: AppColors.coral),
             const SizedBox(height: 16),
             Text('game.game_over'.tr(), style: textTheme.headlineMedium),
+            const SizedBox(height: 8),
+            Text(
+              '${'game.final_score'.tr()}: $score',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.inkSoft,
+              ),
+            ),
             const SizedBox(height: 28),
             FilledButton(
               onPressed: onPlayAgain,
