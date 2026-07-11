@@ -22,26 +22,29 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
 
-  /// Whether this round is timed — captured from settings at start so mid-game
-  /// setting changes don't affect the running round.
-  bool _timed = true;
+  /// Guards the one-time auto-start. The round is kicked off from
+  /// [didChangeDependencies] (not [initState]) because [_start] reads the app
+  /// locale via `context.locale`, an inherited-widget lookup that isn't allowed
+  /// during initState.
+  bool _started = false;
 
   @override
-  void initState() {
-    super.initState();
-    _start();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_started) {
+      _started = true;
+      _start();
+    }
   }
 
-  /// Starts a round using the current Settings (city-list → mode, turn timer).
+  /// Starts a round using the current Settings (city-list → mode) and the app
+  /// locale (→ display language, independent of mode). The countdown always runs
+  /// (game_design.md §2 — the timer is a fixed loss condition).
   void _start() {
     final settings = context.read<SettingsCubit>().state;
-    _timed = settings.timerEnabled;
+    final language = AppLanguage.fromCode(context.locale.languageCode);
     context.read<GameSessionBloc>().add(
-      StartSession(
-        userId: 'local',
-        mode: settings.mode,
-        timerEnabled: settings.timerEnabled,
-      ),
+      StartSession(userId: 'local', mode: settings.mode, language: language),
     );
   }
 
@@ -103,7 +106,6 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
         _GameHeader(
           score: state.session.score,
           seconds: state.timerSeconds,
-          timed: _timed,
           onSurrender: () => context.read<GameSessionBloc>().add(
             EndSession(sessionId: state.session.id),
           ),
@@ -116,7 +118,7 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
                   controller: _scrollController,
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                   itemCount: state.history.length,
-                  itemBuilder: (_, i) => _CityBubble(name: state.history[i]),
+                  itemBuilder: (_, i) => _CityBubble(message: state.history[i]),
                 ),
         ),
         if (state.hint != null) _HintChip(city: state.hint!),
@@ -150,12 +152,10 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
 class _GameHeader extends StatelessWidget {
   final int score;
   final int seconds;
-  final bool timed;
   final VoidCallback onSurrender;
   const _GameHeader({
     required this.score,
     required this.seconds,
-    required this.timed,
     required this.onSurrender,
   });
 
@@ -192,33 +192,9 @@ class _GameHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          if (timed)
-            _TimerBadge(seconds: seconds)
-          else
-            const _UntimedBadge(),
+          _TimerBadge(seconds: seconds),
         ],
       ),
-    );
-  }
-}
-
-/// Shown in place of the countdown when the round is untimed.
-class _UntimedBadge extends StatelessWidget {
-  const _UntimedBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.card,
-        border: Border.all(color: AppColors.teal, width: 2),
-      ),
-      alignment: Alignment.center,
-      child: const Icon(Icons.all_inclusive_rounded,
-          size: 20, color: AppColors.teal),
     );
   }
 }
@@ -291,30 +267,33 @@ class _TimerBadge extends StatelessWidget {
 }
 
 /// A player city, shown as a right-aligned coral chat bubble.
+/// A chat bubble for one named city: right-aligned coral for the player,
+/// left-aligned card for CityBot.
 class _CityBubble extends StatelessWidget {
-  final String name;
-  const _CityBubble({required this.name});
+  final ChatMessage message;
+  const _CityBubble({required this.message});
 
   @override
   Widget build(BuildContext context) {
+    final isBot = message.isBot;
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.coral,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(18),
-            bottomRight: Radius.circular(4),
+          color: isBot ? AppColors.card : AppColors.coral,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(18),
+            topRight: const Radius.circular(18),
+            bottomLeft: Radius.circular(isBot ? 4 : 18),
+            bottomRight: Radius.circular(isBot ? 18 : 4),
           ),
         ),
         child: Text(
-          name,
-          style: const TextStyle(
-            color: Colors.white,
+          message.text,
+          style: TextStyle(
+            color: isBot ? AppColors.ink : Colors.white,
             fontWeight: FontWeight.w600,
             fontSize: 15,
           ),

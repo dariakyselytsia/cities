@@ -84,15 +84,6 @@ class SettingsScreen extends StatelessWidget {
                     onChanged: cubit.setSoundEnabled,
                   ),
                 ),
-                const Divider(height: 1),
-                SettingsRow(
-                  title: 'settings.turn_timer'.tr(),
-                  trailing: Switch(
-                    value: settings.timerEnabled,
-                    activeThumbColor: AppColors.coral,
-                    onChanged: cubit.setTimerEnabled,
-                  ),
-                ),
               ],
             ),
           ],

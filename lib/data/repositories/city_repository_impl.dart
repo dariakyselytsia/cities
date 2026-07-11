@@ -43,19 +43,24 @@ class CityRepositoryImpl implements CityRepository {
   @override
   Future<Set<String>> availableFirstLetters({
     required bool isUkraineMode,
+    required bool isUkrainianLanguage,
   }) async {
     final cities = await loadCities(isUkraineMode: isUkraineMode);
     return cities
-        .map((c) =>
-            (isUkraineMode ? c.firstLetterUA : c.firstLetterEN).toLowerCase())
+        .map((c) => (isUkrainianLanguage ? c.firstLetterUA : c.firstLetterEN)
+            .toLowerCase())
         .where((letter) => letter.isNotEmpty)
         .toSet();
   }
 
   @override
-  Future<City?> getCityByName(String name, {required bool isUA}) async {
-    // Indexed lookup on the name field (see @Index on CityModel.nameUA/nameEN).
-    final model = isUA
+  Future<City?> getCityByName(
+    String name, {
+    required bool isUkrainianLanguage,
+  }) async {
+    // Indexed lookup on the display-language name field (see @Index on
+    // CityModel.nameUA/nameEN).
+    final model = isUkrainianLanguage
         ? await cityModels.where().nameUAEqualTo(name).findFirst()
         : await cityModels.where().nameENEqualTo(name).findFirst();
     return model?.toDomain();

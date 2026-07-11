@@ -15,8 +15,7 @@
     "ukrainian_cities_desc": "Ukraine-only, ~150 cities",
     "city_list_hint": "Select one or both — matches use cities pulled from checked lists.",
     "gameplay": "Gameplay",
-    "sound_effects": "Sound effects",
-    "turn_timer": "Turn timer"
+    "sound_effects": "Sound effects"
   },
   "game": {
     "score": "Score",

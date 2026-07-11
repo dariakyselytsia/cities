@@ -12,6 +12,8 @@ class MockStartGameSessionUseCase extends Mock
 class MockValidateCityAnswerUseCase extends Mock
     implements ValidateCityAnswerUseCase {}
 
+class MockGetBotCityUseCase extends Mock implements GetBotCityUseCase {}
+
 class MockUseHintUseCase extends Mock implements UseHintUseCase {}
 
 class MockReviveSessionUseCase extends Mock implements ReviveSessionUseCase {}
@@ -22,25 +24,46 @@ void main() {
   group('GameSessionBloc', () {
     late MockStartGameSessionUseCase startGameSessionUseCase;
     late MockValidateCityAnswerUseCase validateCityAnswerUseCase;
+    late MockGetBotCityUseCase getBotCityUseCase;
     late MockUseHintUseCase useHintUseCase;
     late MockReviveSessionUseCase reviveSessionUseCase;
     late MockEndGameSessionUseCase endGameSessionUseCase;
     late GameSessionBloc bloc;
 
+    // Bot returns are popped in order per call; defaults to "no city" (null)
+    // once exhausted. Each test fills this in its `build`.
+    late List<Result<BotMove?>> botReturns;
+
     setUpAll(() {
       registerFallbackValue(<int>[]);
       registerFallbackValue(GameMode.ukraine);
+      registerFallbackValue(AppLanguage.ua);
     });
 
     setUp(() {
       startGameSessionUseCase = MockStartGameSessionUseCase();
       validateCityAnswerUseCase = MockValidateCityAnswerUseCase();
+      getBotCityUseCase = MockGetBotCityUseCase();
       useHintUseCase = MockUseHintUseCase();
       reviveSessionUseCase = MockReviveSessionUseCase();
       endGameSessionUseCase = MockEndGameSessionUseCase();
+      botReturns = [];
+      when(
+        () => getBotCityUseCase(
+          mode: any(named: 'mode'),
+          language: any(named: 'language'),
+          usedCityIds: any(named: 'usedCityIds'),
+          previousCity: any(named: 'previousCity'),
+        ),
+      ).thenAnswer(
+        (_) async => botReturns.isNotEmpty
+            ? botReturns.removeAt(0)
+            : const Success<BotMove?>(null),
+      );
       bloc = GameSessionBloc(
         startGameSessionUseCase: startGameSessionUseCase,
         validateCityAnswerUseCase: validateCityAnswerUseCase,
+        getBotCityUseCase: getBotCityUseCase,
         useHintUseCase: useHintUseCase,
         reviveSessionUseCase: reviveSessionUseCase,
         endGameSessionUseCase: endGameSessionUseCase,
@@ -54,44 +77,92 @@ void main() {
     final testSession = GameSession(
       id: 'session1',
       mode: GameMode.ukraine,
-      language: AppLanguage.en,
-      usedCityIds: [],
+      language: AppLanguage.ua,
+      usedCityIds: const [],
       timerSeconds: 60,
       isActive: true,
     );
-    blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionLoading, GameSessionInProgress] on successful StartSession',
-      build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
-        return bloc;
-      },
-      act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine)),
-      expect: () => [isA<GameSessionLoading>(), isA<GameSessionInProgress>()],
+
+    const botOpenCity = City(
+      id: 1,
+      nameUA: 'Одеса',
+      nameEN: 'Odesa',
+      countryCode: 'UA',
+      isCapital: false,
+      firstLetterUA: 'О',
+      firstLetterEN: 'O',
+    );
+    const playerCity = City(
+      id: 2,
+      nameUA: 'Київ',
+      nameEN: 'Kyiv',
+      countryCode: 'UA',
+      isCapital: true,
+      firstLetterUA: 'К',
+      firstLetterEN: 'K',
+    );
+    const botReplyCity = City(
+      id: 3,
+      nameUA: 'Вінниця',
+      nameEN: 'Vinnytsia',
+      countryCode: 'UA',
+      isCapital: false,
+      firstLetterUA: 'В',
+      firstLetterEN: 'V',
     );
 
+    const botOpenMove = BotMove(city: botOpenCity, nextLetter: 'А');
+    const botReplyMove = BotMove(city: botReplyCity, nextLetter: 'Я');
+
+    void stubStartSuccess() => when(
+      () => startGameSessionUseCase(
+        userId: any(named: 'userId'),
+        mode: any(named: 'mode'),
+        language: any(named: 'language'),
+      ),
+    ).thenAnswer((_) async => Success(testSession));
+
+    void stubValidate(Result<ValidationOutcome> result) => when(
+      () => validateCityAnswerUseCase(
+        cityName: any(named: 'cityName'),
+        previousCity: any(named: 'previousCity'),
+        mode: any(named: 'mode'),
+        language: any(named: 'language'),
+        usedCityIds: any(named: 'usedCityIds'),
+        historicUsedCityIds: any(named: 'historicUsedCityIds'),
+      ),
+    ).thenAnswer((_) async => result);
+
     blocTest<GameSessionBloc, GameSessionState>(
-      'does not start the countdown when timerEnabled is false',
+      'CityBot opens the game: first board shows the bot\'s city',
       build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
+        stubStartSuccess();
+        botReturns = [const Success<BotMove?>(botOpenMove)];
         return bloc;
       },
       act: (bloc) => bloc.add(
-        StartSession(userId: 'user1', mode: GameMode.ukraine, timerEnabled: false),
-      ),
-      // Past one tick interval: a running timer would emit an extra
-      // GameSessionInProgress; an untimed round must not.
-      wait: const Duration(milliseconds: 1100),
-      expect: () => [isA<GameSessionLoading>(), isA<GameSessionInProgress>()],
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        ),
+      expect: () => [
+        isA<GameSessionLoading>(),
+        const GameSessionInProgress(
+          session: GameSession(
+            id: 'session1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+            usedCityIds: [1],
+            timerSeconds: 60,
+            isActive: true,
+          ),
+          timerSeconds: 60,
+          history: [ChatMessage(text: 'Одеса', isBot: true)],
+          requiredLetter: 'А',
+        ),
+      ],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -101,147 +172,176 @@ void main() {
           () => startGameSessionUseCase(
             userId: any(named: 'userId'),
             mode: any(named: 'mode'),
+            language: any(named: 'language'),
           ),
         ).thenAnswer((_) async => const ResultFailure(DataFailure()));
         return bloc;
       },
-      act: (bloc) => bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine)),
+      act: (bloc) => bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        ),
       expect: () => [
         isA<GameSessionLoading>(),
         const GameSessionFailure(DataFailure()),
       ],
     );
 
-    const testCity = City(
-      id: 2,
-      nameUA: 'Київ',
-      nameEN: 'Kyiv',
-      countryCode: 'UA',
-      isCapital: true,
-      firstLetterUA: 'К',
-      firstLetterEN: 'K',
+    blocTest<GameSessionBloc, GameSessionState>(
+      'ends the round when CityBot cannot open (exhausted pool)',
+      build: () {
+        stubStartSuccess();
+        botReturns = [const Success<BotMove?>(null)];
+        return bloc;
+      },
+      act: (bloc) => bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        ),
+      expect: () => [
+        isA<GameSessionLoading>(),
+        const GameSessionEnded(score: 0),
+      ],
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'accepted ValidateAnswer adds the real city id and awards points',
+      'accepted answer scores the city, then CityBot replies (shared chain)',
       build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
-        when(
-          () => validateCityAnswerUseCase(
-            cityName: any(named: 'cityName'),
-            previousCity: any(named: 'previousCity'),
-            mode: any(named: 'mode'),
-            usedCityIds: any(named: 'usedCityIds'),
-            historicUsedCityIds: any(named: 'historicUsedCityIds'),
-          ),
-        ).thenAnswer(
-          (_) async => const Success(
-            ValidationOutcome.accepted(city: testCity, points: kBasePoints),
+        stubStartSuccess();
+        stubValidate(
+          const Success(
+            ValidationOutcome.accepted(city: playerCity, points: kBasePoints),
           ),
         );
+        botReturns = [
+          const Success<BotMove?>(botOpenMove),
+          const Success<BotMove?>(botReplyMove),
+        ];
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
-        await Future.delayed(Duration.zero); // let StartSession process
+        bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 30));
         bloc.add(ValidateAnswer(cityName: 'Kyiv'));
       },
       expect: () => [
         isA<GameSessionLoading>(),
-        isA<GameSessionInProgress>(),
-        // One in-progress emission carries the updated session AND the verdict —
-        // no separate transient state. Full value equality via Equatable.
-        const GameSessionInProgress(
-          session: GameSession(
-            id: 'session1',
-            mode: GameMode.ukraine,
-            language: AppLanguage.en,
-            usedCityIds: [2],
-            timerSeconds: 60,
-            isActive: true,
-            score: kBasePoints,
-          ),
-          timerSeconds: 60,
-          // Ukraine mode → canonical UA name is added to the chat history.
-          history: ['Київ'],
-          lastOutcome: ValidationOutcome.accepted(
-            city: testCity,
-            points: kBasePoints,
-          ),
-        ),
+        isA<GameSessionInProgress>(), // bot opening
+        isA<GameSessionInProgress>(), // player's accepted answer
+        isA<GameSessionInProgress>(), // bot's reply
       ],
+      verify: (bloc) {
+        final state = bloc.state as GameSessionInProgress;
+        expect(state.session.score, kBasePoints);
+        expect(state.session.usedCityIds, [1, 2, 3]);
+        expect(state.history, const [
+          ChatMessage(text: 'Одеса', isBot: true),
+          ChatMessage(text: 'Київ', isBot: false),
+          ChatMessage(text: 'Вінниця', isBot: true),
+        ]);
+        expect(state.requiredLetter, 'Я');
+        // The player answered off CityBot's opening city, with the bot's city
+        // already in the shared used-set — proves the chain runs across sides.
+        final captured = verify(
+          () => validateCityAnswerUseCase(
+            cityName: any(named: 'cityName'),
+            previousCity: captureAny(named: 'previousCity'),
+            mode: any(named: 'mode'),
+            language: any(named: 'language'),
+            usedCityIds: captureAny(named: 'usedCityIds'),
+            historicUsedCityIds: any(named: 'historicUsedCityIds'),
+          ),
+        ).captured;
+        expect(captured, [
+          'Одеса',
+          [1],
+        ]);
+      },
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'rejected ValidateAnswer re-emits the board with the verdict, no score change',
+      'rejected answer keeps the board; CityBot does not reply',
       build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
-        when(
-          () => validateCityAnswerUseCase(
-            cityName: any(named: 'cityName'),
-            previousCity: any(named: 'previousCity'),
-            mode: any(named: 'mode'),
-            usedCityIds: any(named: 'usedCityIds'),
-            historicUsedCityIds: any(named: 'historicUsedCityIds'),
-          ),
-        ).thenAnswer(
-          (_) async =>
-              const Success(ValidationOutcome.rejected(AnswerStatus.wrongLetter)),
+        stubStartSuccess();
+        stubValidate(
+          const Success(ValidationOutcome.rejected(AnswerStatus.wrongLetter)),
         );
+        botReturns = [const Success<BotMove?>(botOpenMove)];
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
-        await Future.delayed(Duration.zero);
-        bloc.add(ValidateAnswer(cityName: 'Odesa'));
+        bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 30));
+        bloc.add(ValidateAnswer(cityName: 'Nope'));
       },
       expect: () => [
         isA<GameSessionLoading>(),
-        isA<GameSessionInProgress>(),
-        // Session unchanged (same score/used cities); verdict carried inline.
-        GameSessionInProgress(
-          session: testSession,
-          timerSeconds: 60,
-          lastOutcome: const ValidationOutcome.rejected(
-            AnswerStatus.wrongLetter,
-          ),
-        ),
+        isA<GameSessionInProgress>(), // bot opening
+        isA<GameSessionInProgress>(), // rejection verdict
       ],
+      verify: (bloc) {
+        final state = bloc.state as GameSessionInProgress;
+        expect(state.session.score, 0);
+        expect(state.session.usedCityIds, [1]); // only the bot's opening city
+        expect(state.history, const [ChatMessage(text: 'Одеса', isBot: true)]);
+        expect(state.lastOutcome?.status, AnswerStatus.wrongLetter);
+        expect(state.requiredLetter, 'А'); // unchanged, preserved
+        // Bot ran only for the opening — a rejection does not trigger a reply.
+        verify(
+          () => getBotCityUseCase(
+            mode: any(named: 'mode'),
+            language: any(named: 'language'),
+            usedCityIds: any(named: 'usedCityIds'),
+            previousCity: any(named: 'previousCity'),
+          ),
+        ).called(1);
+      },
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits GameSessionFailure(UnknownFailure) when validation throws unexpectedly',
+      'emits GameSessionFailure(UnknownFailure) when validation throws',
       build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
+        stubStartSuccess();
         when(
           () => validateCityAnswerUseCase(
             cityName: any(named: 'cityName'),
             previousCity: any(named: 'previousCity'),
             mode: any(named: 'mode'),
+            language: any(named: 'language'),
             usedCityIds: any(named: 'usedCityIds'),
             historicUsedCityIds: any(named: 'historicUsedCityIds'),
           ),
         ).thenThrow(Exception('fail'));
+        botReturns = [const Success<BotMove?>(botOpenMove)];
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
-        await Future.delayed(Duration.zero);
+        bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 30));
         bloc.add(ValidateAnswer(cityName: 'Kyiv'));
       },
       expect: () => [
@@ -254,31 +354,38 @@ void main() {
     blocTest<GameSessionBloc, GameSessionState>(
       'UseHint re-emits the board carrying the hint suggestion',
       build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
+        stubStartSuccess();
         when(
           () => useHintUseCase(
             mode: any(named: 'mode'),
+            language: any(named: 'language'),
             usedCityIds: any(named: 'usedCityIds'),
             previousCity: any(named: 'previousCity'),
           ),
         ).thenAnswer((_) async => const Success<String?>('Odesa'));
+        botReturns = [const Success<BotMove?>(botOpenMove)];
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
-        await Future.delayed(Duration.zero);
+        bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 30));
         bloc.add(UseHint());
       },
       expect: () => [
         isA<GameSessionLoading>(),
         isA<GameSessionInProgress>(),
-        GameSessionInProgress(session: testSession, timerSeconds: 60, hint: 'Odesa'),
+        isA<GameSessionInProgress>(),
       ],
+      verify: (bloc) {
+        final state = bloc.state as GameSessionInProgress;
+        expect(state.hint, 'Odesa');
+      },
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
@@ -344,19 +451,21 @@ void main() {
     );
 
     blocTest<GameSessionBloc, GameSessionState>(
-      'emits [GameSessionLoading, GameSessionInProgress, GameSessionInProgress] when TimerTick is above zero',
+      'TimerTick above zero re-emits the board with the new time',
       build: () {
-        when(
-          () => startGameSessionUseCase(
-            userId: any(named: 'userId'),
-            mode: any(named: 'mode'),
-          ),
-        ).thenAnswer((_) async => Success(testSession));
+        stubStartSuccess();
+        botReturns = [const Success<BotMove?>(botOpenMove)];
         return bloc;
       },
       act: (bloc) async {
-        bloc.add(StartSession(userId: 'user1', mode: GameMode.ukraine));
-        await Future.delayed(Duration.zero); // let StartSession process
+        bloc.add(
+          StartSession(
+            userId: 'u1',
+            mode: GameMode.ukraine,
+            language: AppLanguage.ua,
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 30));
         bloc.add(TimerTick(secondsLeft: 10));
       },
       expect: () => [
@@ -364,6 +473,9 @@ void main() {
         isA<GameSessionInProgress>(),
         isA<GameSessionInProgress>(),
       ],
+      verify: (bloc) {
+        expect((bloc.state as GameSessionInProgress).timerSeconds, 10);
+      },
     );
   });
 }

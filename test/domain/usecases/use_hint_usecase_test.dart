@@ -46,6 +46,7 @@ void main() {
         )).thenAnswer((_) async => [kyiv, lviv, odesa]);
     when(() => cityRepository.availableFirstLetters(
           isUkraineMode: any(named: 'isUkraineMode'),
+          isUkrainianLanguage: any(named: 'isUkrainianLanguage'),
         )).thenAnswer((_) async => {'к', 'л', 'о', 'а'});
   });
 
@@ -53,6 +54,7 @@ void main() {
   Future<String?> hint({List<int> used = const [], String previous = ''}) async {
     final result = await useCase(
       mode: GameMode.ukraine,
+      language: AppLanguage.ua,
       usedCityIds: used,
       previousCity: previous,
     );
@@ -83,6 +85,7 @@ void main() {
         )).thenThrow(Exception('asset missing'));
     final result = await useCase(
       mode: GameMode.ukraine,
+      language: AppLanguage.ua,
       usedCityIds: const [],
       previousCity: '',
     );

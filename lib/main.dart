@@ -1,16 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/router.dart';
 import 'core/theme.dart';
 import 'di/di.dart';
 import 'presentation/bloc/settings_cubit.dart';
+import 'presentation/bloc/settings_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await configureDependencies();
+
+  // Load persisted preferences so the cubit starts from the user's last choices.
+  final prefs = await SharedPreferences.getInstance();
+  final settingsStore = SharedPrefsSettingsStore(prefs);
 
   runApp(
     EasyLocalization(
@@ -18,7 +24,7 @@ Future<void> main() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
       child: BlocProvider(
-        create: (_) => SettingsCubit(),
+        create: (_) => SettingsCubit(store: settingsStore),
         child: const CitiesApp(),
       ),
     ),

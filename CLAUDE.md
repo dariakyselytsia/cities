@@ -271,22 +271,47 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   game-over view with Play Again / Home.
 - ✅ **Settings wired into gameplay.** An app-wide `SettingsCubit`
   (`presentation/bloc/settings_cubit.dart`, provided above the router) holds the
-  city-list selection, turn-timer, and sound prefs. The game route reads it at
-  start: city-list → `GameMode` (Ukraine-only → ukraine, else world;
-  `StartSession` carries `timerEnabled`), and the **Turn timer** toggle
-  enables/disables the countdown (untimed shows an ∞ badge). Sound flag is held
-  but not consumed (no audio yet). In-memory only — **not persisted across
-  launches** (shared_preferences/Isar is a later step). Cubit + timer-off
-  behavior unit-tested.
-- **Design vs. MVP scope deltas (design is richer — kept to MVP, flag before
-  building):** the design shows a **CityBot opponent** + **Play Online**
-  (multiplayer — roadmap, not MVP), a **Statistics** screen and **Win/Lose**
-  screens (not yet built), a **3rd language (Español)** (app is UA/EN only), and
-  **city-list multi-select** (domain models a single `GameMode`, so "both"
-  currently plays World). Leaderboard data is a **UI-only stub** (not fetched),
-  and Settings prefs are **not persisted across launches**. The design's full
-  **Win/Lose** screens (streak, new-best, "cities added to atlas") are simplified
-  to a single game-over view for now.
+  city-list selection and sound pref. The game route reads it at start:
+  city-list → `GameMode` (Ukraine-only → ukraine, else world). The countdown
+  always runs — per `game_design.md` §2 the timer is a fixed loss condition, so
+  there is no untimed toggle. Sound flag is held but not consumed (no audio yet).
+  **Persisted across launches** via `shared_preferences` (a `SettingsStore`
+  abstraction backs `SettingsCubit`; see `presentation/bloc/settings_store.dart`).
+  Cubit + persistence unit-tested.
+- ✅ **Display language is decoupled from game mode.** `GameMode` now selects only
+  the **dataset** (Ukraine-only vs World); the **display/matching language** is a
+  separate `AppLanguage` sourced from the app locale (`context.locale` →
+  `AppLanguage.fromCode`), so the World list can be played with Ukrainian names.
+  `CityRepository.getCityByName`/`availableFirstLetters` take an explicit
+  `isUkrainianLanguage` (names/first letters) distinct from `isUkraineMode`
+  (dataset); `StartSession`/`StartGameSessionUseCase` carry a `language`, stored on
+  `GameSession.language`, and the BLoC/use cases pick `nameUA/EN` + `firstLetterUA/EN`
+  by language, not mode. Fixes the bug where World mode always showed English names.
+  (Regression-tested at the use-case level: "World dataset played in Ukrainian".)
+- ✅ **CityBot is the game loop (Player vs. CityBot).** `game_design.md` §2's
+  main-and-only mode is implemented. `GetBotCityUseCase`
+  (`domain/usecases/get_bot_city_usecase*.dart`, `@LazySingleton`) returns a
+  `BotMove` (`domain/game/bot_move.dart`: the chosen `City` + the letter the player
+  must then answer), picking a **random** unused city that satisfies the letter rule
+  via the same `LetterRule` backtracking as validation (the `Random` is injectable
+  so tests seed it; games stay varied). `GameSessionBloc` models the
+  opponent turn as a **discrete `BotTurn` event** it dispatches to itself: CityBot
+  opens the game, and each accepted player answer triggers a `BotTurn` reply, so the
+  loop is bot-open → player-answer → bot-reply → … The used-city set is **shared**
+  (the next answer's letter rule checks `_lastCityName`, the last city named by
+  *either* side), the **timer resets each player turn** (`_turnDuration`), and an
+  exhausted pool (bot returns `null`) ends the round (endurance framing — no
+  "beat the bot" win). Chat history is now `List<ChatMessage>` (`{text, isBot}`),
+  rendered as left (bot) / right (player) bubbles. Keeping `BotTurn` discrete is the
+  seam for future PvP (swap `BotTurn` → a network turn). Fully unit-tested (bot
+  opening, shared-chain reply, rejection-no-reply, exhausted-pool end).
+- **Other design vs. code deltas (design is richer — kept to MVP):** **Play Online**
+  (multiplayer — roadmap, not MVP), a **Statistics** screen and full **Win/Lose**
+  screens (not yet built; simplified to one game-over view), a **3rd language
+  (Español)** (app is UA/EN only), and **city-list multi-select** (domain models a
+  single `GameMode`, so "both" currently plays World). Leaderboard data is a
+  **UI-only stub** (not fetched). *(Settings prefs now persist across launches via
+  `shared_preferences` — the old "not persisted" gap is closed.)*
 
 ### Not yet wired (expected at this stage)
 

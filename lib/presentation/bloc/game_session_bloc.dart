@@ -3,6 +3,18 @@ import 'package:equatable/equatable.dart';
 import 'package:cities/domain/domain.dart';
 import 'dart:async';
 
+/// A single line in the game's chat history: a city [text] named by either the
+/// player or CityBot. [isBot] drives the left/right bubble alignment in the UI.
+class ChatMessage extends Equatable {
+  final String text;
+  final bool isBot;
+
+  const ChatMessage({required this.text, required this.isBot});
+
+  @override
+  List<Object?> get props => [text, isBot];
+}
+
 /// Events for GameSessionBloc
 abstract class GameSessionEvent extends Equatable {
   const GameSessionEvent();
@@ -16,17 +28,18 @@ class StartSession extends GameSessionEvent {
   final String userId;
   final GameMode mode;
 
-  /// When false, the round is untimed (no countdown) — the "Turn timer" setting.
-  final bool timerEnabled;
+  /// Display/matching language for the round (the app locale) — independent of
+  /// [mode], so e.g. the World list can be played with Ukrainian names.
+  final AppLanguage language;
 
   const StartSession({
     required this.userId,
     required this.mode,
-    this.timerEnabled = true,
+    required this.language,
   });
 
   @override
-  List<Object?> get props => [userId, mode, timerEnabled];
+  List<Object?> get props => [userId, mode, language];
 }
 
 /// Event to validate a city answer. The BLoC is authoritative over the previous
@@ -37,6 +50,14 @@ class ValidateAnswer extends GameSessionEvent {
 
   @override
   List<Object?> get props => [cityName];
+}
+
+/// Internal event: CityBot takes its turn — the opening move, or a reply to the
+/// player's last accepted city. The BLoC dispatches this to itself so an
+/// opponent turn is a discrete, swappable step (the seam a future PvP "network
+/// turn" would slot into; see game_design.md roadmap).
+class BotTurn extends GameSessionEvent {
+  const BotTurn();
 }
 
 /// Event to use a hint for the active session.
@@ -84,7 +105,7 @@ class GameSessionInitial extends GameSessionState {
   const GameSessionInitial();
 }
 
-/// State when loading (e.g., starting session)
+/// State when loading (e.g., starting session, or while CityBot opens the game)
 class GameSessionLoading extends GameSessionState {
   const GameSessionLoading();
 }
@@ -97,13 +118,13 @@ class GameSessionInProgress extends GameSessionState {
   final GameSession session;
   final int timerSeconds;
 
-  /// Display names of the cities accepted this session, in play order — the
-  /// chat history the game screen renders.
-  final List<String> history;
+  /// The volley of cities named this session, in play order — the chat history
+  /// the game screen renders (player and CityBot bubbles).
+  final List<ChatMessage> history;
 
-  /// The letter the next city must start with (uppercase), or null on the
-  /// opening move (any city allowed). Sourced from the last accepted answer and
-  /// preserved across rejected attempts.
+  /// The letter the player's next city must start with (uppercase), or null on
+  /// the opening move. Sourced from the last city on the board (CityBot's reply
+  /// or the player's accepted answer) and preserved across rejected attempts.
   final String? requiredLetter;
 
   /// The most recent answer verdict (accepted/rejected, with points and matched
@@ -135,7 +156,8 @@ class SessionRevived extends GameSessionState {
   const SessionRevived();
 }
 
-/// State when the session ends (timeout or surrender), carrying the final score.
+/// State when the session ends (timeout, surrender, or an exhausted pool),
+/// carrying the final score.
 class GameSessionEnded extends GameSessionState {
   final int score;
   const GameSessionEnded({this.score = 0});
@@ -157,23 +179,34 @@ class GameSessionFailure extends GameSessionState {
   List<Object?> get props => [failure];
 }
 
-/// GameSessionBloc manages the full lifecycle and logic of a game session:
-/// session start, answer validation, timer, scoring, hints, revive, and end.
-/// It exposes all session state, timer, and error handling for the UI.
+/// GameSessionBloc manages the full lifecycle and logic of a Player-vs-CityBot
+/// session: start, CityBot's turns, answer validation, the per-turn timer,
+/// scoring, hints, revive, and end. Turns alternate — CityBot opens, then each
+/// accepted player answer triggers a [BotTurn] reply — and the shared used-city
+/// set means neither side may repeat a city (game_design.md §2).
 class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   final StartGameSessionUseCase startGameSessionUseCase;
   final ValidateCityAnswerUseCase validateCityAnswerUseCase;
+  final GetBotCityUseCase getBotCityUseCase;
   final UseHintUseCase useHintUseCase;
   final ReviveSessionUseCase reviveSessionUseCase;
   final EndGameSessionUseCase endGameSessionUseCase;
 
   GameSession? _currentSession;
+
+  /// Seconds remaining in the current player turn.
   int _timerSeconds = 0;
+
+  /// The per-turn time budget; the countdown resets to this at the start of each
+  /// player turn (after CityBot replies). game_design.md §2: "resets every turn".
+  int _turnDuration = 0;
+
   StreamSubscription<int>? _timerSub;
 
-  /// Last accepted city name — the BLoC is authoritative over the "previous
-  /// city" the letter rule is checked against.
-  String? _lastAcceptedCityName;
+  /// The last city on the board — named by the player *or* CityBot. The next
+  /// answer's letter rule is checked against this, so the chain runs across both
+  /// sides.
+  String? _lastCityName;
 
   /// Last answer verdict and last hint, carried on every [GameSessionInProgress]
   /// emission so the board remains the single source of truth. A new user action
@@ -181,31 +214,32 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   ValidationOutcome? _lastOutcome;
   String? _lastHint;
 
-  /// Accepted city display names, in play order (the chat history).
-  final List<String> _history = [];
+  /// Cities named this session, in play order (the chat history).
+  final List<ChatMessage> _history = [];
 
-  /// Letter the next city must start with (uppercase); null on the opening move.
+  /// Letter the player's next city must start with (uppercase); null on the
+  /// opening move.
   String? _requiredLetter;
-
-  /// Whether the countdown timer runs this session (the "Turn timer" setting).
-  bool _timerEnabled = true;
 
   GameSessionBloc({
     required this.startGameSessionUseCase,
     required this.validateCityAnswerUseCase,
+    required this.getBotCityUseCase,
     required this.useHintUseCase,
     required this.reviveSessionUseCase,
     required this.endGameSessionUseCase,
   }) : super(GameSessionInitial()) {
     on<StartSession>(_onStartSession);
     on<ValidateAnswer>(_onValidateAnswer);
+    on<BotTurn>(_onBotTurn);
     on<UseHint>(_onUseHint);
     on<ReviveSession>(_onReviveSession);
     on<EndSession>(_onEndSession);
     on<TimerTick>(_onTimerTick);
   }
 
-  /// Starts a new game session and timer.
+  /// Starts a new game session, then lets CityBot make the opening move (which
+  /// emits the first board and starts the player's timer).
   Future<void> _onStartSession(
     StartSession event,
     Emitter<GameSessionState> emit,
@@ -213,26 +247,78 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     emit(GameSessionLoading());
     await _cancelTimer();
     final result = await _guard(
-      () => startGameSessionUseCase(userId: event.userId, mode: event.mode),
+      () => startGameSessionUseCase(
+        userId: event.userId,
+        mode: event.mode,
+        language: event.language,
+      ),
     );
     switch (result) {
       case Success(:final value):
         _currentSession = value;
+        _turnDuration = value.timerSeconds;
         _timerSeconds = value.timerSeconds;
-        _lastAcceptedCityName = null;
+        _lastCityName = null;
         _lastOutcome = null;
         _lastHint = null;
         _requiredLetter = null;
-        _timerEnabled = event.timerEnabled;
         _history.clear();
-        _emitInProgress(emit);
-        if (_timerEnabled) _startTimer();
+        // CityBot opens the game; that emission shows the first board.
+        add(const BotTurn());
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
   }
 
-  /// Validates a city answer and updates session state.
+  /// CityBot's turn: pick a valid unused city answering the last city on the
+  /// board (any unused city on the opening move), append it to the chat, set the
+  /// letter the player must now answer, and reset + restart the player's timer.
+  /// An exhausted pool (no valid city) ends the round.
+  Future<void> _onBotTurn(BotTurn event, Emitter<GameSessionState> emit) async {
+    final session = _currentSession;
+    if (session == null) return;
+    // Suspend the countdown while the bot moves so a tick can't race the reply.
+    await _cancelTimer();
+    final result = await _guard(
+      () => getBotCityUseCase(
+        mode: session.mode,
+        language: session.language,
+        usedCityIds: session.usedCityIds,
+        previousCity: _lastCityName ?? '',
+      ),
+    );
+    switch (result) {
+      case Success(:final value):
+        if (value == null) {
+          // CityBot has no valid city (exhausted pool) — the round ends.
+          emit(GameSessionEnded(score: session.score));
+          return;
+        }
+        final city = value.city;
+        final name = session.language.isUkrainian ? city.nameUA : city.nameEN;
+        _timerSeconds = _turnDuration; // fresh countdown for the player's turn
+        _currentSession = GameSession(
+          id: session.id,
+          mode: session.mode,
+          language: session.language,
+          usedCityIds: [...session.usedCityIds, city.id],
+          timerSeconds: _timerSeconds,
+          isActive: true,
+          score: session.score,
+        );
+        _lastCityName = name;
+        _history.add(ChatMessage(text: name, isBot: true));
+        _requiredLetter = value.nextLetter;
+        _lastHint = null;
+        _emitInProgress(emit);
+        _startTimer();
+      case ResultFailure(:final failure):
+        emit(GameSessionFailure(failure));
+    }
+  }
+
+  /// Validates a city answer against CityBot's last city and, when accepted,
+  /// scores it and triggers CityBot's reply.
   Future<void> _onValidateAnswer(
     ValidateAnswer event,
     Emitter<GameSessionState> emit,
@@ -245,8 +331,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     final result = await _guard(
       () => validateCityAnswerUseCase(
         cityName: event.cityName,
-        previousCity: _lastAcceptedCityName ?? '',
+        previousCity: _lastCityName ?? '',
         mode: session.mode,
+        language: session.language,
         usedCityIds: session.usedCityIds,
       ),
     );
@@ -256,6 +343,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _lastHint = null;
         if (value.isAccepted && value.city != null) {
           final city = value.city!;
+          final name = session.language.isUkrainian ? city.nameUA : city.nameEN;
           _currentSession = GameSession(
             id: session.id,
             mode: session.mode,
@@ -265,19 +353,23 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
             isActive: true,
             score: session.score + value.points,
           );
-          _lastAcceptedCityName = event.cityName.trim();
-          // Store the canonical city name (in the session's language) for chat.
-          _history.add(session.mode.isUkraine ? city.nameUA : city.nameEN);
-          // Update the required next letter from the accepted answer.
+          // Store the canonical city name so the letter chain and chat use the
+          // dataset spelling, not the player's raw input.
+          _lastCityName = name;
+          _history.add(ChatMessage(text: name, isBot: false));
           _requiredLetter = value.nextLetter;
+          _emitInProgress(emit); // show the player's accepted bubble…
+          add(const BotTurn()); // …then CityBot replies.
+        } else {
+          // Rejected: same turn, timer keeps running; show the verdict inline.
+          _emitInProgress(emit);
         }
-        _emitInProgress(emit);
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
   }
 
-  /// Uses a hint and emits the suggested city.
+  /// Uses a hint and emits the suggested city (a city answering CityBot's last).
   Future<void> _onUseHint(UseHint event, Emitter<GameSessionState> emit) async {
     final session = _currentSession;
     if (session == null) {
@@ -287,8 +379,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     final result = await _guard(
       () => useHintUseCase(
         mode: session.mode,
+        language: session.language,
         usedCityIds: session.usedCityIds,
-        previousCity: _lastAcceptedCityName ?? '',
+        previousCity: _lastCityName ?? '',
       ),
     );
     switch (result) {
@@ -301,7 +394,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     }
   }
 
-  /// Revives a session and restarts the timer.
+  /// Revives a session and restarts the timer, continuing the same chain.
   Future<void> _onReviveSession(
     ReviveSession event,
     Emitter<GameSessionState> emit,
@@ -312,13 +405,14 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     switch (result) {
       case Success(:final value):
         _currentSession = value;
+        _turnDuration = value.timerSeconds;
         _timerSeconds = value.timerSeconds;
         _lastOutcome = null;
         _lastHint = null;
         emit(SessionRevived());
         _emitInProgress(emit);
-        if (_timerEnabled) _startTimer();
-        // NOTE: history is intentionally preserved across a revive (same round).
+        _startTimer();
+      // NOTE: history and the letter chain are preserved across a revive.
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -376,8 +470,9 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   }
 
   /// Emits the current board state from the BLoC's own fields, so every
-  /// in-progress emission (answer, hint, timer tick) is built the same way and
-  /// carries the latest verdict/hint. No-op if there is no active session.
+  /// in-progress emission (answer, bot turn, hint, timer tick) is built the same
+  /// way and carries the latest verdict/hint. No-op if there is no active
+  /// session.
   void _emitInProgress(Emitter<GameSessionState> emit) {
     final session = _currentSession;
     if (session == null) return;
@@ -385,7 +480,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       GameSessionInProgress(
         session: session,
         timerSeconds: _timerSeconds,
-        history: List<String>.of(_history),
+        history: List<ChatMessage>.of(_history),
         requiredLetter: _requiredLetter,
         lastOutcome: _lastOutcome,
         hint: _lastHint,

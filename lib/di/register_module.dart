@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:injectable/injectable.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,6 +12,12 @@ import '../data/models/user_stats_model.dart';
 /// Provides third-party singletons that injectable cannot construct directly.
 @module
 abstract class RegisterModule {
+  /// Shared random source for use cases that need non-deterministic choices.
+  ///
+  /// Injectable resolves this dependency for constructors that request [Random].
+  @lazySingleton
+  Random get random => Random();
+
   /// Opens the Isar database once at startup and registers it as a singleton.
   ///
   /// `@preResolve` makes injectable await this future during
@@ -19,14 +27,11 @@ abstract class RegisterModule {
   @preResolve
   Future<Isar> get isar async {
     final dir = await getApplicationDocumentsDirectory();
-    return Isar.open(
-      [
-        CityModelSchema,
-        GameSessionModelSchema,
-        UserModelSchema,
-        UserStatsModelSchema,
-      ],
-      directory: dir.path,
-    );
+    return Isar.open([
+      CityModelSchema,
+      GameSessionModelSchema,
+      UserModelSchema,
+      UserStatsModelSchema,
+    ], directory: dir.path);
   }
 }

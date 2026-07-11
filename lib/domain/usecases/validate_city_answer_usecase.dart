@@ -1,12 +1,14 @@
 import '../core/result.dart';
+import '../game/app_language.dart';
 import '../game/game_mode.dart';
 import '../game/validation_outcome.dart';
 
 /// Use case for validating a city answer during a game session.
 abstract class ValidateCityAnswerUseCase {
   /// Validates [cityName] against the letter rule, per-session uniqueness, and
-  /// existence for [mode], returning a [ValidationOutcome] with the verdict,
-  /// matched city, and points earned.
+  /// existence in [mode] (the dataset), matched in [language] (the display
+  /// language — names and first letters), returning a [ValidationOutcome] with
+  /// the verdict, matched city, and points earned.
   ///
   /// - [previousCity] is the last accepted city name (empty on the opening move).
   /// - [usedCityIds] are the city ids already named this session (uniqueness).
@@ -21,6 +23,7 @@ abstract class ValidateCityAnswerUseCase {
     required String cityName,
     required String previousCity,
     required GameMode mode,
+    required AppLanguage language,
     required List<int> usedCityIds,
     Set<int>? historicUsedCityIds,
   });

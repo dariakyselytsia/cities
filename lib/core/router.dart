@@ -22,6 +22,7 @@ abstract final class Routes {
 GameSessionBloc _buildGameSessionBloc() => GameSessionBloc(
   startGameSessionUseCase: getIt<StartGameSessionUseCase>(),
   validateCityAnswerUseCase: getIt<ValidateCityAnswerUseCase>(),
+  getBotCityUseCase: getIt<GetBotCityUseCase>(),
   useHintUseCase: getIt<UseHintUseCase>(),
   reviveSessionUseCase: getIt<ReviveSessionUseCase>(),
   endGameSessionUseCase: getIt<EndGameSessionUseCase>(),
