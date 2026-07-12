@@ -1,0 +1,69 @@
+{
+  "app_title": "Міста",
+  "home": {
+    "play": "Грати",
+    "leaderboard": "Таблиця лідерів",
+    "settings": "Налаштування",
+    "tagline": "пиши. з'єднуй. перемагай.",
+    "play_vs_bot": "Грати з ботом",
+    "play_vs_bot_sub": "На витривалість — побий свій рекорд",
+    "play_online": "Грати онлайн",
+    "play_online_sub": "Незабаром",
+    "how_to_play": "як грати",
+    "best_streak": "найкраща серія",
+    "cities_played": "зіграно міст"
+  },
+  "settings": {
+    "title": "Налаштування",
+    "language": "Мова",
+    "city_list": "Список міст",
+    "world_cities": "Міста світу",
+    "world_cities_desc": "усі країни, ~3 000 міст",
+    "ukrainian_cities": "Міста України",
+    "ukrainian_cities_desc": "лише Україна, ~150 міст",
+    "city_list_hint": "Оберіть один або обидва — гра бере міста з позначених списків.",
+    "gameplay": "Гра",
+    "sound_effects": "Звукові ефекти"
+  },
+  "game": {
+    "citybot": "CityBot",
+    "score": "Рахунок",
+    "streak": "Серія",
+    "highscore": "Рекорд",
+    "hint": "Підказка",
+    "surrender": "Здатися",
+    "enter_city": "Введіть місто…",
+    "submit": "Надіслати",
+    "your_turn": "Ваш хід",
+    "start_with": "почніть з",
+    "opening": "Назвіть будь-яке місто, щоб почати",
+    "bot_turn": "Хід CityBot…",
+    "not_found": "Такого міста немає — спробуйте ще",
+    "wrong_letter": "Неправильна початкова літера",
+    "already_used": "Вже використано — інше місто",
+    "game_over": "Гру закінчено",
+    "final_score": "Фінальний рахунок",
+    "play_again": "Ще раз",
+    "home": "Головна"
+  },
+  "leaderboard": {
+    "title": "Таблиця лідерів",
+    "weekly": "Тиждень",
+    "global": "Світ",
+    "friends": "Друзі",
+    "you": "Ви",
+    "footer_top": "ви #1 цього тижня, так тримати!"
+  },
+  "statistics": {
+    "title": "Статистика",
+    "cities_discovered": "відкрито міст",
+    "longest_streak": "найдовша серія",
+    "games_played": "зіграно ігор",
+    "high_scores": "Рекорди",
+    "ukraine": "Україна",
+    "world": "Світ",
+    "recent_sessions": "Останні ігри",
+    "no_sessions": "Ще немає ігор — зіграйте раунд, щоб побачити статистику.",
+    "cities_count": "{} міст"
+  }
+}

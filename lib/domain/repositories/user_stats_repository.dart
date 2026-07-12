@@ -1,20 +1,13 @@
 import '../entities/user_stats.dart';
-import '../entities/game_session.dart';
-import '../entities/city.dart';
 
 /// Abstract repository for user statistics and progress persistence.
+///
+/// Reading/writing only — folding a finished session into the stats is domain
+/// logic that lives in `RecordSessionResultUseCase`, not here.
 abstract class UserStatsRepository {
-  /// Saves the user's statistics (all fields).
+  /// Persists the user's statistics (all fields).
   Future<void> saveUserStats(UserStats stats);
 
-  /// Retrieves the user's statistics (all fields).
+  /// Retrieves the user's statistics, or default/empty stats when none saved.
   Future<UserStats> getUserStats();
-
-  /// Recalculates all user statistics at the end of a game session.
-  /// Should be called with the finished session, previous stats, and all cities for percent calculations.
-  Future<UserStats> recalculateStatistics({
-    required GameSession session,
-    required UserStats previousStats,
-    required List<City> allCities,
-  });
 }

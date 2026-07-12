@@ -25,6 +25,7 @@ void main() {
     useCase = ValidateCityAnswerUseCaseImpl(cityRepository);
     when(() => cityRepository.availableFirstLetters(
           isUkraineMode: any(named: 'isUkraineMode'),
+          isUkrainianLanguage: any(named: 'isUkrainianLanguage'),
         )).thenAnswer((_) async => {'к', 'л', 'а', 'в', 'о'});
   });
 
@@ -40,6 +41,7 @@ void main() {
       cityName: city,
       previousCity: previous,
       mode: GameMode.ukraine,
+      language: AppLanguage.ua,
       usedCityIds: used,
       historicUsedCityIds: historic,
     );
@@ -52,14 +54,16 @@ void main() {
   });
 
   test('unknown city is notFound', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenAnswer((_) async => null);
     final outcome = await validate(city: 'Atlantis');
     expect(outcome.status, AnswerStatus.notFound);
   });
 
   test('city already used this session is alreadyUsed', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenAnswer((_) async => kyiv);
     final outcome = await validate(used: [kyiv.id]);
     expect(outcome.status, AnswerStatus.alreadyUsed);
@@ -67,7 +71,8 @@ void main() {
   });
 
   test('wrong first letter is wrongLetter', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenAnswer((_) async => kyiv);
     // Previous "Львів" requires the next city to start with 'в'; Kyiv starts 'к'.
     final outcome = await validate(previous: 'Львів');
@@ -75,7 +80,8 @@ void main() {
   });
 
   test('opening move accepts any real city and awards base points', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenAnswer((_) async => kyiv);
     final outcome = await validate();
     expect(outcome.isAccepted, isTrue);
@@ -84,7 +90,8 @@ void main() {
   });
 
   test('correct letter accepts and awards base points', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenAnswer((_) async => kyiv);
     // Previous "Одеса" ends in 'а'... use a previous ending in 'к' for Kyiv.
     final outcome = await validate(previous: 'Мурманськ');
@@ -93,7 +100,8 @@ void main() {
   });
 
   test('absolute-new-city bonus applies when history is supplied', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenAnswer((_) async => kyiv);
     final outcome = await validate(historic: <int>{99});
     expect(outcome.isAccepted, isTrue);
@@ -101,13 +109,47 @@ void main() {
     expect(outcome.points, kBasePoints + kNewCityBonus);
   });
 
+  test('accepted answer reports the next required letter (uppercase)', () async {
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
+        .thenAnswer((_) async => kyiv);
+    // 'Київ' ends in 'в', which is present in the available set → next letter В.
+    final outcome = await validate();
+    expect(outcome.isAccepted, isTrue);
+    expect(outcome.nextLetter, 'В');
+  });
+
+  test('World dataset played in Ukrainian matches UA names and letters', () async {
+    when(() => cityRepository.getCityByName(any(),
+            isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
+        .thenAnswer((_) async => kyiv);
+
+    final result = await useCase(
+      cityName: 'Київ',
+      previousCity: '',
+      mode: GameMode.world, // dataset: World
+      language: AppLanguage.ua, // display/matching: Ukrainian
+      usedCityIds: const [],
+    );
+
+    expect((result as Success<ValidationOutcome>).value.isAccepted, isTrue);
+    // Name matched in Ukrainian even though the dataset is World; the letter set
+    // is loaded for World+Ukrainian — proving mode and language are decoupled.
+    verify(() => cityRepository.getCityByName('Київ', isUkrainianLanguage: true))
+        .called(1);
+    verify(() => cityRepository.availableFirstLetters(
+        isUkraineMode: false, isUkrainianLanguage: true)).called(1);
+  });
+
   test('a data read error surfaces as Result.failure(DataFailure)', () async {
-    when(() => cityRepository.getCityByName(any(), isUA: any(named: 'isUA')))
+    when(() => cityRepository.getCityByName(any(),
+        isUkrainianLanguage: any(named: 'isUkrainianLanguage')))
         .thenThrow(Exception('db unavailable'));
     final result = await useCase(
       cityName: 'Kyiv',
       previousCity: '',
       mode: GameMode.ukraine,
+      language: AppLanguage.ua,
       usedCityIds: const [],
     );
     expect(result, isA<ResultFailure<ValidationOutcome>>());

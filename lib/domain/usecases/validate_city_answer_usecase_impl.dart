@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../core/failure.dart';
 import '../core/result.dart';
+import '../game/app_language.dart';
 import '../game/game_mode.dart';
 import '../game/letter_rule.dart';
 import '../game/validation_outcome.dart';
@@ -23,10 +24,12 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
     required String cityName,
     required String previousCity,
     required GameMode mode,
+    required AppLanguage language,
     required List<int> usedCityIds,
     Set<int>? historicUsedCityIds,
   }) async {
-    final isUA = mode.isUkraine;
+    // Dataset is chosen by [mode]; names/first letters by [language].
+    final isUA = language.isUkrainian;
     final answer = cityName.trim();
     if (answer.isEmpty) {
       return const Result.success(
@@ -35,7 +38,8 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
     }
 
     try {
-      final city = await cityRepository.getCityByName(answer, isUA: isUA);
+      final city =
+          await cityRepository.getCityByName(answer, isUkrainianLanguage: isUA);
       if (city == null) {
         return const Result.success(
           ValidationOutcome.rejected(AnswerStatus.notFound),
@@ -48,9 +52,12 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
         );
       }
 
+      final available = await cityRepository.availableFirstLetters(
+        isUkraineMode: mode.isUkraine,
+        isUkrainianLanguage: isUA,
+      );
+
       if (previousCity.trim().isNotEmpty) {
-        final available =
-            await cityRepository.availableFirstLetters(isUkraineMode: isUA);
         final firstLetter = isUA ? city.firstLetterUA : city.firstLetterEN;
         final valid = LetterRule.isValidNext(
           previousCity: previousCity,
@@ -67,11 +74,17 @@ class ValidateCityAnswerUseCaseImpl implements ValidateCityAnswerUseCase {
       final isNew =
           historicUsedCityIds != null && !historicUsedCityIds.contains(city.id);
       final points = kBasePoints + (isNew ? kNewCityBonus : 0);
+      // The letter the next city must start with, derived from this accepted
+      // city's canonical name (same backtracking rule used for validation).
+      final acceptedName = isUA ? city.nameUA : city.nameEN;
+      final nextLetter =
+          LetterRule.requiredNextLetter(acceptedName, available)?.toUpperCase();
       return Result.success(
         ValidationOutcome.accepted(
           city: city,
           points: points,
           isNewToPlayer: isNew,
+          nextLetter: nextLetter,
         ),
       );
     } catch (_) {

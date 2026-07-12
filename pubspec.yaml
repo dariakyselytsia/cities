@@ -46,6 +46,10 @@ dependencies:
   easy_localization: ^3.0.3
   go_router: ^13.2.2
   path_provider: ^2.1.4
+  shared_preferences: ^2.2.3
+  # Fonts (Baloo 2 + Poppins). Fetches/caches at runtime; swap for bundled
+  # .ttf assets later for full offline-first font loading on first launch.
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +82,7 @@ flutter:
   assets:
     - assets/data/cities_ua.json
     - assets/data/cities_world.json
+    - assets/translations/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

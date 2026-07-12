@@ -9,6 +9,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:math' as _i407;
+
 import 'package:cities/data/repositories/city_repository_impl.dart' as _i840;
 import 'package:cities/data/repositories/game_session_repository_impl.dart'
     as _i303;
@@ -24,6 +26,15 @@ import 'package:cities/domain/repositories/user_stats_repository.dart' as _i562;
 import 'package:cities/domain/usecases/end_game_session_usecase.dart' as _i163;
 import 'package:cities/domain/usecases/end_game_session_usecase_impl.dart'
     as _i388;
+import 'package:cities/domain/usecases/get_bot_city_usecase.dart' as _i154;
+import 'package:cities/domain/usecases/get_bot_city_usecase_impl.dart' as _i862;
+import 'package:cities/domain/usecases/get_user_stats_usecase.dart' as _i154;
+import 'package:cities/domain/usecases/get_user_stats_usecase_impl.dart'
+    as _i577;
+import 'package:cities/domain/usecases/record_session_result_usecase.dart'
+    as _i285;
+import 'package:cities/domain/usecases/record_session_result_usecase_impl.dart'
+    as _i579;
 import 'package:cities/domain/usecases/revive_session_usecase.dart' as _i399;
 import 'package:cities/domain/usecases/revive_session_usecase_impl.dart'
     as _i193;
@@ -53,6 +64,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.isar,
       preResolve: true,
     );
+    gh.lazySingleton<_i407.Random>(() => registerModule.random);
     gh.lazySingleton<_i255.GameSessionRepository>(
       () => _i303.GameSessionRepositoryImpl(gh<_i214.Isar>()),
     );
@@ -62,8 +74,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i385.CityRepository>(
       () => _i840.CityRepositoryImpl(gh<_i214.Isar>()),
     );
+    gh.lazySingleton<_i285.RecordSessionResultUseCase>(
+      () =>
+          _i579.RecordSessionResultUseCaseImpl(gh<_i562.UserStatsRepository>()),
+    );
     gh.lazySingleton<_i408.UserRepository>(
       () => _i616.UserRepositoryImpl(gh<_i214.Isar>()),
+    );
+    gh.lazySingleton<_i154.GetBotCityUseCase>(
+      () => _i862.GetBotCityUseCaseImpl(
+        gh<_i385.CityRepository>(),
+        gh<_i407.Random>(),
+      ),
     );
     gh.lazySingleton<_i991.ValidateCityAnswerUseCase>(
       () => _i549.ValidateCityAnswerUseCaseImpl(gh<_i385.CityRepository>()),
@@ -82,6 +104,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i385.CityRepository>(),
         gh<_i255.GameSessionRepository>(),
       ),
+    );
+    gh.lazySingleton<_i154.GetUserStatsUseCase>(
+      () => _i577.GetUserStatsUseCaseImpl(gh<_i562.UserStatsRepository>()),
     );
     return this;
   }

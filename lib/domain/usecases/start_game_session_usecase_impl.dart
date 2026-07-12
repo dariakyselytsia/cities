@@ -25,6 +25,7 @@ class StartGameSessionUseCaseImpl implements StartGameSessionUseCase {
   Future<Result<GameSession>> call({
     required String userId,
     required GameMode mode,
+    required AppLanguage language,
   }) async {
     // Warm the local Isar cache so gameplay lookups are hot.
     try {
@@ -36,7 +37,7 @@ class StartGameSessionUseCaseImpl implements StartGameSessionUseCase {
     final session = GameSession(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       mode: mode,
-      language: mode.isUkraine ? AppLanguage.ua : AppLanguage.en,
+      language: language,
       usedCityIds: const [],
       timerSeconds: kDefaultTimerSeconds,
       isActive: true,

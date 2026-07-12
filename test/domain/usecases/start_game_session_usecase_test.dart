@@ -39,7 +39,11 @@ void main() {
   });
 
   test('starts a fresh Ukraine session and persists it', () async {
-    final result = await useCase(userId: 'u1', mode: GameMode.ukraine);
+    final result = await useCase(
+      userId: 'u1',
+      mode: GameMode.ukraine,
+      language: AppLanguage.ua,
+    );
 
     expect(result, isA<Success<GameSession>>());
     final session = (result as Success<GameSession>).value;
@@ -54,12 +58,17 @@ void main() {
     verify(() => sessionRepository.saveSession(session)).called(1);
   });
 
-  test('World mode uses the English dataset/language', () async {
-    final result = await useCase(userId: 'u1', mode: GameMode.world);
+  test('language is independent of mode (World dataset, Ukrainian names)',
+      () async {
+    final result = await useCase(
+      userId: 'u1',
+      mode: GameMode.world,
+      language: AppLanguage.ua, // playing the World list in Ukrainian
+    );
 
     final session = (result as Success<GameSession>).value;
     expect(session.mode, GameMode.world);
-    expect(session.language, AppLanguage.en);
+    expect(session.language, AppLanguage.ua);
     verify(() => cityRepository.loadCities(isUkraineMode: false)).called(1);
   });
 
@@ -68,7 +77,11 @@ void main() {
           isUkraineMode: any(named: 'isUkraineMode'),
         )).thenThrow(Exception('asset missing'));
 
-    final result = await useCase(userId: 'u1', mode: GameMode.ukraine);
+    final result = await useCase(
+      userId: 'u1',
+      mode: GameMode.ukraine,
+      language: AppLanguage.ua,
+    );
 
     expect(result, isA<ResultFailure<GameSession>>());
     expect((result as ResultFailure<GameSession>).failure, isA<AssetFailure>());
@@ -79,7 +92,11 @@ void main() {
     when(() => sessionRepository.saveSession(any()))
         .thenThrow(Exception('disk full'));
 
-    final result = await useCase(userId: 'u1', mode: GameMode.ukraine);
+    final result = await useCase(
+      userId: 'u1',
+      mode: GameMode.ukraine,
+      language: AppLanguage.ua,
+    );
 
     expect(result, isA<ResultFailure<GameSession>>());
     expect((result as ResultFailure<GameSession>).failure, isA<DataFailure>());

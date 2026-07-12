@@ -35,22 +35,31 @@ class ValidationOutcome extends Equatable {
   /// True when the awarded points include the absolute-new-city bonus.
   final bool isNewToPlayer;
 
+  /// On an accepted answer, the letter the *next* city must start with (per the
+  /// dataset-driven letter rule), or null when it can't be determined. Null on
+  /// rejections. Lets the UI show the "start with «X»" cue without re-deriving
+  /// the rule.
+  final String? nextLetter;
+
   const ValidationOutcome({
     required this.status,
     this.city,
     this.points = 0,
     this.isNewToPlayer = false,
+    this.nextLetter,
   });
 
   const ValidationOutcome.accepted({
     required City city,
     required int points,
     bool isNewToPlayer = false,
+    String? nextLetter,
   }) : this(
          status: AnswerStatus.accepted,
          city: city,
          points: points,
          isNewToPlayer: isNewToPlayer,
+         nextLetter: nextLetter,
        );
 
   const ValidationOutcome.rejected(AnswerStatus status, {City? city})
@@ -59,5 +68,5 @@ class ValidationOutcome extends Equatable {
   bool get isAccepted => status == AnswerStatus.accepted;
 
   @override
-  List<Object?> get props => [status, city, points, isNewToPlayer];
+  List<Object?> get props => [status, city, points, isNewToPlayer, nextLetter];
 }

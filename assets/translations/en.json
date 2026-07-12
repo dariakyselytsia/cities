@@ -1,0 +1,69 @@
+{
+  "app_title": "Cities",
+  "home": {
+    "play": "Play",
+    "leaderboard": "Leaderboard",
+    "settings": "Settings",
+    "tagline": "type it. chain it. win it.",
+    "play_vs_bot": "Play vs Bot",
+    "play_vs_bot_sub": "Endurance — beat your best",
+    "play_online": "Play Online",
+    "play_online_sub": "Coming soon",
+    "how_to_play": "how to play",
+    "best_streak": "best streak",
+    "cities_played": "cities played"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "city_list": "City list",
+    "world_cities": "World Cities",
+    "world_cities_desc": "all countries, ~3,000 cities",
+    "ukrainian_cities": "Ukrainian Cities",
+    "ukrainian_cities_desc": "Ukraine-only, ~150 cities",
+    "city_list_hint": "Select one or both — matches use cities pulled from checked lists.",
+    "gameplay": "Gameplay",
+    "sound_effects": "Sound effects"
+  },
+  "game": {
+    "citybot": "CityBot",
+    "score": "Score",
+    "streak": "Streak",
+    "highscore": "Best",
+    "hint": "Hint",
+    "surrender": "Give Up",
+    "enter_city": "Enter a city…",
+    "submit": "Submit",
+    "your_turn": "Your turn",
+    "start_with": "start with",
+    "opening": "Name any city to begin",
+    "bot_turn": "CityBot's turn…",
+    "not_found": "No such city — try again",
+    "wrong_letter": "Wrong starting letter",
+    "already_used": "Already used — try another city",
+    "game_over": "Game over",
+    "final_score": "Final score",
+    "play_again": "Play Again",
+    "home": "Home"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "weekly": "Weekly",
+    "global": "Global",
+    "friends": "Friends",
+    "you": "You",
+    "footer_top": "you're #1 this week, keep it up!"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "cities_discovered": "cities found",
+    "longest_streak": "longest streak",
+    "games_played": "games played",
+    "high_scores": "High scores",
+    "ukraine": "Ukraine",
+    "world": "World",
+    "recent_sessions": "Recent games",
+    "no_sessions": "No games yet — play a round to see your stats here.",
+    "cities_count": "{} cities"
+  }
+}

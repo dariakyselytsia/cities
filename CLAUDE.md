@@ -126,6 +126,12 @@ dart run build_runner build --delete-conflicting-outputs # after DI / Isar / mod
    committing.
 5. Commit with **Conventional Commits** (`feat(game): add countdown timer bloc`,
    `fix(data): correct Isar index for firstLetter`).
+6. **Always end a unit of work with a wrap-up** for the user, containing exactly
+   three parts:
+   - **Commit message** — a ready-to-use Conventional Commit line (do not run
+     `git commit` unless asked; just provide the message).
+   - **Summary** — what changed and why, in a few bullets.
+   - **Proposed next steps** — the 1–3 highest-leverage follow-ups, ordered.
 
 ## Skills
 
@@ -180,10 +186,21 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   the user, then saves the link, and `getUser` `.load()`s it before mapping.
   Round-trip mapping tests lock the conversion (incl. empty-map and
   independent-`UserStatsModel` cases). Remaining: `GameSessionSummary.mode` is
-  still a `String` (unwired stats path); a `UserStatsRepository` impl and the
-  end-of-session `recalculateStatistics` wiring are still stubs, so the
-  absolute-new-city bonus stays gated until the BLoC actually reads/writes
-  lifetime history.
+  still a `String` (a legacy token, not the `GameMode` enum).
+- ✅ **Lifetime stats are wired end-to-end.** Two new use cases drive it:
+  `GetUserStatsUseCase` (loads persisted `UserStats`) and
+  `RecordSessionResultUseCase` (a pure fold of a finished session into the stats
+  — merges the player's city ids into the lifetime used-set, bumps per-city
+  usage, keeps the per-mode/legacy high-score max, and the max streak — then
+  persists; unit-tested). `UserStatsRepositoryImpl` is a real singleton-row
+  (`id = 0`) store; the old `recalculateStatistics` repo stub is gone (fold logic
+  now lives in the use case). `GameSessionBloc` loads stats at start (seeding
+  `historicUsedCityIds` → the **absolute-new-city bonus is now live**, and the
+  header's lifetime best), records the session on every end path (timeout /
+  surrender / exhausted pool) via a `_finishSession` helper, and tracks the
+  player's own city ids for the streak. The home stat card (best streak / cities
+  played) and the game header's "Best" now read real persisted values, not `0`.
+  (Duration is still recorded as `0` — no elapsed-time counter yet.)
 - ✅ **Indexed queries replace full-table scans.** Added `@Index()` on
   `CityModel.nameUA/nameEN`, `GameSessionModel.sessionId`, `UserModel.userId`;
   the repos now use `where().<field>EqualTo(...).findFirst()` instead of
@@ -239,9 +256,108 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - ✅ Removed the duplicate doc-comment block on `GameSessionBloc`.
 - Import the `domain.dart` barrel in `main.dart` instead of each use case.
 
+### UI / app shell (in progress)
+
+- ✅ **App shell wired.** `main.dart` now runs `EasyLocalization` →
+  `MaterialApp.router` with `buildAppTheme()` (`lib/core/theme.dart`, placeholder
+  palette) and `appRouter` (`lib/core/router.dart`). Four `go_router` routes
+  (`/`, `/settings`, `/game`, `/leaderboard`); the game route scopes its
+  `GameSessionBloc` (built from DI use cases) so it's created on entry and
+  disposed on exit. `easy_localization` is set up with `uk`/`en` under
+  `assets/translations/` (fallback `en`).
+- ✅ **Theme built to the shared design** (`lib/core/theme.dart`): "vibrant"
+  palette (`AppColors` — coral `#FF6B5B`, teal `#17B0A6`, yellow, purple, cream
+  `#FBF7F0`, ink `#22303A`, colored glows), `AppRadii`, Baloo 2 + Poppins via
+  `google_fonts`, and rounded component themes. (Offline-first caveat: fonts
+  fetch on first run — bundle the `.ttf`s before release.)
+- ✅ **Four screens styled to the design:** Home (hero + coral/teal glow CTAs),
+  Settings (language radios [live], city-list checks, gameplay toggles),
+  Leaderboard (Weekly/Global/Friends pills, podium, list), and the **Game chat
+  screen** (right-aligned coral city bubbles with a purple first-letter accent,
+  timer badge, score/streak pills, rejection banner, input bar). The game route
+  auto-starts a Ukraine session. **Hint auto-plays:** tapping the hint button no
+  longer shows a suggestion chip — the screen types the suggested city into the
+  input and submits it for the player (the `UseHint` → `_lastHint` state is
+  consumed by a `BlocConsumer.listener` that fills+sends it once). **Turn cue is
+  player-only:** `_requiredLetter` is cleared while CityBot moves and set again
+  only on its reply, so the "your turn → start with «X»" banner shows the letter
+  only on the player's turn; during the bot's move the banner reads "CityBot's
+  turn…" with no letter.
+- ✅ **Home lifetime-stats card refreshes on return & links to Statistics.**
+  Home is `RouteAware` via `appRouteObserver` (a `RouteObserver` on the
+  `GoRouter`); `didPopNext` reloads `GetUserStatsUseCase` whenever Home is
+  returned to (after a game / the stats screen), so best-streak & cities-played
+  reflect the just-recorded session. The card is wrapped in a `GestureDetector`
+  → pushes `/statistics`.
+- ✅ **BLoC exposes chat history.** `GameSessionInProgress.history` (`List<String>`
+  of accepted city names, session-language) accumulates in the BLoC; preserved
+  across a revive, cleared on start. Test updated.
+- ✅ **"Start with «X»" cue wired end-to-end.** `ValidationOutcome.nextLetter`
+  (computed in `ValidateCityAnswerUseCaseImpl` from the accepted city via the
+  same `LetterRule` backtracking) → BLoC `_requiredLetter` →
+  `GameSessionInProgress.requiredLetter` → the game screen's turn banner
+  (opening move shows "name any city"). Unit-tested.
+- ✅ **Game-over shows the final score.** `GameSessionEnded.score` carries the
+  score on timeout/surrender; the game screen has a **Surrender** action and a
+  game-over view with Play Again / Home.
+- ✅ **Settings wired into gameplay.** An app-wide `SettingsCubit`
+  (`presentation/bloc/settings_cubit.dart`, provided above the router) holds the
+  city-list selection and sound pref. The game route reads it at start:
+  city-list → `GameMode` (Ukraine-only → ukraine, else world). The countdown
+  always runs — per `game_design.md` §2 the timer is a fixed loss condition, so
+  there is no untimed toggle. Sound flag is held but not consumed (no audio yet).
+  **Persisted across launches** via `shared_preferences` (a `SettingsStore`
+  abstraction backs `SettingsCubit`; see `presentation/bloc/settings_store.dart`).
+  Cubit + persistence unit-tested.
+- ✅ **Display language is decoupled from game mode.** `GameMode` now selects only
+  the **dataset** (Ukraine-only vs World); the **display/matching language** is a
+  separate `AppLanguage` sourced from the app locale (`context.locale` →
+  `AppLanguage.fromCode`), so the World list can be played with Ukrainian names.
+  `CityRepository.getCityByName`/`availableFirstLetters` take an explicit
+  `isUkrainianLanguage` (names/first letters) distinct from `isUkraineMode`
+  (dataset); `StartSession`/`StartGameSessionUseCase` carry a `language`, stored on
+  `GameSession.language`, and the BLoC/use cases pick `nameUA/EN` + `firstLetterUA/EN`
+  by language, not mode. Fixes the bug where World mode always showed English names.
+  (Regression-tested at the use-case level: "World dataset played in Ukrainian".)
+- ✅ **CityBot is the game loop (Player vs. CityBot).** `game_design.md` §2's
+  main-and-only mode is implemented. `GetBotCityUseCase`
+  (`domain/usecases/get_bot_city_usecase*.dart`, `@LazySingleton`) returns a
+  `BotMove` (`domain/game/bot_move.dart`: the chosen `City` + the letter the player
+  must then answer), picking a **random** unused city that satisfies the letter rule
+  via the same `LetterRule` backtracking as validation (the `Random` is injectable
+  so tests seed it; games stay varied). `GameSessionBloc` models the
+  opponent turn as a **discrete `BotTurn` event** it dispatches to itself: CityBot
+  opens the game, and each accepted player answer triggers a `BotTurn` reply, so the
+  loop is bot-open → player-answer → bot-reply → … The used-city set is **shared**
+  (the next answer's letter rule checks `_lastCityName`, the last city named by
+  *either* side), the **timer resets each player turn** (`_turnDuration`), and an
+  exhausted pool (bot returns `null`) ends the round (endurance framing — no
+  "beat the bot" win). Chat history is now `List<ChatMessage>` (`{text, isBot}`),
+  rendered as left (bot) / right (player) bubbles. Keeping `BotTurn` discrete is the
+  seam for future PvP (swap `BotTurn` → a network turn). Fully unit-tested (bot
+  opening, shared-chain reply, rejection-no-reply, exhausted-pool end).
+- ✅ **Statistics screen built** (`presentation/pages/statistics_screen.dart`,
+  route `/statistics`, reached from a bar-chart icon on the home top bar). Reads
+  persisted `UserStats` via `GetUserStatsUseCase`: a summary row (cities found /
+  longest streak / games played), per-mode high scores, and the recent-session
+  history (mode chip + unique cities + score). Not shown yet: "most used cities"
+  (needs city-id→name resolution — no `getCityById`), per-country/percent bars,
+  and favorite country (the stats fold doesn't populate `usedCitiesPercent` /
+  `favoriteCountry`).
+- **Other design vs. code deltas (design is richer — kept to MVP):** **Play Online**
+  (multiplayer — roadmap, not MVP) and full **Win/Lose** screens (not yet built;
+  simplified to one game-over view), a **3rd language (Español)** (app is UA/EN
+  only), and **city-list multi-select** (domain models a single `GameMode`, so
+  "both" currently plays World). Leaderboard data is a **UI-only stub** (not
+  fetched). *(Settings prefs now persist across launches via `shared_preferences`
+  — the old "not persisted" gap is closed.)*
+
 ### Not yet wired (expected at this stage)
 
-`go_router`, `easy_localization`, `google_mobile_ads`, `supabase_flutter` are
-declared but unintegrated; `main.dart` uses a plain
-`MaterialApp(home: GameSessionScreen())`. `user_profile_bloc` /
-`user_stats_bloc` are empty stubs.
+`google_mobile_ads` and `supabase_flutter` are declared but unintegrated (ads,
+global leaderboard). `user_profile_bloc` / `user_stats_bloc` are empty stubs
+(the game reads lifetime stats directly through `GetUserStatsUseCase`, so these
+BLoCs aren't needed yet). Lifetime `UserStats` now persists via
+`UserStatsRepositoryImpl` and the absolute-new-city bonus is live; the
+**Statistics screen** reads it. The remaining stats gaps are richer metrics
+(most-used cities, per-country/percent, favorite country) and session duration.

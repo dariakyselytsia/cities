@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../core/failure.dart';
 import '../core/result.dart';
+import '../game/app_language.dart';
 import '../game/game_mode.dart';
 import '../game/letter_rule.dart';
 import '../repositories/city_repository.dart';
@@ -24,18 +25,23 @@ class UseHintUseCaseImpl implements UseHintUseCase {
   @override
   Future<Result<String?>> call({
     required GameMode mode,
+    required AppLanguage language,
     required List<int> usedCityIds,
     required String previousCity,
   }) async {
-    final isUkraine = mode.isUkraine;
+    // Dataset by [mode]; names/first letters by [language].
+    final isUA = language.isUkrainian;
     try {
-      final cities = await cityRepository.loadCities(isUkraineMode: isUkraine);
+      final cities = await cityRepository.loadCities(
+        isUkraineMode: mode.isUkraine,
+      );
       final used = usedCityIds.toSet();
 
       String? requiredLetter;
       if (previousCity.trim().isNotEmpty) {
         final available = await cityRepository.availableFirstLetters(
-          isUkraineMode: isUkraine,
+          isUkraineMode: mode.isUkraine,
+          isUkrainianLanguage: isUA,
         );
         requiredLetter = LetterRule.requiredNextLetter(previousCity, available);
         // Previous city is a dead end — no valid hint exists.
@@ -45,9 +51,9 @@ class UseHintUseCaseImpl implements UseHintUseCase {
       for (final city in cities) {
         if (used.contains(city.id)) continue;
         final firstLetter =
-            (isUkraine ? city.firstLetterUA : city.firstLetterEN).toLowerCase();
+            (isUA ? city.firstLetterUA : city.firstLetterEN).toLowerCase();
         if (requiredLetter == null || firstLetter == requiredLetter) {
-          return Result.success(isUkraine ? city.nameUA : city.nameEN);
+          return Result.success(isUA ? city.nameUA : city.nameEN);
         }
       }
       return const Result.success(null);
