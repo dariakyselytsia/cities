@@ -52,5 +52,17 @@
     "friends": "Friends",
     "you": "You",
     "footer_top": "you're #1 this week, keep it up!"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "cities_discovered": "cities found",
+    "longest_streak": "longest streak",
+    "games_played": "games played",
+    "high_scores": "High scores",
+    "ukraine": "Ukraine",
+    "world": "World",
+    "recent_sessions": "Recent games",
+    "no_sessions": "No games yet — play a round to see your stats here.",
+    "cities_count": "{} cities"
   }
 }

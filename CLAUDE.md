@@ -322,13 +322,21 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   rendered as left (bot) / right (player) bubbles. Keeping `BotTurn` discrete is the
   seam for future PvP (swap `BotTurn` → a network turn). Fully unit-tested (bot
   opening, shared-chain reply, rejection-no-reply, exhausted-pool end).
+- ✅ **Statistics screen built** (`presentation/pages/statistics_screen.dart`,
+  route `/statistics`, reached from a bar-chart icon on the home top bar). Reads
+  persisted `UserStats` via `GetUserStatsUseCase`: a summary row (cities found /
+  longest streak / games played), per-mode high scores, and the recent-session
+  history (mode chip + unique cities + score). Not shown yet: "most used cities"
+  (needs city-id→name resolution — no `getCityById`), per-country/percent bars,
+  and favorite country (the stats fold doesn't populate `usedCitiesPercent` /
+  `favoriteCountry`).
 - **Other design vs. code deltas (design is richer — kept to MVP):** **Play Online**
-  (multiplayer — roadmap, not MVP), a **Statistics** screen and full **Win/Lose**
-  screens (not yet built; simplified to one game-over view), a **3rd language
-  (Español)** (app is UA/EN only), and **city-list multi-select** (domain models a
-  single `GameMode`, so "both" currently plays World). Leaderboard data is a
-  **UI-only stub** (not fetched). *(Settings prefs now persist across launches via
-  `shared_preferences` — the old "not persisted" gap is closed.)*
+  (multiplayer — roadmap, not MVP) and full **Win/Lose** screens (not yet built;
+  simplified to one game-over view), a **3rd language (Español)** (app is UA/EN
+  only), and **city-list multi-select** (domain models a single `GameMode`, so
+  "both" currently plays World). Leaderboard data is a **UI-only stub** (not
+  fetched). *(Settings prefs now persist across launches via `shared_preferences`
+  — the old "not persisted" gap is closed.)*
 
 ### Not yet wired (expected at this stage)
 
@@ -336,6 +344,6 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 global leaderboard). `user_profile_bloc` / `user_stats_bloc` are empty stubs
 (the game reads lifetime stats directly through `GetUserStatsUseCase`, so these
 BLoCs aren't needed yet). Lifetime `UserStats` now persists via
-`UserStatsRepositoryImpl` and the absolute-new-city bonus is live — the
-remaining stats gaps are a dedicated **Statistics screen** and richer
-per-country/percent metrics.
+`UserStatsRepositoryImpl` and the absolute-new-city bonus is live; the
+**Statistics screen** reads it. The remaining stats gaps are richer metrics
+(most-used cities, per-country/percent, favorite country) and session duration.

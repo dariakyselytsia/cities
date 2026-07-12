@@ -8,6 +8,7 @@ import '../presentation/pages/game_session_screen.dart';
 import '../presentation/pages/home_screen.dart';
 import '../presentation/pages/settings_screen.dart';
 import '../presentation/pages/leaderboard_screen.dart';
+import '../presentation/pages/statistics_screen.dart';
 
 /// Named route paths for the app's four screens (see game_design.md §3).
 abstract final class Routes {
@@ -15,6 +16,7 @@ abstract final class Routes {
   static const settings = '/settings';
   static const game = '/game';
   static const leaderboard = '/leaderboard';
+  static const statistics = '/statistics';
 }
 
 /// Builds a fresh [GameSessionBloc] from DI-resolved use cases. A new instance
@@ -46,6 +48,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: Routes.leaderboard,
       builder: (context, state) => const LeaderboardScreen(),
+    ),
+    GoRoute(
+      path: Routes.statistics,
+      builder: (context, state) => const StatisticsScreen(),
     ),
     GoRoute(
       path: Routes.game,

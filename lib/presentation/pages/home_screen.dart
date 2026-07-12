@@ -43,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       _RoundIconButton(
+                        icon: Icons.bar_chart_rounded,
+                        tooltip: 'statistics.title'.tr(),
+                        onTap: () => context.push(Routes.statistics),
+                      ),
+                      const SizedBox(width: 8),
+                      _RoundIconButton(
                         icon: Icons.leaderboard_rounded,
                         tooltip: 'home.leaderboard'.tr(),
                         onTap: () => context.push(Routes.leaderboard),

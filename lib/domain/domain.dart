@@ -9,6 +9,7 @@ export 'game/validation_outcome.dart';
 export 'game/bot_move.dart';
 export 'entities/user.dart';
 export 'entities/user_stats.dart';
+export 'entities/game_session_summary.dart';
 export 'repositories/game_session_repository.dart';
 export 'repositories/city_repository.dart';
 export 'repositories/user_stats_repository.dart';

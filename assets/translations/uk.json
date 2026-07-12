@@ -52,5 +52,17 @@
     "friends": "Друзі",
     "you": "Ви",
     "footer_top": "ви #1 цього тижня, так тримати!"
+  },
+  "statistics": {
+    "title": "Статистика",
+    "cities_discovered": "відкрито міст",
+    "longest_streak": "найдовша серія",
+    "games_played": "зіграно ігор",
+    "high_scores": "Рекорди",
+    "ukraine": "Україна",
+    "world": "Світ",
+    "recent_sessions": "Останні ігри",
+    "no_sessions": "Ще немає ігор — зіграйте раунд, щоб побачити статистику.",
+    "cities_count": "{} міст"
   }
 }
