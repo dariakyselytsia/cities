@@ -273,8 +273,22 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 - ✅ **Four screens styled to the design:** Home (hero + coral/teal glow CTAs),
   Settings (language radios [live], city-list checks, gameplay toggles),
   Leaderboard (Weekly/Global/Friends pills, podium, list), and the **Game chat
-  screen** (right-aligned coral city bubbles, timer badge, score, hint chip,
-  rejection banner, input bar). The game route auto-starts a Ukraine session.
+  screen** (right-aligned coral city bubbles with a purple first-letter accent,
+  timer badge, score/streak pills, rejection banner, input bar). The game route
+  auto-starts a Ukraine session. **Hint auto-plays:** tapping the hint button no
+  longer shows a suggestion chip — the screen types the suggested city into the
+  input and submits it for the player (the `UseHint` → `_lastHint` state is
+  consumed by a `BlocConsumer.listener` that fills+sends it once). **Turn cue is
+  player-only:** `_requiredLetter` is cleared while CityBot moves and set again
+  only on its reply, so the "your turn → start with «X»" banner shows the letter
+  only on the player's turn; during the bot's move the banner reads "CityBot's
+  turn…" with no letter.
+- ✅ **Home lifetime-stats card refreshes on return & links to Statistics.**
+  Home is `RouteAware` via `appRouteObserver` (a `RouteObserver` on the
+  `GoRouter`); `didPopNext` reloads `GetUserStatsUseCase` whenever Home is
+  returned to (after a game / the stats screen), so best-streak & cities-played
+  reflect the just-recorded session. The card is wrapped in a `GestureDetector`
+  → pushes `/statistics`.
 - ✅ **BLoC exposes chat history.** `GameSessionInProgress.history` (`List<String>`
   of accepted city names, session-language) accumulates in the BLoC; preserved
   across a revive, cleared on start. Test updated.

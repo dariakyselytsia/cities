@@ -407,7 +407,11 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
           _lastCityName = name;
           _playerCityIds.add(city.id); // recorded into lifetime stats at end
           _history.add(ChatMessage(text: name, isBot: false));
-          _requiredLetter = value.nextLetter;
+          // It's CityBot's turn next, so clear the player's letter cue — the
+          // next required letter is shown only when the turn returns to the
+          // player (set in [_onBotTurn]). value.nextLetter (the bot's letter) is
+          // intentionally not surfaced.
+          _requiredLetter = null;
           _emitInProgress(emit); // show the player's accepted bubble…
           add(const BotTurn()); // …then CityBot replies.
         } else {

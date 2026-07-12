@@ -37,6 +37,7 @@
     "your_turn": "Your turn",
     "start_with": "start with",
     "opening": "Name any city to begin",
+    "bot_turn": "CityBot's turn…",
     "not_found": "No such city — try again",
     "wrong_letter": "Wrong starting letter",
     "already_used": "Already used — try another city",

@@ -18,12 +18,37 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  /// Lifetime stats for the card. Fetched once per screen entry (a fresh
-  /// HomeScreen is built when returning from a finished game), so the numbers
-  /// pick up the just-recorded session without flickering on unrelated rebuilds.
-  late final Future<Result<UserStats>> _statsFuture =
-      getIt<GetUserStatsUseCase>()();
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  /// Lifetime stats for the card. Re-fetched whenever Home is returned to (via
+  /// [didPopNext]) so the numbers reflect the just-recorded session, without
+  /// flickering on unrelated rebuilds.
+  Future<Result<UserStats>> _statsFuture = getIt<GetUserStatsUseCase>()();
+
+  /// Reloads the lifetime stats and rebuilds the card.
+  void _refreshStats() =>
+      setState(() => _statsFuture = getIt<GetUserStatsUseCase>()());
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Returned to Home from a pushed route (e.g. a finished game or the stats
+    // screen) — reload the lifetime stats so the card is current.
+    _refreshStats();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,20 +105,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  FutureBuilder<Result<UserStats>>(
-                    future: _statsFuture,
-                    builder: (context, snapshot) {
-                      // Show 0 while loading or if the read failed — never crash
-                      // the home screen on a stats miss.
-                      final stats = switch (snapshot.data) {
-                        Success(:final value) => value,
-                        _ => null,
-                      };
-                      return _StatCard(
-                        bestStreak: stats?.longestStreak ?? 0,
-                        citiesPlayed: stats?.usedCityIds.length ?? 0,
-                      );
-                    },
+                  // Tapping the summary card opens the full Statistics screen.
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => context.push(Routes.statistics),
+                    child: FutureBuilder<Result<UserStats>>(
+                      future: _statsFuture,
+                      builder: (context, snapshot) {
+                        // Show 0 while loading or if the read failed — never
+                        // crash the home screen on a stats miss.
+                        final stats = switch (snapshot.data) {
+                          Success(:final value) => value,
+                          _ => null,
+                        };
+                        return _StatCard(
+                          bestStreak: stats?.longestStreak ?? 0,
+                          citiesPlayed: stats?.usedCityIds.length ?? 0,
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(height: 28),
                   _HomeCta(

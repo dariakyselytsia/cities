@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +10,12 @@ import '../presentation/pages/home_screen.dart';
 import '../presentation/pages/settings_screen.dart';
 import '../presentation/pages/leaderboard_screen.dart';
 import '../presentation/pages/statistics_screen.dart';
+
+/// Observes route pushes/pops so a screen can refresh when it's returned to.
+/// HomeScreen subscribes to it (`didPopNext`) to reload its lifetime-stats card
+/// after a game or the statistics screen is popped.
+final RouteObserver<PageRoute<dynamic>> appRouteObserver =
+    RouteObserver<PageRoute<dynamic>>();
 
 /// Named route paths for the app's four screens (see game_design.md §3).
 abstract final class Routes {
@@ -36,6 +43,7 @@ GameSessionBloc _buildGameSessionBloc() => GameSessionBloc(
 /// entry and disposed on exit.
 final GoRouter appRouter = GoRouter(
   initialLocation: Routes.home,
+  observers: [appRouteObserver],
   routes: [
     GoRoute(
       path: Routes.home,

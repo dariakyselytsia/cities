@@ -9,6 +9,18 @@ import '../../core/theme.dart';
 import '../bloc/game_session_bloc.dart';
 import '../bloc/settings_cubit.dart';
 
+/// Leaves the game back to Home. Pops when the game was pushed (so Home's
+/// `await push(...)` resolves and its stats card refreshes with the just-played
+/// session); falls back to a direct navigation if there's nothing to pop (e.g.
+/// deep-linked straight into a game).
+void _leaveToHome(BuildContext context) {
+  if (context.canPop()) {
+    context.pop();
+  } else {
+    context.go(Routes.home);
+  }
+}
+
 /// Game screen — a chat-style history of named cities with a fixed input,
 /// timer, and score (game_design.md §3). Styled to the shared design.
 class GameSessionScreen extends StatefulWidget {
@@ -27,6 +39,10 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   /// locale via `context.locale`, an inherited-widget lookup that isn't allowed
   /// during initState.
   bool _started = false;
+
+  /// The last hint we auto-played, so a fresh hint suggestion is played exactly
+  /// once (the state carrying it is re-emitted on every timer tick).
+  String? _lastAutoHint;
 
   @override
   void didChangeDependencies() {
@@ -68,8 +84,18 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
       body: SafeArea(
         child: BlocConsumer<GameSessionBloc, GameSessionState>(
           listener: (context, state) {
-            if (state is GameSessionInProgress &&
-                _scrollController.hasClients) {
+            if (state is! GameSessionInProgress) return;
+            // A hint isn't shown to the player — it's typed into the input and
+            // sent on their behalf. Play each fresh suggestion once.
+            final hint = state.hint;
+            if (hint != null && hint != _lastAutoHint) {
+              _lastAutoHint = hint;
+              _controller.text = hint;
+              _submit();
+            } else if (hint == null) {
+              _lastAutoHint = null;
+            }
+            if (_scrollController.hasClients) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (_scrollController.hasClients) {
                   _scrollController.animateTo(
@@ -114,7 +140,6 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
           ),
         ),
         _StatPills(streak: streak, score: state.session.score),
-        if (state.hint != null) _HintChip(city: state.hint!),
         Expanded(
           child: state.history.isEmpty
               ? const SizedBox.expand()
@@ -172,7 +197,7 @@ class _GameHeader extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => context.go(Routes.home),
+            onPressed: () => _leaveToHome(context),
           ),
           // CityBot identity: teal avatar + name and live score.
           Container(
@@ -310,30 +335,37 @@ class _TurnBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = requiredLetter == null
-        ? 'game.opening'.tr()
-        : '${'game.your_turn'.tr()} → ${'game.start_with'.tr()} «$requiredLetter»';
+    // requiredLetter is set only on the player's turn (cleared while CityBot
+    // moves), so a null value means it's CityBot's turn — no letter cue then.
+    final isPlayerTurn = requiredLetter != null;
+    final text = isPlayerTurn
+        ? '${'game.your_turn'.tr()} → ${'game.start_with'.tr()} «$requiredLetter»'
+        : 'game.bot_turn'.tr();
+    final color = isPlayerTurn ? AppColors.coral : AppColors.inkSoft;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(20, 4, 20, 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.coral.withValues(alpha: 0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.play_arrow_rounded, size: 18, color: AppColors.coral),
+          Icon(
+            isPlayerTurn
+                ? Icons.play_arrow_rounded
+                : Icons.smart_toy_rounded,
+            size: 18,
+            color: color,
+          ),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: AppColors.coral,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w700, color: color),
             ),
           ),
         ],
@@ -397,7 +429,7 @@ class _CityBubble extends StatelessWidget {
           message.text,
           baseColor: isBot ? AppColors.ink : Colors.white,
           // The chain letter — accented so the player can read the flow.
-          accentColor: isBot ? AppColors.coral : AppColors.green,
+          accentColor: isBot ? AppColors.coral : AppColors.purple,
         ),
       ),
     );
@@ -426,33 +458,6 @@ class _CityBubble extends StatelessWidget {
             ),
           ),
           TextSpan(text: text.characters.skip(1).toString()),
-        ],
-      ),
-    );
-  }
-}
-
-class _HintChip extends StatelessWidget {
-  final String city;
-  const _HintChip({required this.city});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.yellow,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.lightbulb_rounded, size: 18, color: AppColors.ink),
-          const SizedBox(width: 8),
-          Text(
-            '${'game.hint'.tr()}: $city',
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
         ],
       ),
     );
@@ -575,7 +580,7 @@ class _GameOverView extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             OutlinedButton(
-              onPressed: () => context.go(Routes.home),
+              onPressed: () => _leaveToHome(context),
               child: Text('game.home'.tr()),
             ),
           ],
