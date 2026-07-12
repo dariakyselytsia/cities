@@ -118,6 +118,10 @@ class GameSessionInProgress extends GameSessionState {
   final GameSession session;
   final int timerSeconds;
 
+  /// The player's persisted lifetime best for this session's mode, shown under
+  /// CityBot's name. 0 until any session has been recorded.
+  final int highScore;
+
   /// The volley of cities named this session, in play order — the chat history
   /// the game screen renders (player and CityBot bubbles).
   final List<ChatMessage> history;
@@ -137,6 +141,7 @@ class GameSessionInProgress extends GameSessionState {
   const GameSessionInProgress({
     required this.session,
     required this.timerSeconds,
+    this.highScore = 0,
     this.history = const [],
     this.requiredLetter,
     this.lastOutcome,
@@ -147,8 +152,15 @@ class GameSessionInProgress extends GameSessionState {
   bool get lastAnswerCorrect => lastOutcome?.isAccepted ?? false;
 
   @override
-  List<Object?> get props =>
-      [session, timerSeconds, history, requiredLetter, lastOutcome, hint];
+  List<Object?> get props => [
+    session,
+    timerSeconds,
+    highScore,
+    history,
+    requiredLetter,
+    lastOutcome,
+    hint,
+  ];
 }
 
 /// State when session is revived
@@ -191,8 +203,25 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   final UseHintUseCase useHintUseCase;
   final ReviveSessionUseCase reviveSessionUseCase;
   final EndGameSessionUseCase endGameSessionUseCase;
+  final GetUserStatsUseCase getUserStatsUseCase;
+  final RecordSessionResultUseCase recordSessionResultUseCase;
 
   GameSession? _currentSession;
+
+  /// Snapshot of the player's lifetime used-city ids, loaded once at session
+  /// start. Passed into validation to award the absolute-new-city bonus (a city
+  /// absent from this set is "new to the player"). Null when lifetime history
+  /// couldn't be loaded — the bonus stays off rather than being over-awarded.
+  Set<int>? _historicCityIds;
+
+  /// The player's lifetime best for the current session's mode (shown in the
+  /// header). Loaded at session start; 0 when nothing is persisted yet.
+  int _historicHighScore = 0;
+
+  /// Ids of the cities the *player* has named this session (excludes CityBot's).
+  /// Recorded into lifetime stats when the session ends; its length is the
+  /// session streak.
+  final List<int> _playerCityIds = [];
 
   /// Seconds remaining in the current player turn.
   int _timerSeconds = 0;
@@ -228,6 +257,8 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     required this.useHintUseCase,
     required this.reviveSessionUseCase,
     required this.endGameSessionUseCase,
+    required this.getUserStatsUseCase,
+    required this.recordSessionResultUseCase,
   }) : super(GameSessionInitial()) {
     on<StartSession>(_onStartSession);
     on<ValidateAnswer>(_onValidateAnswer);
@@ -263,10 +294,27 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _lastHint = null;
         _requiredLetter = null;
         _history.clear();
+        _playerCityIds.clear();
+        await _loadLifetimeStats(value.mode);
         // CityBot opens the game; that emission shows the first board.
         add(const BotTurn());
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
+    }
+  }
+
+  /// Loads the player's lifetime stats to seed the absolute-new-city bonus and
+  /// the header's best-score, for the [mode] being played. A failure here is
+  /// non-fatal: the game still runs, just without the bonus (history stays null)
+  /// and with a 0 best.
+  Future<void> _loadLifetimeStats(GameMode mode) async {
+    _historicCityIds = null;
+    _historicHighScore = 0;
+    final result = await _guard(() => getUserStatsUseCase());
+    if (result case Success(:final value)) {
+      _historicCityIds = value.usedCityIds.toSet();
+      _historicHighScore =
+          mode.isUkraine ? value.highScoreUA : value.highScoreWorld;
     }
   }
 
@@ -291,7 +339,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       case Success(:final value):
         if (value == null) {
           // CityBot has no valid city (exhausted pool) — the round ends.
-          emit(GameSessionEnded(score: session.score));
+          await _finishSession(emit);
           return;
         }
         final city = value.city;
@@ -335,6 +383,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         mode: session.mode,
         language: session.language,
         usedCityIds: session.usedCityIds,
+        historicUsedCityIds: _historicCityIds,
       ),
     );
     switch (result) {
@@ -356,6 +405,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
           // Store the canonical city name so the letter chain and chat use the
           // dataset spelling, not the player's raw input.
           _lastCityName = name;
+          _playerCityIds.add(city.id); // recorded into lifetime stats at end
           _history.add(ChatMessage(text: name, isBot: false));
           _requiredLetter = value.nextLetter;
           _emitInProgress(emit); // show the player's accepted bubble…
@@ -429,7 +479,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     );
     switch (result) {
       case Success():
-        emit(GameSessionEnded(score: _currentSession?.score ?? 0));
+        await _finishSession(emit);
       case ResultFailure(:final failure):
         emit(GameSessionFailure(failure));
     }
@@ -443,7 +493,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     _timerSeconds = event.secondsLeft;
     if (_timerSeconds <= 0) {
       await _cancelTimer();
-      emit(GameSessionEnded(score: _currentSession?.score ?? 0));
+      await _finishSession(emit);
     } else if (_currentSession != null) {
       // Preserve the last verdict/hint across ticks — the board is unchanged.
       _emitInProgress(emit);
@@ -469,6 +519,29 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
     _timerSub = null;
   }
 
+  /// Ends the round: records this session into lifetime stats (best-effort — a
+  /// persistence failure must not block the game-over screen), then emits
+  /// [GameSessionEnded] with the final score. All three end paths (timeout,
+  /// surrender, exhausted pool) funnel through here.
+  Future<void> _finishSession(Emitter<GameSessionState> emit) async {
+    final session = _currentSession;
+    final score = session?.score ?? 0;
+    if (session != null) {
+      await _guard(
+        () => recordSessionResultUseCase(
+          sessionId: session.id,
+          mode: session.mode,
+          score: score,
+          playerCityIds: List<int>.of(_playerCityIds),
+          // Total session duration isn't tracked yet (only the per-turn timer);
+          // recorded as 0 until an elapsed-time counter is wired.
+          durationSeconds: 0,
+        ),
+      );
+    }
+    emit(GameSessionEnded(score: score));
+  }
+
   /// Emits the current board state from the BLoC's own fields, so every
   /// in-progress emission (answer, bot turn, hint, timer tick) is built the same
   /// way and carries the latest verdict/hint. No-op if there is no active
@@ -480,6 +553,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
       GameSessionInProgress(
         session: session,
         timerSeconds: _timerSeconds,
+        highScore: _historicHighScore,
         history: List<ChatMessage>.of(_history),
         requiredLetter: _requiredLetter,
         lastOutcome: _lastOutcome,

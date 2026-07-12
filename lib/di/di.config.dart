@@ -28,6 +28,13 @@ import 'package:cities/domain/usecases/end_game_session_usecase_impl.dart'
     as _i388;
 import 'package:cities/domain/usecases/get_bot_city_usecase.dart' as _i154;
 import 'package:cities/domain/usecases/get_bot_city_usecase_impl.dart' as _i862;
+import 'package:cities/domain/usecases/get_user_stats_usecase.dart' as _i154;
+import 'package:cities/domain/usecases/get_user_stats_usecase_impl.dart'
+    as _i577;
+import 'package:cities/domain/usecases/record_session_result_usecase.dart'
+    as _i285;
+import 'package:cities/domain/usecases/record_session_result_usecase_impl.dart'
+    as _i579;
 import 'package:cities/domain/usecases/revive_session_usecase.dart' as _i399;
 import 'package:cities/domain/usecases/revive_session_usecase_impl.dart'
     as _i193;
@@ -53,11 +60,11 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
-    gh.factory<_i407.Random>(() => registerModule.random);
     await gh.factoryAsync<_i214.Isar>(
       () => registerModule.isar,
       preResolve: true,
     );
+    gh.lazySingleton<_i407.Random>(() => registerModule.random);
     gh.lazySingleton<_i255.GameSessionRepository>(
       () => _i303.GameSessionRepositoryImpl(gh<_i214.Isar>()),
     );
@@ -66,6 +73,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i385.CityRepository>(
       () => _i840.CityRepositoryImpl(gh<_i214.Isar>()),
+    );
+    gh.lazySingleton<_i285.RecordSessionResultUseCase>(
+      () =>
+          _i579.RecordSessionResultUseCaseImpl(gh<_i562.UserStatsRepository>()),
     );
     gh.lazySingleton<_i408.UserRepository>(
       () => _i616.UserRepositoryImpl(gh<_i214.Isar>()),
@@ -93,6 +104,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i385.CityRepository>(),
         gh<_i255.GameSessionRepository>(),
       ),
+    );
+    gh.lazySingleton<_i154.GetUserStatsUseCase>(
+      () => _i577.GetUserStatsUseCaseImpl(gh<_i562.UserStatsRepository>()),
     );
     return this;
   }

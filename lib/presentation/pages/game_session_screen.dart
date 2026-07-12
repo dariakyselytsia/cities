@@ -107,8 +107,8 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
       children: [
         _GameHeader(
           seconds: state.timerSeconds,
-          // Lifetime best is not persisted yet (UserStats unwired) → 0.
-          highscore: 0,
+          // Lifetime best for this mode, from persisted UserStats.
+          highscore: state.highScore,
           onSurrender: () => context.read<GameSessionBloc>().add(
             EndSession(sessionId: state.session.id),
           ),
@@ -201,7 +201,7 @@ class _GameHeader extends StatelessWidget {
                 'game.citybot'.tr(),
                 style: baloo(size: 17, weight: FontWeight.w700),
               ),
-              // Lifetime best. Placeholder until UserStats persistence is wired.
+              // Lifetime best for this mode (persisted UserStats).
               Text(
                 '${'game.highscore'.tr()} $highscore',
                 style: const TextStyle(color: AppColors.inkSoft, fontSize: 12),

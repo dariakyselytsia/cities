@@ -3,13 +3,15 @@ import 'package:injectable/injectable.dart';
 import '../models/user_stats_model.dart';
 
 import '../../domain/entities/user_stats.dart';
-import '../../domain/entities/game_session.dart';
-import '../../domain/entities/city.dart';
 import '../../domain/repositories/user_stats_repository.dart';
 
-/// Implementation of UserStatsRepository using Isar for local storage.
+/// Implementation of UserStatsRepository using Isar for local storage. The
+/// single lifetime-stats row is stored under the fixed Isar id `0`.
 @LazySingleton(as: UserStatsRepository)
 class UserStatsRepositoryImpl implements UserStatsRepository {
+  /// The fixed Isar id of the singleton stats row (there is one player).
+  static const int _statsId = 0;
+
   final Isar isar;
   UserStatsRepositoryImpl(this.isar);
 
@@ -18,7 +20,7 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
 
   @override
   Future<void> saveUserStats(UserStats stats) async {
-    final model = UserStatsModel.fromDomain(stats);
+    final model = UserStatsModel.fromDomain(stats)..id = _statsId;
     await isar.writeTxn(() async {
       await userStatsModels.put(model);
     });
@@ -26,11 +28,11 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
 
   @override
   Future<UserStats> getUserStats() async {
-    final stats = await userStatsModels.get(0);
+    final stats = await userStatsModels.get(_statsId);
     if (stats != null) {
       return stats.toDomain();
     }
-    // Return default if not found
+    // No stats saved yet — return an empty baseline.
     return const UserStats(
       highScoreUA: 0,
       highScoreWorld: 0,
@@ -42,15 +44,5 @@ class UserStatsRepositoryImpl implements UserStatsRepository {
       longestStreak: 0,
       sessionHistory: [],
     );
-  }
-
-  @override
-  Future<UserStats> recalculateStatistics({
-    required GameSession session,
-    required UserStats previousStats,
-    required List<City> allCities,
-  }) async {
-    // TODO: Implement statistics recalculation logic
-    return previousStats;
   }
 }

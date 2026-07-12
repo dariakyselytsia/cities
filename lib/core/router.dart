@@ -26,6 +26,8 @@ GameSessionBloc _buildGameSessionBloc() => GameSessionBloc(
   useHintUseCase: getIt<UseHintUseCase>(),
   reviveSessionUseCase: getIt<ReviveSessionUseCase>(),
   endGameSessionUseCase: getIt<EndGameSessionUseCase>(),
+  getUserStatsUseCase: getIt<GetUserStatsUseCase>(),
+  recordSessionResultUseCase: getIt<RecordSessionResultUseCase>(),
 );
 
 /// Central app router. The game route scopes its BLoC so it is created on

@@ -20,6 +20,25 @@ class MockReviveSessionUseCase extends Mock implements ReviveSessionUseCase {}
 
 class MockEndGameSessionUseCase extends Mock implements EndGameSessionUseCase {}
 
+class MockGetUserStatsUseCase extends Mock implements GetUserStatsUseCase {}
+
+class MockRecordSessionResultUseCase extends Mock
+    implements RecordSessionResultUseCase {}
+
+/// Empty lifetime stats — the default the stats use cases return in these tests
+/// (no persisted history), so scoring/streak assertions stay deterministic.
+const _emptyStats = UserStats(
+  highScoreUA: 0,
+  highScoreWorld: 0,
+  usedCityIds: [],
+  cityUsageCount: {},
+  highScores: {},
+  usedCitiesPercent: {},
+  favoriteCountry: '',
+  longestStreak: 0,
+  sessionHistory: [],
+);
+
 void main() {
   group('GameSessionBloc', () {
     late MockStartGameSessionUseCase startGameSessionUseCase;
@@ -28,6 +47,8 @@ void main() {
     late MockUseHintUseCase useHintUseCase;
     late MockReviveSessionUseCase reviveSessionUseCase;
     late MockEndGameSessionUseCase endGameSessionUseCase;
+    late MockGetUserStatsUseCase getUserStatsUseCase;
+    late MockRecordSessionResultUseCase recordSessionResultUseCase;
     late GameSessionBloc bloc;
 
     // Bot returns are popped in order per call; defaults to "no city" (null)
@@ -47,6 +68,22 @@ void main() {
       useHintUseCase = MockUseHintUseCase();
       reviveSessionUseCase = MockReviveSessionUseCase();
       endGameSessionUseCase = MockEndGameSessionUseCase();
+      getUserStatsUseCase = MockGetUserStatsUseCase();
+      recordSessionResultUseCase = MockRecordSessionResultUseCase();
+      // Default: no persisted stats, and recording succeeds — individual tests
+      // don't care about lifetime stats, only that the game loop is unaffected.
+      when(
+        () => getUserStatsUseCase(),
+      ).thenAnswer((_) async => const Success(_emptyStats));
+      when(
+        () => recordSessionResultUseCase(
+          sessionId: any(named: 'sessionId'),
+          mode: any(named: 'mode'),
+          score: any(named: 'score'),
+          playerCityIds: any(named: 'playerCityIds'),
+          durationSeconds: any(named: 'durationSeconds'),
+        ),
+      ).thenAnswer((_) async => const Success(_emptyStats));
       botReturns = [];
       when(
         () => getBotCityUseCase(
@@ -67,6 +104,8 @@ void main() {
         useHintUseCase: useHintUseCase,
         reviveSessionUseCase: reviveSessionUseCase,
         endGameSessionUseCase: endGameSessionUseCase,
+        getUserStatsUseCase: getUserStatsUseCase,
+        recordSessionResultUseCase: recordSessionResultUseCase,
       );
     });
 

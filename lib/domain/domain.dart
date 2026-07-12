@@ -19,3 +19,5 @@ export 'usecases/use_hint_usecase.dart';
 export 'usecases/get_bot_city_usecase.dart';
 export 'usecases/revive_session_usecase.dart';
 export 'usecases/end_game_session_usecase.dart';
+export 'usecases/get_user_stats_usecase.dart';
+export 'usecases/record_session_result_usecase.dart';

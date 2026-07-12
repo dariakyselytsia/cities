@@ -2,15 +2,28 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:cities/domain/domain.dart';
 import '../../core/router.dart';
 import '../../core/theme.dart';
+import '../../di/di.dart';
 
 /// Home screen (game_design.md §3), styled to the shared design: decorative
 /// hero art, the CITIES wordmark + tagline, a lifetime-stats card, and the two
 /// primary CTAs — "Play vs Bot" (active) and "Play Online" (PvP, disabled until
 /// multiplayer ships).
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  /// Lifetime stats for the card. Fetched once per screen entry (a fresh
+  /// HomeScreen is built when returning from a finished game), so the numbers
+  /// pick up the just-recorded session without flickering on unrelated rebuilds.
+  late final Future<Result<UserStats>> _statsFuture =
+      getIt<GetUserStatsUseCase>()();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +74,21 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const _StatCard(bestStreak: 0, citiesPlayed: 0),
+                  FutureBuilder<Result<UserStats>>(
+                    future: _statsFuture,
+                    builder: (context, snapshot) {
+                      // Show 0 while loading or if the read failed — never crash
+                      // the home screen on a stats miss.
+                      final stats = switch (snapshot.data) {
+                        Success(:final value) => value,
+                        _ => null,
+                      };
+                      return _StatCard(
+                        bestStreak: stats?.longestStreak ?? 0,
+                        citiesPlayed: stats?.usedCityIds.length ?? 0,
+                      );
+                    },
+                  ),
                   const SizedBox(height: 28),
                   _HomeCta(
                     label: 'home.play_vs_bot'.tr(),
@@ -154,8 +181,8 @@ class _HeroArt extends StatelessWidget {
   );
 }
 
-/// A white card with two lifetime stats (best streak / cities played).
-/// Values are placeholders until UserStats persistence is wired.
+/// A white card with two lifetime stats (best streak / cities played), read
+/// from persisted [UserStats].
 class _StatCard extends StatelessWidget {
   final int bestStreak;
   final int citiesPlayed;

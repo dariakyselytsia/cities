@@ -186,10 +186,21 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
   the user, then saves the link, and `getUser` `.load()`s it before mapping.
   Round-trip mapping tests lock the conversion (incl. empty-map and
   independent-`UserStatsModel` cases). Remaining: `GameSessionSummary.mode` is
-  still a `String` (unwired stats path); a `UserStatsRepository` impl and the
-  end-of-session `recalculateStatistics` wiring are still stubs, so the
-  absolute-new-city bonus stays gated until the BLoC actually reads/writes
-  lifetime history.
+  still a `String` (a legacy token, not the `GameMode` enum).
+- ✅ **Lifetime stats are wired end-to-end.** Two new use cases drive it:
+  `GetUserStatsUseCase` (loads persisted `UserStats`) and
+  `RecordSessionResultUseCase` (a pure fold of a finished session into the stats
+  — merges the player's city ids into the lifetime used-set, bumps per-city
+  usage, keeps the per-mode/legacy high-score max, and the max streak — then
+  persists; unit-tested). `UserStatsRepositoryImpl` is a real singleton-row
+  (`id = 0`) store; the old `recalculateStatistics` repo stub is gone (fold logic
+  now lives in the use case). `GameSessionBloc` loads stats at start (seeding
+  `historicUsedCityIds` → the **absolute-new-city bonus is now live**, and the
+  header's lifetime best), records the session on every end path (timeout /
+  surrender / exhausted pool) via a `_finishSession` helper, and tracks the
+  player's own city ids for the streak. The home stat card (best streak / cities
+  played) and the game header's "Best" now read real persisted values, not `0`.
+  (Duration is still recorded as `0` — no elapsed-time counter yet.)
 - ✅ **Indexed queries replace full-table scans.** Added `@Index()` on
   `CityModel.nameUA/nameEN`, `GameSessionModel.sessionId`, `UserModel.userId`;
   the repos now use `where().<field>EqualTo(...).findFirst()` instead of
@@ -322,5 +333,9 @@ is to **improve, not rewrite**. Execute the roadmap below in priority order.
 ### Not yet wired (expected at this stage)
 
 `google_mobile_ads` and `supabase_flutter` are declared but unintegrated (ads,
-global leaderboard). `user_profile_bloc` / `user_stats_bloc` are empty stubs; no
-`UserStatsRepository` impl yet, so the absolute-new-city bonus stays gated.
+global leaderboard). `user_profile_bloc` / `user_stats_bloc` are empty stubs
+(the game reads lifetime stats directly through `GetUserStatsUseCase`, so these
+BLoCs aren't needed yet). Lifetime `UserStats` now persists via
+`UserStatsRepositoryImpl` and the absolute-new-city bonus is live — the
+remaining stats gaps are a dedicated **Statistics screen** and richer
+per-country/percent metrics.
