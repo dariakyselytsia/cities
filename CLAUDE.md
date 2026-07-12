@@ -126,6 +126,12 @@ dart run build_runner build --delete-conflicting-outputs # after DI / Isar / mod
    committing.
 5. Commit with **Conventional Commits** (`feat(game): add countdown timer bloc`,
    `fix(data): correct Isar index for firstLetter`).
+6. **Always end a unit of work with a wrap-up** for the user, containing exactly
+   three parts:
+   - **Commit message** — a ready-to-use Conventional Commit line (do not run
+     `git commit` unless asked; just provide the message).
+   - **Summary** — what changed and why, in a few bullets.
+   - **Proposed next steps** — the 1–3 highest-leverage follow-ups, ordered.
 
 ## Skills
 

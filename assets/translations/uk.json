@@ -3,7 +3,15 @@
   "home": {
     "play": "Грати",
     "leaderboard": "Таблиця лідерів",
-    "settings": "Налаштування"
+    "settings": "Налаштування",
+    "tagline": "пиши. з'єднуй. перемагай.",
+    "play_vs_bot": "Грати з ботом",
+    "play_vs_bot_sub": "На витривалість — побий свій рекорд",
+    "play_online": "Грати онлайн",
+    "play_online_sub": "Незабаром",
+    "how_to_play": "як грати",
+    "best_streak": "найкраща серія",
+    "cities_played": "зіграно міст"
   },
   "settings": {
     "title": "Налаштування",
@@ -18,7 +26,10 @@
     "sound_effects": "Звукові ефекти"
   },
   "game": {
+    "citybot": "CityBot",
     "score": "Рахунок",
+    "streak": "Серія",
+    "highscore": "Рекорд",
     "hint": "Підказка",
     "surrender": "Здатися",
     "enter_city": "Введіть місто…",

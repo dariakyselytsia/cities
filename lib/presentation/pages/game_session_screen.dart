@@ -101,16 +101,20 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   void _restart() => _start();
 
   Widget _buildBoard(BuildContext context, GameSessionInProgress state) {
+    // Streak = number of cities the player has chained (their own messages).
+    final streak = state.history.where((m) => !m.isBot).length;
     return Column(
       children: [
         _GameHeader(
-          score: state.session.score,
           seconds: state.timerSeconds,
+          // Lifetime best is not persisted yet (UserStats unwired) → 0.
+          highscore: 0,
           onSurrender: () => context.read<GameSessionBloc>().add(
             EndSession(sessionId: state.session.id),
           ),
         ),
-        _TurnBanner(requiredLetter: state.requiredLetter),
+        _StatPills(streak: streak, score: state.session.score),
+        if (state.hint != null) _HintChip(city: state.hint!),
         Expanded(
           child: state.history.isEmpty
               ? const SizedBox.expand()
@@ -121,9 +125,9 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
                   itemBuilder: (_, i) => _CityBubble(message: state.history[i]),
                 ),
         ),
-        if (state.hint != null) _HintChip(city: state.hint!),
         if (_rejectionMessage(state.lastOutcome) != null)
           _FeedbackBanner(message: _rejectionMessage(state.lastOutcome)!),
+        _TurnBanner(requiredLetter: state.requiredLetter),
         _InputBar(controller: _controller, onSubmit: _submit, onHint: _hint),
       ],
     );
@@ -148,50 +152,70 @@ class _GameSessionScreenState extends State<GameSessionScreen> {
   }
 }
 
-/// Top bar: back button, score, surrender, and a circular timer badge.
+/// Top bar: back button, CityBot identity, surrender, and a timer badge.
+/// (Score and streak live in the pills row below.)
 class _GameHeader extends StatelessWidget {
-  final int score;
   final int seconds;
+  final int highscore;
   final VoidCallback onSurrender;
   const _GameHeader({
-    required this.score,
     required this.seconds,
+    required this.highscore,
     required this.onSurrender,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 16, 8),
+      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
       child: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () => context.go(Routes.home),
           ),
+          // CityBot identity: teal avatar + name and live score.
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(20),
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              color: AppColors.teal,
+              shape: BoxShape.circle,
             ),
-            child: Text(
-              '${'game.score'.tr()}  $score',
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: AppColors.ink,
+            alignment: Alignment.center,
+            child: const Text(
+              'B',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
               ),
             ),
           ),
-          const Spacer(),
-          TextButton(
-            onPressed: onSurrender,
-            child: Text(
-              'game.surrender'.tr(),
-              style: const TextStyle(color: AppColors.inkSoft),
-            ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'game.citybot'.tr(),
+                style: baloo(size: 17, weight: FontWeight.w700),
+              ),
+              // Lifetime best. Placeholder until UserStats persistence is wired.
+              Text(
+                '${'game.highscore'.tr()} $highscore',
+                style: const TextStyle(color: AppColors.inkSoft, fontSize: 12),
+              ),
+            ],
           ),
-          const SizedBox(width: 4),
+          const Spacer(),
+          IconButton(
+            onPressed: onSurrender,
+            icon: const Icon(Icons.flag_outlined),
+            color: AppColors.inkSoft,
+            tooltip: 'game.surrender'.tr(),
+          ),
+          const SizedBox(width: 2),
           _TimerBadge(seconds: seconds),
         ],
       ),
@@ -199,7 +223,86 @@ class _GameHeader extends StatelessWidget {
   }
 }
 
-/// The turn cue: "Your turn — start with «X»", or an opening prompt when any
+/// The live streak/score chips, shown as rounded pills under the header.
+class _StatPills extends StatelessWidget {
+  final int streak;
+  final int score;
+  const _StatPills({required this.streak, required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _Pill(
+            label: 'game.streak'.tr(),
+            value: '$streak',
+            background: AppColors.purple.withValues(alpha: 0.14),
+            foreground: AppColors.purple,
+          ),
+          const SizedBox(width: 10),
+          _Pill(
+            label: 'game.score'.tr(),
+            value: '$score',
+            background: AppColors.yellow,
+            foreground: AppColors.ink,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A single rounded "label value" chip.
+class _Pill extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color background;
+  final Color foreground;
+  const _Pill({
+    required this.label,
+    required this.value,
+    required this.background,
+    required this.foreground,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: foreground.withValues(alpha: 0.75),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            value,
+            style: TextStyle(
+              color: foreground,
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The turn cue: "Your turn → start with «X»", or an opening prompt when any
 /// city is allowed.
 class _TurnBanner extends StatelessWidget {
   final String? requiredLetter;
@@ -209,27 +312,27 @@ class _TurnBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = requiredLetter == null
         ? 'game.opening'.tr()
-        : '${'game.your_turn'.tr()} — ${'game.start_with'.tr()} «$requiredLetter»';
+        : '${'game.your_turn'.tr()} → ${'game.start_with'.tr()} «$requiredLetter»';
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(20, 4, 20, 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.yellow,
+        color: AppColors.coral.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.bolt_rounded, size: 18, color: AppColors.ink),
+          const Icon(Icons.play_arrow_rounded, size: 18, color: AppColors.coral),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
               text,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: AppColors.ink,
+                fontWeight: FontWeight.w700,
+                color: AppColors.coral,
               ),
             ),
           ),
@@ -290,14 +393,40 @@ class _CityBubble extends StatelessWidget {
             bottomRight: Radius.circular(isBot ? 18 : 4),
           ),
         ),
-        child: Text(
+        child: _firstLetterHighlighted(
           message.text,
-          style: TextStyle(
-            color: isBot ? AppColors.ink : Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
+          baseColor: isBot ? AppColors.ink : Colors.white,
+          // The chain letter — accented so the player can read the flow.
+          accentColor: isBot ? AppColors.coral : AppColors.green,
         ),
+      ),
+    );
+  }
+
+  /// Renders [text] with its first character in [accentColor] and the rest in
+  /// [baseColor], so the starting letter of each city stands out.
+  Widget _firstLetterHighlighted(
+    String text, {
+    required Color baseColor,
+    required Color accentColor,
+  }) {
+    const style = TextStyle(fontWeight: FontWeight.w600, fontSize: 15);
+    if (text.isEmpty) {
+      return Text(text, style: style.copyWith(color: baseColor));
+    }
+    return Text.rich(
+      TextSpan(
+        style: style.copyWith(color: baseColor),
+        children: [
+          TextSpan(
+            text: text.characters.first,
+            style: TextStyle(
+              color: accentColor,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          TextSpan(text: text.characters.skip(1).toString()),
+        ],
       ),
     );
   }
@@ -340,7 +469,7 @@ class _FeedbackBanner extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFE1DC),
+        color: AppColors.rejectionBg,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -352,7 +481,7 @@ class _FeedbackBanner extends StatelessWidget {
             child: Text(
               message,
               style: const TextStyle(
-                color: Color(0xFFA1341C),
+                color: AppColors.rejectionInk,
                 fontWeight: FontWeight.w600,
               ),
             ),

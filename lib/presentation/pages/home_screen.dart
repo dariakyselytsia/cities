@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/router.dart';
 import '../../core/theme.dart';
 
-/// Home screen (game_design.md §3): map placeholder, Play, Leaderboard, Settings.
+/// Home screen (game_design.md §3), styled to the shared design: decorative
+/// hero art, the CITIES wordmark + tagline, a lifetime-stats card, and the two
+/// primary CTAs — "Play vs Bot" (active) and "Play Online" (PvP, disabled until
+/// multiplayer ships).
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -13,64 +16,81 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('app_title'.tr()),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_rounded),
-            tooltip: 'home.settings'.tr(),
-            onPressed: () => context.push(Routes.settings),
-          ),
-        ],
-      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // World-map placeholder (future: interactive map).
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.yellow,
-                        borderRadius: BorderRadius.circular(AppRadii.hero),
+                  // Top-right quick access to Leaderboard and Settings.
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _RoundIconButton(
+                        icon: Icons.leaderboard_rounded,
+                        tooltip: 'home.leaderboard'.tr(),
+                        onTap: () => context.push(Routes.leaderboard),
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.public_rounded,
-                          size: 140,
-                          color: AppColors.coral,
-                        ),
+                      const SizedBox(width: 8),
+                      _RoundIconButton(
+                        icon: Icons.settings_rounded,
+                        tooltip: 'home.settings'.tr(),
+                        onTap: () => context.push(Routes.settings),
                       ),
-                    ),
+                    ],
                   ),
+                  const SizedBox(height: 8),
+                  const _HeroArt(),
                   const SizedBox(height: 28),
                   Text(
-                    'app_title'.tr(),
+                    'CITIES',
                     textAlign: TextAlign.center,
-                    style: textTheme.displayMedium,
+                    style: textTheme.displayLarge,
                   ),
-                  const SizedBox(height: 32),
-                  _GlowButton(
-                    label: 'home.play'.tr(),
+                  const SizedBox(height: 6),
+                  Text(
+                    'home.tagline'.tr(),
+                    textAlign: TextAlign.center,
+                    style: baloo(
+                      size: 15,
+                      weight: FontWeight.w600,
+                      color: AppColors.coral,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const _StatCard(bestStreak: 0, citiesPlayed: 0),
+                  const SizedBox(height: 28),
+                  _HomeCta(
+                    label: 'home.play_vs_bot'.tr(),
+                    subtitle: 'home.play_vs_bot_sub'.tr(),
+                    icon: Icons.smart_toy_rounded,
                     color: AppColors.coral,
                     glow: AppColors.coralGlow,
-                    icon: Icons.play_arrow_rounded,
                     onTap: () => context.push(Routes.game),
                   ),
                   const SizedBox(height: 16),
-                  _GlowButton(
-                    label: 'home.leaderboard'.tr(),
+                  _HomeCta(
+                    label: 'home.play_online'.tr(),
+                    subtitle: 'home.play_online_sub'.tr(),
+                    icon: Icons.public_rounded,
                     color: AppColors.teal,
                     glow: AppColors.tealGlow,
-                    icon: Icons.leaderboard_rounded,
-                    onTap: () => context.push(Routes.leaderboard),
+                    onTap: null, // PvP not available yet.
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: null,
+                      icon: const Icon(Icons.help_outline_rounded, size: 18),
+                      label: Text('home.how_to_play'.tr()),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.inkSoft,
+                        textStyle: baloo(size: 14, weight: FontWeight.w600),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -82,44 +102,211 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// A rounded, full-width button with a colored drop-glow — the primary CTA
-/// style from the design.
-class _GlowButton extends StatelessWidget {
+/// Decorative hero: soft color blobs behind a coral location-pin badge —
+/// the playful masthead from the design (no interactive map in the MVP).
+class _HeroArt extends StatelessWidget {
+  const _HeroArt();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Big soft blobs that spill well past the left edge and right corner.
+          Positioned(
+            left: -80,
+            top: 34,
+            child: _blob(210, AppColors.teal.withValues(alpha: 0.28)),
+          ),
+          Positioned(
+            right: -80,
+            top: -6,
+            child: _blob(230, AppColors.yellow),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: 84,
+              height: 84,
+              decoration: BoxDecoration(
+                color: AppColors.coral,
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: AppColors.coralGlow,
+              ),
+              child: const Icon(
+                Icons.location_on_rounded,
+                color: Colors.white,
+                size: 44,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _blob(double size, Color color) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
+}
+
+/// A white card with two lifetime stats (best streak / cities played).
+/// Values are placeholders until UserStats persistence is wired.
+class _StatCard extends StatelessWidget {
+  final int bestStreak;
+  final int citiesPlayed;
+  const _StatCard({required this.bestStreak, required this.citiesPlayed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(AppRadii.card),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F000000),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.landscape_rounded, color: AppColors.purple),
+          const SizedBox(width: 14),
+          _stat('$bestStreak', 'home.best_streak'.tr()),
+          const SizedBox(width: 24),
+          _stat('$citiesPlayed', 'home.cities_played'.tr()),
+        ],
+      ),
+    );
+  }
+
+  Widget _stat(String value, String label) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        value,
+        style: baloo(size: 22, weight: FontWeight.w800),
+      ),
+      Text(
+        label,
+        style: const TextStyle(color: AppColors.inkSoft, fontSize: 12),
+      ),
+    ],
+  );
+}
+
+/// A large rounded call-to-action with a leading icon chip, a title, and a
+/// subtitle. When [onTap] is null the button is shown disabled (muted, no glow)
+/// — used for the not-yet-available PvP mode.
+class _HomeCta extends StatelessWidget {
   final String label;
+  final String subtitle;
+  final IconData icon;
   final Color color;
   final List<BoxShadow> glow;
-  final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
-  const _GlowButton({
+  const _HomeCta({
     required this.label,
+    required this.subtitle,
+    required this.icon,
     required this.color,
     required this.glow,
-    required this.icon,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final enabled = onTap != null;
+    final bg = enabled ? color : AppColors.disabled;
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadii.button),
-        boxShadow: glow,
+        boxShadow: enabled ? glow : null,
       ),
-      child: FilledButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon),
-        label: Text(label),
-        style: FilledButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(0, 58),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadii.button),
+      child: Material(
+        color: bg,
+        borderRadius: BorderRadius.circular(AppRadii.button),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadii.button),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.22),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(icon, color: Colors.white),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        label,
+                        style: baloo(
+                          size: 18,
+                          weight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!enabled)
+                  const Icon(Icons.lock_rounded, color: Colors.white, size: 20),
+              ],
+            ),
           ),
-          textStyle: baloo(size: 18, weight: FontWeight.w700, color: Colors.white),
         ),
+      ),
+    );
+  }
+}
+
+/// A small circular icon button on the cream surface (top-bar navigation).
+class _RoundIconButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  const _RoundIconButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.card,
+      shape: const CircleBorder(),
+      child: IconButton(
+        icon: Icon(icon, color: AppColors.ink),
+        tooltip: tooltip,
+        onPressed: onTap,
       ),
     );
   }

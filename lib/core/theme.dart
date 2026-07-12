@@ -9,6 +9,7 @@ abstract final class AppColors {
   static const Color teal = Color(0xFF17B0A6); // secondary CTA
   static const Color yellow = Color(0xFFFFE9A8); // highlight accent
   static const Color purple = Color(0xFF5B3AA8); // accent
+  static const Color green = Color(0xFF2FB16B); // success / player accent
   static const Color tealDark = Color(0xFF0D6D66);
 
   static const Color background = Color(0xFFFBF7F0); // app surface (cream)
@@ -16,6 +17,11 @@ abstract final class AppColors {
   static const Color card = Color(0xFFFFFFFF);
   static const Color ink = Color(0xFF22303A); // primary text
   static const Color inkSoft = Color(0xFF5B6770); // muted text
+  static const Color disabled = Color(0xFFCFCABF); // muted/disabled CTA
+
+  // Rejection banner (wrong / used / unknown answer).
+  static const Color rejectionBg = Color(0xFFFFE1DC);
+  static const Color rejectionInk = Color(0xFFA1341C);
 
   /// Colored glow shadows for primary/secondary buttons.
   static const List<BoxShadow> coralGlow = [

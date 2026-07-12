@@ -3,7 +3,15 @@
   "home": {
     "play": "Play",
     "leaderboard": "Leaderboard",
-    "settings": "Settings"
+    "settings": "Settings",
+    "tagline": "type it. chain it. win it.",
+    "play_vs_bot": "Play vs Bot",
+    "play_vs_bot_sub": "Endurance — beat your best",
+    "play_online": "Play Online",
+    "play_online_sub": "Coming soon",
+    "how_to_play": "how to play",
+    "best_streak": "best streak",
+    "cities_played": "cities played"
   },
   "settings": {
     "title": "Settings",
@@ -18,7 +26,10 @@
     "sound_effects": "Sound effects"
   },
   "game": {
+    "citybot": "CityBot",
     "score": "Score",
+    "streak": "Streak",
+    "highscore": "Best",
     "hint": "Hint",
     "surrender": "Give Up",
     "enter_city": "Enter a city…",
