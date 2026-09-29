@@ -36,7 +36,7 @@
 
 | # | Task | Milestone | Size | Status |
 |---|---|---|---|---|
-| T00 | Dev environment: Android SDK + emulator | M0 Reset | S | [ ] |
+| T00 | Dev environment: Android SDK + emulator | M0 Reset | S | [x] |
 | T01 | Reset project skeleton | M0 Reset | M | [x] |
 | T02 | Update CLAUDE.md & project skills | M0 Reset | S | [ ] |
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [ ] |
@@ -88,6 +88,29 @@ by T22.
 - `flutter doctor` shows the Android toolchain ✓;
 - `flutter emulators` lists the AVD;
 - `flutter run` launches the T01 skeleton on the emulator.
+
+**Setup notes (done 2026-09-29):**
+- Everything lives on `D:\Android`, because C: has little free space:
+  - SDK: `D:\Android\Sdk` (API 36, build-tools 36.1.0);
+  - JDK: `D:\Android\jdk-17`, used by Flutter via `flutter config --jdk-dir`.
+    The system Java 8 is untouched.
+  - AVD: `Pixel_8_API_36` in `D:\Android\avd` (user env var
+    `ANDROID_AVD_HOME`). `ANDROID_HOME` is also set as a user env var.
+- Acceleration: WHPX (Windows Hypervisor Platform) — no admin changes were
+  needed.
+- Run it:
+  - start the phone with `flutter emulators --launch Pixel_8_API_36`, or
+    from VS Code's device picker;
+  - then `flutter run`.
+- If the emulator hangs "offline" after a crash, cold boot it:
+  `D:\Android\Sdk\emulator\emulator.exe -avd Pixel_8_API_36 -no-snapshot-load`.
+- Memory: the machine has little free commit memory (a fixed 10 GB pagefile,
+  plus WSL/SQL Server running). Gradle's heap is capped at 2 GB in
+  `android/gradle.properties`, because Flutter's 8 GB default crashed.
+- If the emulator dies during builds, stop idle build daemons with
+  `android\gradlew --stop`, or make the Windows pagefile system-managed
+  (needs admin).
+- First Android build: ~7.5 min. Incremental builds are much faster.
 
 ### T01 · Reset project skeleton · M
 Start from scratch while keeping what carries over (tech_design §8).
