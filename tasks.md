@@ -38,7 +38,7 @@
 |---|---|---|---|---|
 | T00 | Dev environment: Android SDK + emulator | M0 Reset | S | [x] |
 | T01 | Reset project skeleton | M0 Reset | M | [x] |
-| T02 | Update CLAUDE.md & project skills | M0 Reset | S | [ ] |
+| T02 | Update CLAUDE.md & project skills | M0 Reset | S | [x] |
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [ ] |
 | T04 | Name review & overrides | M1 Data | M | [ ] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [ ] |
@@ -123,8 +123,9 @@ Start from scratch while keeping what carries over (tech_design §8).
   - remove isar_community, get_it, injectable, build_runner,
     supabase_flutter, google_mobile_ads, google_fonts and mocktail;
   - add equatable, path_provider and fake_async (dev).
-- Bundle the Baloo 2 and Poppins `.ttf` files under `assets/fonts/`, and switch
-  the theme to them.
+- Bundle the fonts as `.ttf` files under `assets/fonts/`, and switch
+  the theme to them. We bundled Nunito + Rubik: the design's Baloo 2 / Poppins
+  have no Cyrillic.
 - A minimal `main.dart`/`app.dart` shows one placeholder screen with the theme
   and `easy_localization`.
 - Keep the old `assets/data/*.json` until T03 replaces them.
@@ -145,6 +146,8 @@ Start from scratch while keeping what carries over (tech_design §8).
   - update `feature-scaffold` and `flutter-review` (drop the Isar and
     injectable checks; add "engine must be pure Dart");
   - check `test-review`.
+- Also update `.github/copilot-instructions.md` and
+  `.github/agents/Agent.agent.md`.
 
 **Done when:** no doc or skill references Isar, get_it, injectable,
 build_runner, Supabase or ads as current tech.

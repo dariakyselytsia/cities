@@ -1,85 +1,81 @@
 ---
 name: feature-scaffold
-description: Scaffold a new Clean-Architecture feature for the Cities Flutter game end to end. Use when adding a new use case, entity, repository, or BLoC (e.g. "add a leaderboard feature", "add a new usecase/bloc"). Walks domain → data → presentation → test following the existing project patterns, keeping strict layer separation.
+description: Scaffold a feature for the Cities Flutter game end to end — pure-Dart engine logic, data access, Cubit + state, screen, and tests — following tech_design.md. Use when implementing a task from tasks.md or adding a new screen, Cubit, engine rule, or store (e.g. "implement T11", "add the setup sheet", "add a new engine rule").
 ---
 
-# Feature Scaffold (Clean Architecture)
+# Feature Scaffold
 
-Build a new feature by moving outward through the layers, mirroring the patterns
-already in the codebase. Keep strict layer separation and the **Coding standards**
-in `CLAUDE.md` (sealed failures, enums, indexed Isar queries, `Equatable`, real
-IDs, typed JSON). Read `game_design.md` first if the feature is gameplay- or
-product-facing.
+Build outward from the pure-Dart core. Follow `CLAUDE.md` (rules + coding
+standards) and `tech_design.md`. If the feature is gameplay- or UI-facing, read
+the relevant part of `game_design.md` first. If it's a task from `tasks.md`,
+its **Done when** list is the definition of finished.
 
-> New code must be born compliant — don't replicate the scaffold's known gaps
-> (stringly-typed modes, `hashCode` ids, `.where().findAll()` scans, interface-only
-> use cases, states without `Equatable`).
+## 0. Plan
+- Identify which layers the feature touches: `engine/`, `data/`,
+  `features/<name>/`, `core/`. Many tasks touch only one or two.
+- List the behaviors to test *before* writing code: rules, edge cases, and end
+  conditions.
 
-## Reference files (copy these patterns)
+## 1. Engine (`lib/engine/`) — only if there are rules
+- Pure Dart only: no `package:flutter`, no `dart:io`, no assets.
+- Inject `Random` and durations; never call `DateTime.now()` or `Random()`
+  inside rules.
+- Value classes are immutable with `const` constructors and `Equatable`.
+  Outcomes are `sealed` classes (`Accepted` / `Rejected(reason)`, `BotMove.city`
+  / `BotMove.giveUp`).
+- Tuning numbers (tiers, timers, points) are named constants, e.g. in
+  `difficulty.dart` / `scoring.dart`.
+- `///` Dartdoc explaining *why* for any non-obvious rule.
+- **Tests first-class:** `test/engine/<file>_test.dart`, plain `test()` with
+  real objects and no mocks. Use table-driven cases for normalization and
+  letter rules, and seeded `Random` for the bot and match.
 
-- Entity: `lib/domain/entities/city.dart` — plain immutable class, `const` ctor.
-- Abstract repository: `lib/domain/repositories/city_repository.dart`.
-- Abstract use case: `lib/domain/usecases/validate_city_answer_usecase.dart`
-  (callable class with `call(...)`).
-- Data model + impl: `lib/data/models/city_model.dart` (Isar `@Collection`,
-  `@Index()`, `fromDomain`/`toDomain`) and
-  `lib/data/repositories/city_repository_impl.dart`
-  (`@LazySingleton(as: XRepository)`).
-- BLoC: `lib/presentation/bloc/game_session_bloc.dart` (events/states/handlers,
-  use-case injection, try/catch → failure state).
-- Test: `test/presentation/bloc/game_session_bloc_test.dart`
-  (`bloc_test` + `mocktail`).
+## 2. Data (`lib/data/`) — only if it reads assets or files
+- Parse JSON through typed `fromJson`; `dynamic` stays inside the parser.
+- Heavy parsing goes in `Isolate.run`.
+- Errors come back as typed failure values (sealed), never thrown to the
+  caller and never stringified.
+- If a Cubit test will need to fake it, define a small abstract interface
+  (like `PlayerStore`) plus the file-backed implementation.
+- Tests: fixture files under `test/fixtures/`, and a temp directory for file
+  I/O. Cover the missing-file and corrupt-file paths.
 
-## Steps
+## 3. Cubit (`lib/features/<name>/<name>_cubit.dart` + `<name>_state.dart`)
+- The state is a `sealed` hierarchy with `Equatable` (e.g. `GameLoading` /
+  `GamePlaying` / `GameOver`). Keep one source-of-truth "in progress" state.
+  Put transient info (last rejection) *inside* it rather than emitting
+  separate states.
+- The Cubit owns timers/delays (`Timer`, `Future.delayed`) and calls `engine/`
+  and `data/`. It holds no game rules itself.
+- Dependencies come in through the constructor. There is no service locator.
+- Cancel timers in `close()`.
+- Tests: `test/features/<name>/<name>_cubit_test.dart` with `bloc_test`.
+  Use `fake_async` for anything time-based. Assert **exact** states, not just
+  `isA<>()`.
 
-1. **Domain — entity** (`lib/domain/entities/<name>.dart`): pure Dart, immutable,
-   `const` constructor. No Flutter/Isar/Supabase imports. Use **enums** for
-   categorical fields (`GameMode`, `AppLanguage`), and keep id types consistent
-   with the Isar model. Add `Equatable` if the entity is compared by value.
+## 4. Screen & widgets (`lib/features/<name>/<name>_screen.dart`, `widgets/`)
+- Only `BlocBuilder` / `BlocListener` / `BlocConsumer`, with no logic in
+  widgets.
+- Styling: `AppColors`, `AppRadii`, `heading()` and the `TextTheme` from
+  `core/theme.dart`.
+- If you're porting a screen, take its look from `archive/v0`:
+  `git show archive/v0:lib/presentation/pages/<file>.dart`. Copy **visuals
+  only**, never the old wiring.
+- Every user-visible string goes through `easy_localization`, with keys in
+  **both** `assets/translations/uk.json` and `en.json`.
+- Tests: a widget smoke test (renders each state, main tap paths).
 
-2. **Domain — repository interface**
-   (`lib/domain/repositories/<name>_repository.dart`): abstract methods only,
-   returning domain entities (or a sealed `Failure` on the error path — do not
-   throw across the boundary).
+## 5. Wiring
+- Build long-lived dependencies in `main.dart` and provide them with
+  `RepositoryProvider`.
+- Create the Cubit where the route/screen is built (`BlocProvider`) so it's
+  disposed on exit.
+- Add routes in `core/router.dart` (after T14).
 
-3. **Domain — use case(s)** (`lib/domain/usecases/<verb>_<name>_usecase.dart`):
-   abstract callable class exposing `call(...)`, **plus a concrete implementation**
-   — an interface alone is not a finished feature (the current codebase has
-   interfaces without impls; do not repeat that). One use case per user intent.
-
-4. **Data — model** (`lib/data/models/<name>_model.dart`): Isar `@Collection`
-   class with `Id id = Isar.autoIncrement;`, `@Index()` on **every field queried
-   by equality**, and `fromDomain()` / `toDomain()` converters. Add
-   `part '<name>_model.g.dart';`. If it parses JSON, give it a typed `fromJson` —
-   no `dynamic` leaking out.
-
-5. **Data — repository impl**
-   (`lib/data/repositories/<name>_repository_impl.dart`): annotate
-   `@LazySingleton(as: <Name>Repository)`, inject `Isar` (and/or Supabase),
-   implement the interface, map models ⇄ entities, use `writeTxn` for writes, and
-   query through **indexed `.filter()` queries** — never `.where().findAll()` +
-   Dart-side `firstWhere`.
-
-6. **Codegen:** run the **flutter-codegen** skill (build_runner + analyze) so the
-   Isar `.g.dart` and DI config regenerate.
-
-7. **Presentation — BLoC** (`lib/presentation/bloc/<name>_bloc.dart`): define
-   events and sealed states, **all with `Equatable`/`freezed`** (so tests assert
-   values); constructor-inject the use cases; handle each event with `on<Event>`
-   and wrap failures into a `<Name>Failure` carrying a typed `Failure`. No logic in
-   widgets. Prefer a single source-of-truth in-progress state over transient
-   double-emits.
-
-8. **Presentation — page/widgets** (`lib/presentation/pages/`): UI talks only to
-   the BLoC via `BlocBuilder`/`BlocListener`.
-
-9. **Wiring:** register the BLoC/use cases where the app provides them and ensure
-   the repository is resolvable from `getIt` (DI is not fully wired yet — see
-   `CLAUDE.md` "known gaps").
-
-10. **Test** (`test/presentation/bloc/<name>_bloc_test.dart`): `bloc_test` +
-    `mocktail`, cover every event/state and failure paths. Then run the
-    **test-review** skill.
-
-11. **Verify & review:** `flutter analyze` + `flutter test` green, then run the
-    **flutter-review** skill before committing with a Conventional Commit.
+## 6. Verify
+- `flutter analyze` is clean and `flutter test` is green.
+- UI changes: run on the emulator and check a screenshot. See `CLAUDE.md` →
+  Dev environment.
+- Run **test-review** on new tests and **flutter-review** on the diff.
+- Tick the task in `tasks.md`, then end with the wrap-up (commit message ·
+  summary · next steps).

@@ -1,61 +1,68 @@
 ---
 name: test-review
-description: Unit-test review protocol for the Cities Flutter game. Use when reviewing or writing unit tests, or before merging test changes. Checks AAA structure, full BLoC event/state and use-case coverage, mocking/isolation, naming, bloc_test state assertions, and maintainability. Reference suite: test/presentation/bloc/game_session_bloc_test.dart.
+description: Unit-test review protocol for the Cities Flutter game. Use when reviewing or writing tests, or before merging test changes. Checks AAA structure, coverage of engine rules / Cubit states / data failure paths, determinism (seeded Random, fake_async), fakes over mocks, value-based assertions, naming, and maintainability.
 ---
 
 # Unit Test Review Protocol
 
-As an Expert Flutter Architect, rigorously review unit tests before merging. Apply
-this checklist to every test change. The existing
-`test/presentation/bloc/game_session_bloc_test.dart` is the reference for the
-project's `bloc_test` + `mocktail` style.
+Review every test change against this checklist.
+
+Test layout mirrors `lib/`:
+- `test/engine/` holds plain unit tests;
+- `test/data/` holds fixture- and temp-dir-based tests;
+- `test/features/` holds `bloc_test` Cubit tests and widget smoke tests.
 
 ## 1. Structure & coverage
+- [ ] **Arrange-Act-Assert** is visible in each test.
+- [ ] **Engine:** every rule and outcome is covered, including:
+  - each rejection reason (not in list / wrong letter / already used);
+  - letter-rule backtracking (`ь`, `и`, `й`, apostrophes);
+  - normalization cases;
+  - tier boundaries;
+  - bot give-up;
+  - scoring (new city vs. seen, hint = 0, win bonus);
+  - each end condition.
+- [ ] **Cubits:** every public method and every state transition is covered,
+      including the win, timeout and give-up paths.
+- [ ] **Data:** round-trip, missing file, corrupt file, version mismatch.
+- [ ] **Edge cases,** not just the happy path.
 
-- [ ] **Arrange-Act-Assert:** Each test clearly separates setup, action, and
-      assertion.
-- [ ] **Coverage:** Every public BLoC event, emitted state, and use-case method
-      has a corresponding test.
-- [ ] **Edge cases:** Both typical and edge/failure scenarios are covered (timer
-      expiry, invalid city, duplicate city, repository throw, etc.).
-
-## 2. Isolation & mocking
-
-- [ ] **No real dependencies:** Repositories, use cases, and external services are
-      mocked/faked (`class MockX extends Mock implements XUseCase`).
-- [ ] **No side effects:** Tests never touch real files, databases, or the
-      network.
-- [ ] **Data-layer isolation:** Repository/data-layer tests use a mocked repo or a
-      fake/registered `Isar` instance — never open a real database. Prefer testing
-      through the domain interface with `mocktail`.
+## 2. Determinism & isolation
+- [ ] **Seeded randomness:** bot and match tests pass an explicit `Random(seed)`.
+      No real randomness in assertions.
+- [ ] **Fake time:** anything with timers or delays runs under `fake_async`.
+      No real `Future.delayed` waits and no flaky sleeps.
+- [ ] **Real objects over mocks.**
+  - The engine is pure: test it with real objects and small fixture catalogs.
+  - Use hand-written fakes for interfaces (e.g. `FakePlayerStore`).
+  - Add `mocktail` only if a fake becomes unwieldy; it's not in the stack by
+    default.
+- [ ] **No side effects:** no network. File I/O only in a temp dir that's
+      cleaned up. No real app documents directory.
 
 ## 3. Naming & readability
+- [ ] Descriptions state the scenario and the expected outcome ("rejects a
+      city already used by the bot").
+- [ ] Test data uses named fixtures or builders (`kyiv`, `lviv`,
+      `fixtureCatalog()`), not unexplained literals.
+- [ ] Table-driven cases (input → expected) for normalization and the letter
+      rule.
 
-- [ ] **Descriptive names:** Test descriptions state the scenario and expected
-      outcome.
-- [ ] **No magic values:** Test data uses named constants or builders.
-
-## 4. Assertions & error handling
-
-- [ ] **Value-based assertions, not just types.** Once BLoC states have
-      `Equatable`/`freezed`, assert the *actual* emitted values — exact score,
-      `timerSeconds`, session/history — via concrete state instances. Bare
-      `isA<State>()` alone is insufficient (the current
-      `game_session_bloc_test.dart` only type-checks; strengthen it as states gain
-      `Equatable`).
-- [ ] **Error paths:** Failure and exception paths are asserted, and assert the
-      **typed `Failure`** carried by the failure state — not merely that *some*
-      failure was emitted.
-- [ ] **Interaction checks:** Use `verify(...)` / `any(named: ...)` to confirm the
-      right use cases were invoked.
+## 4. Assertions
+- [ ] **Exact values, not types.** Assert full `Equatable` states and outcomes
+      (score, timer seconds, history, reason), not bare `isA<>()`.
+- [ ] **Failure paths assert the typed failure** that was produced, not just
+      "something failed".
+- [ ] Interaction checks on fakes (e.g. "saved once on game over") where
+      behavior depends on them.
 
 ## 5. Maintainability
+- [ ] Shared setup goes in `setUp` or helper builders; no copy-pasted
+      arrangements.
+- [ ] Fixtures live in `test/fixtures/` and stay small: only the cities the
+      tests need.
+- [ ] Complex suites have a short `///` note on what they cover and why.
 
-- [ ] **No duplicated logic:** `setUp`/`tearDown` and helper builders remove
-      repetition.
-- [ ] **Dartdoc:** Complex suites and custom matchers are documented.
-
-## 6. Actionable feedback
-
-- If any item fails, output a checklist of required fixes and withhold approval.
-- Only approve/merge when every check passes, and confirm `flutter test` is green.
+## 6. Output
+- If anything fails, list the required fixes and withhold approval.
+- Approve only when every check passes and `flutter test` is green.
