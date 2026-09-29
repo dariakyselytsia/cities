@@ -105,7 +105,9 @@ Starting guesses:
 ## 3. Screens (MVP)
 
 The visual design carries over from the current app: the "vibrant" palette,
-Baloo 2 + Poppins fonts, rounded cards, chat bubbles, and glow buttons.
+rounded cards, chat bubbles, and glow buttons. The fonts are Nunito (headings)
+and Rubik (body). They replace the design file's Baloo 2 and Poppins, which
+can't render Ukrainian.
 
 1. **Home.** Hero, a **Play** button (opens the setup sheet), a small lifetime
    stats card (tapping it opens Statistics), a Settings icon and a Statistics

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Design tokens for the "Cities" vibrant/playful palette (from the shared
 /// design file). Text is dark slate on warm cream; primary actions are coral,
@@ -40,15 +39,32 @@ abstract final class AppRadii {
   static const double hero = 44;
 }
 
-/// Baloo 2 — rounded display font for the logo, headings, and button labels.
-TextStyle baloo({
+/// Bundled font families (see `pubspec.yaml`). Both cover Cyrillic — the
+/// design's original Baloo 2 / Poppins don't, so Ukrainian text fell back to
+/// the system font.
+abstract final class AppFonts {
+  /// Rounded display face for the logo, headings, and button labels.
+  /// Bundled weights: 600, 700, 800.
+  static const String heading = 'Nunito';
+
+  /// Body and label text. Bundled weights: 400, 500, 600.
+  static const String body = 'Rubik';
+}
+
+/// Heading style (Nunito) for the logo, headings, and button labels.
+TextStyle heading({
   double? size,
   FontWeight weight = FontWeight.w700,
   Color color = AppColors.ink,
 }) =>
-    GoogleFonts.baloo2(fontSize: size, fontWeight: weight, color: color);
+    TextStyle(
+      fontFamily: AppFonts.heading,
+      fontSize: size,
+      fontWeight: weight,
+      color: color,
+    );
 
-/// Builds the app [ThemeData]: Poppins body, Baloo 2 headings, coral/teal
+/// Builds the app [ThemeData]: Rubik body, Nunito headings, coral/teal
 /// accents, rounded components.
 ThemeData buildAppTheme() {
   const scheme = ColorScheme(
@@ -65,22 +81,24 @@ ThemeData buildAppTheme() {
     onError: Colors.white,
   );
 
-  final baseText = GoogleFonts.poppinsTextTheme().apply(
+  final baseText = ThemeData.light().textTheme.apply(
+    fontFamily: AppFonts.body,
     bodyColor: AppColors.ink,
     displayColor: AppColors.ink,
   );
 
-  // Headlines/titles use Baloo 2; body/labels stay Poppins.
+  // Headlines/titles use Nunito; body/labels stay Rubik.
   final textTheme = baseText.copyWith(
-    displayLarge: baloo(size: 40, weight: FontWeight.w800),
-    displayMedium: baloo(size: 32, weight: FontWeight.w800),
-    headlineMedium: baloo(size: 26, weight: FontWeight.w700),
-    headlineSmall: baloo(size: 22, weight: FontWeight.w700),
-    titleLarge: baloo(size: 20, weight: FontWeight.w600),
+    displayLarge: heading(size: 40, weight: FontWeight.w800),
+    displayMedium: heading(size: 32, weight: FontWeight.w800),
+    headlineMedium: heading(size: 26, weight: FontWeight.w700),
+    headlineSmall: heading(size: 22, weight: FontWeight.w700),
+    titleLarge: heading(size: 20, weight: FontWeight.w600),
   );
 
   return ThemeData(
     useMaterial3: true,
+    fontFamily: AppFonts.body,
     colorScheme: scheme,
     scaffoldBackgroundColor: AppColors.background,
     textTheme: textTheme,
@@ -89,7 +107,7 @@ ThemeData buildAppTheme() {
       foregroundColor: AppColors.ink,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: baloo(size: 22, weight: FontWeight.w700),
+      titleTextStyle: heading(size: 22, weight: FontWeight.w700),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
@@ -102,7 +120,7 @@ ThemeData buildAppTheme() {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.button),
         ),
-        textStyle: baloo(size: 18, weight: FontWeight.w700, color: Colors.white),
+        textStyle: heading(size: 18, weight: FontWeight.w700, color: Colors.white),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -114,7 +132,7 @@ ThemeData buildAppTheme() {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.button),
         ),
-        textStyle: baloo(size: 18, weight: FontWeight.w600),
+        textStyle: heading(size: 18, weight: FontWeight.w600),
       ),
     ),
     cardTheme: CardThemeData(

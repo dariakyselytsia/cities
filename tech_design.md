@@ -13,7 +13,7 @@
 | Navigation | `go_router` | Carried over. Only 4 routes + a sheet. |
 | Localization | `easy_localization` | Existing `uk`/`en` translation files are reused (pruned). |
 | Persistence | `path_provider` → one JSON file | The player's data is small. No Isar, no migrations tooling. |
-| Fonts | Bundled `.ttf` (Baloo 2, Poppins) | Truly offline. Drop `google_fonts`. |
+| Fonts | Bundled `.ttf`: **Nunito** (headings) + **Rubik** (body) | Truly offline. Drop `google_fonts`. The design's Baloo 2 / Poppins have **no Cyrillic**, so they were replaced by the closest rounded faces that have it. |
 | Tests | `flutter_test`, `bloc_test`, `fake_async` | The engine is tested with plain unit tests. |
 
 **Removed:** `isar_community`, `get_it`, `injectable`, `build_runner`,

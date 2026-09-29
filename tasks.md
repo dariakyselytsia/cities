@@ -36,7 +36,8 @@
 
 | # | Task | Milestone | Size | Status |
 |---|---|---|---|---|
-| T01 | Reset project skeleton | M0 Reset | M | [ ] |
+| T00 | Dev environment: Android SDK + emulator | M0 Reset | S | [ ] |
+| T01 | Reset project skeleton | M0 Reset | M | [x] |
 | T02 | Update CLAUDE.md & project skills | M0 Reset | S | [ ] |
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [ ] |
 | T04 | Name review & overrides | M1 Data | M | [ ] |
@@ -63,6 +64,31 @@
 
 ## M0 — Reset
 
+### T00 · Dev environment: Android SDK + emulator · S
+We can't see the app on a phone yet: this machine has no Android SDK and no
+emulator. It's needed from T10 onward (cold-start timing) and for T12
+(🎯 playable on a phone).
+
+Steps:
+- Install Android Studio (it includes the SDK, platform-tools and the
+  emulator), or install just the command-line tools.
+- Point Flutter at it: `flutter config --android-sdk <path>`, or set
+  `ANDROID_HOME`.
+- Accept the licenses: `flutter doctor --android-licenses`.
+- Create an AVD, e.g. a Pixel with a recent API level, x86_64 image. Enable
+  hardware acceleration (Windows Hypervisor Platform).
+- Optional: enable USB debugging on a real Android phone. Real-device timing
+  matters for T10.
+
+iOS: building needs a Mac with Xcode. Until one is available, iOS is checked
+through a cloud build (e.g. Codemagic or GitHub Actions macOS) at the latest
+by T22.
+
+**Done when:**
+- `flutter doctor` shows the Android toolchain ✓;
+- `flutter emulators` lists the AVD;
+- `flutter run` launches the T01 skeleton on the emulator.
+
 ### T01 · Reset project skeleton · M
 Start from scratch while keeping what carries over (tech_design §8).
 - Delete the old `lib/` and `test/` contents and the generated files
@@ -81,7 +107,8 @@ Start from scratch while keeping what carries over (tech_design §8).
 - Keep the old `assets/data/*.json` until T03 replaces them.
 
 **Done when:**
-- the app launches on iOS and Android;
+- the app builds and launches (verified on Windows desktop; the Android launch
+  check moved to T00, iOS to a Mac / cloud build);
 - `flutter analyze` is clean and the letter-rule tests pass;
 - no codegen is left in the project.
 

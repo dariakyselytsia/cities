@@ -1,50 +1,21 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'core/router.dart';
-import 'core/theme.dart';
-import 'di/di.dart';
-import 'presentation/bloc/settings_cubit.dart';
-import 'presentation/bloc/settings_store.dart';
+import 'app.dart';
 
+/// Composition root. There is no DI container: dependencies (city catalog,
+/// player store) are built here and handed down explicitly — see
+/// `tech_design.md` §2.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  await configureDependencies();
-
-  // Load persisted preferences so the cubit starts from the user's last choices.
-  final prefs = await SharedPreferences.getInstance();
-  final settingsStore = SharedPrefsSettingsStore(prefs);
 
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('uk'), Locale('en')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: BlocProvider(
-        create: (_) => SettingsCubit(store: settingsStore),
-        child: const CitiesApp(),
-      ),
+      child: const CitiesApp(),
     ),
   );
-}
-
-/// Root widget: wires localization, theme, and the go_router configuration.
-class CitiesApp extends StatelessWidget {
-  const CitiesApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      onGenerateTitle: (context) => 'app_title'.tr(),
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      theme: buildAppTheme(),
-      routerConfig: appRouter,
-    );
-  }
 }
