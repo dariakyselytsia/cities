@@ -96,17 +96,21 @@ Keeping the bot turn a discrete step is the seam for future PvP.
 
 ### Source
 **GeoNames** (CC BY 4.0, attribution shown in Settings → About):
-- World: `cities15000` (≈ 33k cities, all with population ≥ 15,000). This is
-  what the current data appears to be based on.
-- Ukraine: `cities5000` (or `cities1000`) filtered to `UA`, for fuller coverage
-  of towns.
-- `alternateNamesV2`: real `uk` and `en` names plus aliases (Kiev, Львов, …).
-  This replaces the current machine-transliterated Ukrainian names
+- World: `cities15000` (all with population ≥ 15,000).
+- Ukraine: `cities5000` filtered to `UA`, for fuller coverage of towns.
+- `alternateNamesV2`: real `uk` and `en` names plus aliases (Kiev,
+  Кіровоград, …). This replaces the old machine-transliterated Ukrainian names
   (e.g. "лес Ескалдес").
+- Excluded feature codes: `PPLX` (city sections such as Obolon or Podil),
+  `PPLH`, `PPLQ` and `PPLW`.
+- Result:
+  - **World:** 31,733 cities, 7,021 of them with a Ukrainian name.
+  - **Ukraine:** 852 cities, 843 with a Ukrainian name.
 
 ### Build pipeline
 - A reproducible script, `tool/build_cities.dart`, reads the GeoNames dumps
-  (not committed) and writes compact assets that *are* committed.
+  (not committed) and writes compact assets that *are* committed. The output
+  is deterministic. See `tool/README.md`.
 - The script needs a manual review pass on tiers 1–2 names; those are the
   cities players see most.
 
@@ -115,16 +119,20 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
 
 ```json
 {"v":1,"cities":[
-  {"id":703448,"uk":"Київ","en":"Kyiv","cc":"UA","cap":true,"pop":2797553,
-   "akaUk":["Київ-місто"],"akaEn":["Kiev"]}
+  {"id":703448,"uk":"Київ","en":"Kyiv","cc":"UA","cap":true,"pop":2952301,
+   "akaEn":["Kiev"]}
 ]}
 ```
 
-- The Ukraine list is `cc == "UA"` plus the extra towns, flagged `"uaOnly":true`
-  so World stays at ≥ 15k population.
+- `uk` is **optional**. A city without it is not in the Ukrainian-language
+  indexes, so World in Ukrainian ≈ 7k cities. `cap`, `akaUk`, `akaEn` and
+  `uaOnly` are omitted when false or empty.
+- The Ukraine list is `cc == "UA"`, including the extra towns below 15k, which
+  are flagged `"uaOnly":true`. The World list is every city that is not
+  `uaOnly`.
 - Ids are GeoNames ids: unique across both lists. **Old bug fixed:** the old
   Ukraine and World files both started their ids at 1, so their ids collided.
-- Expected size is ~2–3 MB (the current file is 7.8 MB of pretty-printed JSON
+- Actual size: **1.92 MB** (the old files were 7.8 MB of pretty-printed JSON
   with redundant fields).
 
 ### At load

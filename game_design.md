@@ -45,7 +45,9 @@ An answer is accepted if all of these are true:
      (`'`, `’`, `ʼ`);
    - it folds Latin diacritics (São Paulo = Sao Paulo) and treats Ukrainian `ґ`
      like `г`;
-   - it accepts **known alternate names** (Kiev → Kyiv, Львов → Львів).
+   - it accepts **known alternate names in the same language**, including
+     historic ones (Kiev → Kyiv, Кіровоград → Кропивницький, Bombay →
+     Mumbai). Russian names are not accepted.
    - There is **no typo guessing** in MVP.
 2. **It starts with the required letter** (§2.3).
 3. **It hasn't been used** in this game by either side. There is one shared
@@ -55,8 +57,8 @@ A rejected answer shows its reason inline ("not in the list", "must start with
 «Х»", "already used"). The player may retry until the timer runs out. The timer
 does **not** reset on a wrong answer.
 
-City names are displayed and matched in the **app language**. English names also
-work while playing in Ukrainian only if they are listed as known alternate names.
+City names are displayed and matched in the **app language** only. In
+Ukrainian, a Latin-script answer like "Kyiv" is not accepted.
 
 ### 2.5 CityBot and difficulty
 Cities are ranked into **tiers** by fame. Fame is based on population rank
@@ -139,13 +141,24 @@ All data stays on the device and persists across launches.
 Each city has:
 - a stable, globally unique `id` (the GeoNames id), which is the same across
   both lists;
-- `nameUA`, `nameEN`, alternate names for each language, `countryCode`,
-  `isCapital`, and `population`.
+- `nameEN`, an **optional** `nameUA`, alternate names for each language,
+  `countryCode`, `isCapital`, and `population`.
 
 Tiers and first letters are **derived at load time**, not stored.
 
-The Ukraine list includes smaller towns than World, because Ukrainian players
-know them. The details are in `tech_design.md` §4.
+List sizes (GeoNames, Sept 2026 build):
+
+| List | English | Ukrainian |
+|---|---|---|
+| Ukraine (≥ 5,000 people) | 852 cities | 843 cities |
+| World (≥ 15,000 people) | ~31,700 cities | ~7,000 cities |
+
+- **World in Ukrainian contains only cities with a real Ukrainian name.**
+  GeoNames has one for only ~7,000 of them. Machine-transliterating the rest
+  produced names nobody would type, so they're left out. Important gaps
+  (capitals, big cities) are filled by hand (T04).
+- The Ukraine list includes smaller towns than World, because Ukrainian
+  players know them. The details are in `tech_design.md` §4.
 
 ## 5. Future (not MVP, keep the door open)
 

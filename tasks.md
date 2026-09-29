@@ -39,7 +39,7 @@
 | T00 | Dev environment: Android SDK + emulator | M0 Reset | S | [x] |
 | T01 | Reset project skeleton | M0 Reset | M | [x] |
 | T02 | Update CLAUDE.md & project skills | M0 Reset | S | [x] |
-| T03 | GeoNames build script → `cities.json` | M1 Data | L | [ ] |
+| T03 | GeoNames build script → `cities.json` | M1 Data | L | [x] |
 | T04 | Name review & overrides | M1 Data | M | [ ] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [ ] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [ ] |
@@ -164,8 +164,9 @@ and are **not committed** (`tool/geonames/` goes in `.gitignore`):
 - `alternateNamesV2`, which must be **streamed** (it is huge).
 
 The script:
-- reads `uk` and `en` preferred names and aliases, and falls back to the
-  English name when there's no `uk` name (flag it for T04);
+- reads `uk` and `en` preferred names and aliases. When there's no real `uk`
+  name, `uk` is left out; there's no transliteration. The script reports those
+  cities for T04;
 - marks capitals from feature code `PPLC`;
 - adds `pop`, and `uaOnly` for towns under 15k;
 - writes minified `assets/data/cities.json` in the format from tech_design §4;
@@ -179,10 +180,25 @@ The script:
 - spot checks give sensible Ukrainian names, e.g. "Андорра-ла-Велья" rather
   than "Андорра ла Велла".
 
+**Result (2026-09-30):**
+- 1.92 MB; a byte-identical rebuild in ~25 s.
+- World 31,733 cities (7,021 with a `uk` name); Ukraine 852 (843 with `uk`).
+- Kyiv has `akaEn: ["Kiev"]`, and historic names are kept as aliases
+  (Кіровоград → Кропивницький).
+- Andorra la Vella has **no** `uk` name in GeoNames, so it now has none
+  instead of a bad one. 36 capitals lack a `uk` name (Lisbon, Tehran,
+  Belgrade, New Delhi, …) and are handed to T04.
+- The asset is **not yet declared in `pubspec.yaml`**. That happens in T10,
+  when the loader reads it.
+
 ### T04 · Name review & overrides · M
 - The script also writes a review CSV of the top ~1,500 World and ~150
   Ukraine cities by population, plus all cities where the `uk` name is
-  missing or fell back.
+  missing.
+  - Priorities: the 36 capitals without a `uk` name, and big cities without
+    one (Tehran, Hyderabad, Yokohama, Giza, …).
+  - Also the 9 Ukrainian towns without one (Kadiyivka, Liubotyn,
+    Ovidiopol, …).
 - Fix names in `tool/overrides.json` (by id: name/alias/exclude) and apply
   them on every build, so fixes survive re-runs.
 - Delete the old `cities_ua.json` and `cities_world.json`.
