@@ -2,6 +2,8 @@
 /// tested. `tool/build_cities.dart` does the file reading and writing.
 library;
 
+import 'ua_translit.dart';
+
 /// GeoNames feature codes that are not real, current cities:
 /// - `PPLX`: a section of a city (e.g. Obolon, Podil);
 /// - `PPLH`: historical;
@@ -200,6 +202,155 @@ String foldForDedupe(String s) => s
     .replaceAll(RegExp("['’ʼ`]"), '')
     .replaceAll(RegExp(r'[\s\-‐–]+'), ' ')
     .trim();
+
+/// A manual fix from `tool/overrides.json`, applied on top of GeoNames.
+///
+/// Fixes are keyed by GeoNames id, so they survive every rebuild. They cover
+/// the names GeoNames lacks or gets wrong (e.g. 36 capitals have no `uk`
+/// name).
+class CityOverride {
+  const CityOverride({
+    this.uk,
+    this.en,
+    this.akaUk = const [],
+    this.akaEn = const [],
+    this.exclude = false,
+  });
+
+  /// Replaces the Ukrainian display name.
+  final String? uk;
+
+  /// Replaces the English display name.
+  final String? en;
+
+  /// Extra Ukrainian aliases (merged with GeoNames' aliases).
+  final List<String> akaUk;
+
+  /// Extra English aliases (merged with GeoNames' aliases).
+  final List<String> akaEn;
+
+  /// Drops the city from the output entirely (e.g. a duplicate or non-city).
+  final bool exclude;
+
+  /// Parses one override entry. It throws [FormatException] on bad input:
+  /// a typo in the overrides file should stop the build, not slip through.
+  factory CityOverride.fromJson(Map<String, Object?> json) {
+    const known = {'_name', 'uk', 'en', 'akaUk', 'akaEn', 'exclude'};
+    final unknown = json.keys.where((k) => !known.contains(k));
+    if (unknown.isNotEmpty) {
+      throw FormatException('Unknown override field(s): ${unknown.join(', ')}');
+    }
+    final uk = _optionalString(json, 'uk');
+    if (uk != null && !_cyrillicName.hasMatch(uk)) {
+      throw FormatException('"uk" must be Cyrillic: "$uk"');
+    }
+    final akaUk = _stringList(json, 'akaUk');
+    for (final alias in akaUk) {
+      if (!_cyrillicName.hasMatch(alias)) {
+        throw FormatException('"akaUk" entries must be Cyrillic: "$alias"');
+      }
+    }
+    final exclude = json['exclude'];
+    if (exclude != null && exclude is! bool) {
+      throw const FormatException('"exclude" must be true/false');
+    }
+    return CityOverride(
+      uk: uk,
+      en: _optionalString(json, 'en'),
+      akaUk: akaUk,
+      akaEn: _stringList(json, 'akaEn'),
+      exclude: exclude == true,
+    );
+  }
+
+  static String? _optionalString(Map<String, Object?> json, String key) {
+    final value = json[key];
+    if (value == null) return null;
+    if (value is! String || value.trim().isEmpty) {
+      throw FormatException('"$key" must be a non-empty string');
+    }
+    return value.trim();
+  }
+
+  static List<String> _stringList(Map<String, Object?> json, String key) {
+    final value = json[key];
+    if (value == null) return const [];
+    if (value is! List || value.any((e) => e is! String)) {
+      throw FormatException('"$key" must be a list of strings');
+    }
+    return [for (final e in value) (e as String).trim()];
+  }
+}
+
+/// Parses the whole `tool/overrides.json` document: `{"cities": {"<id>": {…}}}`.
+Map<int, CityOverride> parseOverrides(Object? document) {
+  if (document is! Map || document['cities'] is! Map) {
+    throw const FormatException('overrides.json must have a "cities" object');
+  }
+  final cities = document['cities'] as Map;
+  final result = <int, CityOverride>{};
+  for (final MapEntry(:key, :value) in cities.entries) {
+    final id = int.tryParse('$key');
+    if (id == null) throw FormatException('Override key is not an id: "$key"');
+    if (value is! Map<String, Object?>) {
+      throw FormatException('Override $id must be an object');
+    }
+    try {
+      result[id] = CityOverride.fromJson(value);
+    } on FormatException catch (e) {
+      throw FormatException('Override $id: ${e.message}');
+    }
+  }
+  return result;
+}
+
+/// Applies [override] to GeoNames-derived [names].
+///
+/// - An overridden **Ukrainian** name *replaces* the GeoNames one: a `uk`
+///   override usually exists because the GeoNames name was wrong
+///   ("Старе Делі" for Delhi). If the old name is still a valid alias (a
+///   pre-renaming name), the override lists it in `akaUk` explicitly.
+/// - An overridden **English** name keeps the old one as an alias: `en`
+///   overrides are mostly spelling updates ("Sharjah city" → "Sharjah"), and
+///   players may still type the old form.
+///
+/// Extra aliases are merged and deduped like any others.
+CityNames applyOverride(CityNames names, CityOverride override) {
+  final uk = override.uk ?? names.uk;
+  final en = override.en ?? names.en;
+  return CityNames(
+    uk: uk,
+    en: en,
+    akaUk: uk == null ? const [] : _aliases([...names.akaUk, ...override.akaUk], uk),
+    akaEn: _aliases([...names.akaEn, names.en, ...override.akaEn], en),
+  );
+}
+
+/// Gives a Ukrainian city its **official** English name, transliterated from
+/// its Ukrainian name ([transliterateUk]), and keeps GeoNames' English
+/// spellings as aliases.
+///
+/// Without this, many Ukrainian cities would display outdated romanizations
+/// ("Zaporizhzhya", "Kryvyy Rih"). Worse, a player typing the official
+/// spelling would be told it's not a city.
+///
+/// The Ukrainian aliases (mostly pre-renaming names, e.g. Червоноград) are
+/// transliterated into English aliases too, so "Chervonohrad" works in
+/// English just as "Червоноград" does in Ukrainian.
+CityNames withOfficialUkrainianEnglish(CityNames names) {
+  final uk = names.uk;
+  if (uk == null) return names;
+  final en = transliterateUk(uk);
+  return CityNames(
+    uk: uk,
+    en: en,
+    akaUk: names.akaUk,
+    akaEn: _aliases(
+      [...names.akaEn, names.en, ...names.akaUk.map(transliterateUk)],
+      en,
+    ),
+  );
+}
 
 /// One city as written to `assets/data/cities.json` (format: tech_design §4).
 ///

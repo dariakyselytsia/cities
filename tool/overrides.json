@@ -1,0 +1,911 @@
+{
+  "_doc": "Manual fixes applied on top of GeoNames by tool/build_cities.dart (T04). Keyed by GeoNames id. Fields: uk / en replace the display name (an old en name stays as an alias; list an old uk name in akaUk if it is still a valid alias), akaUk / akaEn add aliases, exclude drops the city. \"_name\" is only a reading aid.",
+  "cities": {
+    "57289": {
+      "_name": "Hargeisa",
+      "uk": "Харгейса"
+    },
+    "70225": {
+      "_name": "Taiz",
+      "uk": "Таїз"
+    },
+    "79415": {
+      "_name": "Al Ḩudaydah",
+      "uk": "Ходейда"
+    },
+    "109223": {
+      "_name": "Madinah",
+      "en": "Medina"
+    },
+    "112931": {
+      "_name": "Tehran",
+      "uk": "Тегеран"
+    },
+    "121801": {
+      "_name": "Orūmīyeh",
+      "uk": "Урмія"
+    },
+    "128226": {
+      "_name": "Kermanshah",
+      "uk": "Керманшах"
+    },
+    "132144": {
+      "_name": "Hamadān",
+      "uk": "Хамадан"
+    },
+    "143083": {
+      "_name": "Ardabīl",
+      "uk": "Ардебіль"
+    },
+    "152224": {
+      "_name": "Mwanza",
+      "uk": "Мванза"
+    },
+    "161325": {
+      "_name": "Arusha",
+      "uk": "Аруша"
+    },
+    "217831": {
+      "_name": "Bukavu",
+      "uk": "Букаву"
+    },
+    "250090": {
+      "_name": "Zarqa",
+      "uk": "Ез-Зарка"
+    },
+    "285787": {
+      "_name": "Kuwait City",
+      "uk": "Ель-Кувейт",
+      "akaUk": [
+        "Кувейт"
+      ]
+    },
+    "292672": {
+      "_name": "Sharjah city",
+      "en": "Sharjah"
+    },
+    "298333": {
+      "_name": "Sanliurfa",
+      "uk": "Шанлиурфа"
+    },
+    "304531": {
+      "_name": "Mersin",
+      "uk": "Мерсін"
+    },
+    "311046": {
+      "_name": "İzmir",
+      "uk": "Ізмір"
+    },
+    "323779": {
+      "_name": "Antakya",
+      "uk": "Антак'я"
+    },
+    "336014": {
+      "_name": "Gonder",
+      "uk": "Гондер"
+    },
+    "347497": {
+      "_name": "Tanta",
+      "uk": "Танта"
+    },
+    "358619": {
+      "_name": "Port Said",
+      "uk": "Порт-Саїд"
+    },
+    "359783": {
+      "_name": "Asyut",
+      "uk": "Асьют"
+    },
+    "360761": {
+      "_name": "Al Mansurah",
+      "uk": "Ель-Мансура"
+    },
+    "360995": {
+      "_name": "Giza",
+      "uk": "Гіза"
+    },
+    "373303": {
+      "_name": "Juba",
+      "uk": "Джуба"
+    },
+    "426272": {
+      "_name": "Gitega",
+      "uk": "Гітега"
+    },
+    "472045": {
+      "_name": "Voronezh",
+      "uk": "Воронеж"
+    },
+    "479561": {
+      "_name": "Ufa",
+      "uk": "Уфа"
+    },
+    "482283": {
+      "_name": "Tolyatti",
+      "uk": "Тольятті"
+    },
+    "487846": {
+      "_name": "Stavropol",
+      "uk": "Ставрополь"
+    },
+    "500096": {
+      "_name": "Ryazan",
+      "uk": "Рязань"
+    },
+    "511565": {
+      "_name": "Penza",
+      "uk": "Пенза"
+    },
+    "515003": {
+      "_name": "Orenburg",
+      "uk": "Оренбург"
+    },
+    "523750": {
+      "_name": "Naberezhnye Chelny",
+      "uk": "Набережні Челни"
+    },
+    "542420": {
+      "_name": "Krasnodar",
+      "uk": "Краснодар"
+    },
+    "571476": {
+      "_name": "Bryansk",
+      "uk": "Брянськ"
+    },
+    "584923": {
+      "_name": "Sumgayit",
+      "uk": "Сумгаїт"
+    },
+    "609655": {
+      "_name": "Karaganda",
+      "uk": "Караганда"
+    },
+    "618426": {
+      "_name": "Chisinau",
+      "uk": "Кишинів"
+    },
+    "688073": {
+      "_name": "Bunhe (renamed from Юнокомунарівськ)",
+      "uk": "Бунге",
+      "akaUk": [
+        "Юнокомунарівськ"
+      ]
+    },
+    "688089": {
+      "_name": "Katerynivka (renamed from Ювілейне)",
+      "uk": "Катеринівка",
+      "akaUk": [
+        "Ювілейне"
+      ]
+    },
+    "688501": {
+      "_name": "Yampil’",
+      "uk": "Ямпіль"
+    },
+    "689190": {
+      "_name": "Vilne (renamed from Просяна)",
+      "uk": "Вільне",
+      "akaUk": [
+        "Просяна"
+      ]
+    },
+    "691374": {
+      "_name": "Chystyakove (GeoNames typo \"Часткове\")",
+      "uk": "Чистякове",
+      "akaUk": [
+        "Торез"
+      ]
+    },
+    "691705": {
+      "_name": "Irmino (renamed from Теплогірськ)",
+      "uk": "Ірміно",
+      "akaUk": [
+        "Теплогірськ"
+      ]
+    },
+    "692975": {
+      "_name": "Kadiyivka",
+      "uk": "Кадіївка",
+      "akaUk": [
+        "Стаханов"
+      ]
+    },
+    "694273": {
+      "_name": "Snovsk (renamed from Щорс)",
+      "uk": "Сновськ",
+      "akaUk": [
+        "Щорс"
+      ]
+    },
+    "697592": {
+      "_name": "Sokolohirsk (renamed from Pervomaisk)",
+      "uk": "Сокологірськ",
+      "akaUk": [
+        "Первомайськ"
+      ]
+    },
+    "698138": {
+      "_name": "Ovidiopol",
+      "uk": "Овідіополь"
+    },
+    "699311": {
+      "_name": "Aidar (renamed from Новопсков)",
+      "uk": "Айдар",
+      "akaUk": [
+        "Новопсков"
+      ]
+    },
+    "699675": {
+      "_name": "Novoazovs'k",
+      "uk": "Новоазовськ"
+    },
+    "701643": {
+      "_name": "Masany (city district, not a town)",
+      "exclude": true
+    },
+    "702417": {
+      "_name": "Liubotyn",
+      "uk": "Люботин"
+    },
+    "704202": {
+      "_name": "Khrustalnyi (renamed from Красний Луч)",
+      "uk": "Хрустальний",
+      "akaUk": [
+        "Красний Луч"
+      ]
+    },
+    "705186": {
+      "_name": "Kal'mius'ke",
+      "uk": "Кальміуське"
+    },
+    "705797": {
+      "_name": "Khrestivka (renamed from Кіровське)",
+      "uk": "Хрестівка",
+      "akaUk": [
+        "Кіровське"
+      ]
+    },
+    "705809": {
+      "_name": "Holubivka (renamed from Кіровськ)",
+      "uk": "Голубівка",
+      "akaUk": [
+        "Кіровськ"
+      ]
+    },
+    "709352": {
+      "_name": "Liubymivka (renamed from Дзержинський)",
+      "uk": "Любимівка",
+      "akaUk": [
+        "Дзержинський"
+      ]
+    },
+    "710554": {
+      "_name": "Sheptytskyi (renamed from Червоноград)",
+      "uk": "Шептицький",
+      "akaUk": [
+        "Червоноград"
+      ]
+    },
+    "710556": {
+      "_name": "Pulyny (renamed from Червоноармійськ)",
+      "uk": "Пулини",
+      "akaUk": [
+        "Червоноармійськ"
+      ]
+    },
+    "712521": {
+      "_name": "Bilovods'k",
+      "uk": "Біловодськ"
+    },
+    "712631": {
+      "_name": "Bilychi (city district, not a town)",
+      "exclude": true
+    },
+    "713175": {
+      "_name": "Kypuche (renamed from Артемівськ)",
+      "uk": "Кипуче",
+      "akaUk": [
+        "Артемівськ"
+      ]
+    },
+    "792680": {
+      "_name": "Belgrade",
+      "uk": "Белград"
+    },
+    "921815": {
+      "_name": "Mamoudzou",
+      "uk": "Мамудзу"
+    },
+    "935264": {
+      "_name": "Saint-Denis",
+      "uk": "Сен-Дені"
+    },
+    "1133616": {
+      "_name": "Mazār-e Sharīf",
+      "uk": "Мазарі-Шариф"
+    },
+    "1138336": {
+      "_name": "Kandahār",
+      "uk": "Кандагар"
+    },
+    "1140026": {
+      "_name": "Herāt",
+      "uk": "Герат"
+    },
+    "1176734": {
+      "_name": "Hyderābād",
+      "en": "Hyderabad"
+    },
+    "1216265": {
+      "_name": "Samarkand",
+      "uk": "Самарканд"
+    },
+    "1221874": {
+      "_name": "Dushanbe",
+      "uk": "Душанбе"
+    },
+    "1255364": {
+      "_name": "Surat",
+      "uk": "Сурат"
+    },
+    "1258847": {
+      "_name": "Rajkot",
+      "uk": "Раджкот"
+    },
+    "1261481": {
+      "_name": "New Delhi",
+      "uk": "Нью-Делі"
+    },
+    "1269321": {
+      "_name": "Jammu",
+      "uk": "Джамму"
+    },
+    "1269843": {
+      "_name": "Hyderabad",
+      "uk": "Хайдарабад"
+    },
+    "1270396": {
+      "_name": "Howrah",
+      "uk": "Хаора"
+    },
+    "1270583": {
+      "_name": "Gwalior",
+      "uk": "Гваліор"
+    },
+    "1273294": {
+      "_name": "Delhi (GeoNames uk is \"Старе Делі\" = Old Delhi)",
+      "uk": "Делі"
+    },
+    "1273874": {
+      "_name": "Kochi",
+      "uk": "Коччі"
+    },
+    "1274746": {
+      "_name": "Chandigarh",
+      "uk": "Чандігарх"
+    },
+    "1275817": {
+      "_name": "Bhubaneswar",
+      "uk": "Бхубанешвар"
+    },
+    "1278149": {
+      "_name": "Aurangabad",
+      "uk": "Аурангабад"
+    },
+    "1278994": {
+      "_name": "Prayagraj",
+      "uk": "Праяградж",
+      "akaUk": [
+        "Аллахабад"
+      ]
+    },
+    "1486209": {
+      "_name": "Yekaterinburg (GeoNames uk is the Russian spelling)",
+      "uk": "Єкатеринбург",
+      "akaUk": [
+        "Екатеринбург"
+      ]
+    },
+    "1488754": {
+      "_name": "Tyumen",
+      "uk": "Тюмень"
+    },
+    "1502026": {
+      "_name": "Krasnoyarsk",
+      "uk": "Красноярськ"
+    },
+    "1526273": {
+      "_name": "Astana",
+      "uk": "Астана"
+    },
+    "1562414": {
+      "_name": "Vũng Tàu",
+      "uk": "Вунгтау"
+    },
+    "1581298": {
+      "_name": "Haiphong",
+      "uk": "Хайфон"
+    },
+    "1586203": {
+      "_name": "Cần Thơ",
+      "uk": "Кантхо"
+    },
+    "1587923": {
+      "_name": "Biên Hòa",
+      "uk": "Б'єнхоа"
+    },
+    "1622786": {
+      "_name": "Makassar",
+      "uk": "Макасар"
+    },
+    "1624917": {
+      "_name": "Bandar Lampung",
+      "uk": "Бандар-Лампунг"
+    },
+    "1631761": {
+      "_name": "Pekanbaru",
+      "uk": "Пеканбару"
+    },
+    "1633419": {
+      "_name": "Padang",
+      "uk": "Паданг"
+    },
+    "1636722": {
+      "_name": "Malang",
+      "uk": "Маланг"
+    },
+    "1650213": {
+      "_name": "Banjarmasin",
+      "uk": "Банджармасін"
+    },
+    "1650527": {
+      "_name": "Balikpapan",
+      "uk": "Балікпапан"
+    },
+    "1668399": {
+      "_name": "Taichung",
+      "uk": "Тайчжун"
+    },
+    "1673820": {
+      "_name": "Kaohsiung City",
+      "en": "Kaohsiung"
+    },
+    "1675151": {
+      "_name": "Hsinchu",
+      "uk": "Сіньчжу"
+    },
+    "1684308": {
+      "_name": "City of Taguig",
+      "en": "Taguig"
+    },
+    "1699076": {
+      "_name": "City of Muntinlupa",
+      "en": "Muntinlupa"
+    },
+    "1703417": {
+      "_name": "Makati City",
+      "uk": "Макаті",
+      "en": "Makati"
+    },
+    "1711005": {
+      "_name": "Iloilo City",
+      "uk": "Ілоїло",
+      "en": "Iloilo"
+    },
+    "1715348": {
+      "_name": "Davao City",
+      "en": "Davao"
+    },
+    "1733432": {
+      "_name": "Kota Kinabalu",
+      "uk": "Кота-Кінабалу"
+    },
+    "1734759": {
+      "_name": "Malacca",
+      "uk": "Малакка"
+    },
+    "1796556": {
+      "_name": "Sanya",
+      "uk": "Санья"
+    },
+    "1809498": {
+      "_name": "Guilin",
+      "uk": "Гуйлінь"
+    },
+    "1833747": {
+      "_name": "Ulsan",
+      "uk": "Ульсан"
+    },
+    "1835235": {
+      "_name": "Daejeon",
+      "uk": "Теджон"
+    },
+    "1835553": {
+      "_name": "Suwon",
+      "uk": "Сувон"
+    },
+    "1839071": {
+      "_name": "Pohang",
+      "uk": "Пхохан"
+    },
+    "1846266": {
+      "_name": "Jeju City",
+      "uk": "Чеджу",
+      "en": "Jeju"
+    },
+    "1848354": {
+      "_name": "Yokohama",
+      "uk": "Йокогама"
+    },
+    "1849053": {
+      "_name": "Utsunomiya",
+      "uk": "Уцуномія"
+    },
+    "1849876": {
+      "_name": "Toyama",
+      "uk": "Тояма"
+    },
+    "1853195": {
+      "_name": "Sakai",
+      "uk": "Сакаї"
+    },
+    "1854383": {
+      "_name": "Okayama",
+      "uk": "Окаяма"
+    },
+    "1855431": {
+      "_name": "Niigata",
+      "uk": "Ніїгата"
+    },
+    "1856177": {
+      "_name": "Nagasaki",
+      "uk": "Нагасакі"
+    },
+    "1856717": {
+      "_name": "Miyazaki",
+      "uk": "Міядзакі"
+    },
+    "1858421": {
+      "_name": "Kumamoto",
+      "uk": "Кумамото"
+    },
+    "1860243": {
+      "_name": "Kanazawa",
+      "uk": "Канадзава"
+    },
+    "1860827": {
+      "_name": "Kagoshima",
+      "uk": "Кагосіма"
+    },
+    "2036502": {
+      "_name": "Jilin (GeoNames uk \"Ґірін\" is the Japanese reading)",
+      "uk": "Цзілінь",
+      "en": "Jilin"
+    },
+    "2078127": {
+      "_name": "Flying Fish Cove",
+      "uk": "Флаїнг-Фіш-Коув"
+    },
+    "2081986": {
+      "_name": "Palikir",
+      "uk": "Палікір"
+    },
+    "2110394": {
+      "_name": "Funafuti",
+      "uk": "Фунафуті"
+    },
+    "2111149": {
+      "_name": "Sendai",
+      "uk": "Сендай"
+    },
+    "2113015": {
+      "_name": "Chiba",
+      "uk": "Тіба"
+    },
+    "2165087": {
+      "_name": "Gold Coast",
+      "uk": "Голд-Кост"
+    },
+    "2243271": {
+      "_name": "Cabinda",
+      "uk": "Кабінда"
+    },
+    "2244322": {
+      "_name": "Touba",
+      "uk": "Туба"
+    },
+    "2255414": {
+      "_name": "Pointe-Noire",
+      "uk": "Пуент-Нуар"
+    },
+    "2267057": {
+      "_name": "Lisbon",
+      "uk": "Лісабон"
+    },
+    "2290956": {
+      "_name": "Bouaké",
+      "uk": "Буаке"
+    },
+    "2337639": {
+      "_name": "Ilorin",
+      "uk": "Ілорин"
+    },
+    "2343279": {
+      "_name": "Enugu",
+      "uk": "Енугу"
+    },
+    "2422465": {
+      "_name": "Conakry",
+      "uk": "Конакрі"
+    },
+    "2427123": {
+      "_name": "N'Djamena",
+      "uk": "Нджамена"
+    },
+    "2501152": {
+      "_name": "Constantine",
+      "uk": "Константіна"
+    },
+    "2512989": {
+      "_name": "Palma",
+      "uk": "Пальма",
+      "akaUk": [
+        "Пальма-де-Мальорка"
+      ]
+    },
+    "2513416": {
+      "_name": "Murcia",
+      "uk": "Мурсія"
+    },
+    "2523920": {
+      "_name": "Palermo",
+      "uk": "Палермо"
+    },
+    "2530335": {
+      "_name": "Tangier",
+      "uk": "Танжер"
+    },
+    "2537763": {
+      "_name": "Salé",
+      "uk": "Сале"
+    },
+    "2542715": {
+      "_name": "Meknes",
+      "uk": "Мекнес"
+    },
+    "2542997": {
+      "_name": "Marrakesh",
+      "uk": "Марракеш"
+    },
+    "2544571": {
+      "_name": "Kenitra",
+      "uk": "Кенітра"
+    },
+    "2548885": {
+      "_name": "Fes",
+      "uk": "Фес"
+    },
+    "2747373": {
+      "_name": "The Hague",
+      "uk": "Гаага"
+    },
+    "2925533": {
+      "_name": "Frankfurt am Main",
+      "uk": "Франкфурт-на-Майні",
+      "akaUk": [
+        "Франкфурт"
+      ]
+    },
+    "2993458": {
+      "_name": "Monaco",
+      "uk": "Монако"
+    },
+    "3041563": {
+      "_name": "Andorra la Vella",
+      "uk": "Андорра-ла-Велья"
+    },
+    "3041732": {
+      "_name": "Mariehamn",
+      "uk": "Марієгамн"
+    },
+    "3042030": {
+      "_name": "Vaduz",
+      "uk": "Вадуц"
+    },
+    "3042091": {
+      "_name": "Saint Helier",
+      "uk": "Сент-Гельєр"
+    },
+    "3176219": {
+      "_name": "Genoa",
+      "uk": "Генуя"
+    },
+    "3181928": {
+      "_name": "Bologna",
+      "uk": "Болонья"
+    },
+    "3351663": {
+      "_name": "Benguela",
+      "uk": "Бенгела"
+    },
+    "3374036": {
+      "_name": "Bridgetown",
+      "uk": "Бриджтаун"
+    },
+    "3394023": {
+      "_name": "Natal",
+      "uk": "Натал"
+    },
+    "3413829": {
+      "_name": "Reykjavík",
+      "uk": "Рейк'явік"
+    },
+    "3424934": {
+      "_name": "Saint-Pierre",
+      "uk": "Сен-П'єр"
+    },
+    "3456283": {
+      "_name": "Niterói",
+      "uk": "Нітерой"
+    },
+    "3459712": {
+      "_name": "Joinville",
+      "uk": "Жоінвілі"
+    },
+    "3461786": {
+      "_name": "Guarulhos",
+      "uk": "Гуарульюс"
+    },
+    "3489854": {
+      "_name": "Kingston",
+      "uk": "Кінгстон"
+    },
+    "3513563": {
+      "_name": "Kralendijk",
+      "uk": "Кралендейк"
+    },
+    "3515302": {
+      "_name": "Toluca",
+      "uk": "Толука"
+    },
+    "3520339": {
+      "_name": "Reynosa",
+      "uk": "Рейноса"
+    },
+    "3522551": {
+      "_name": "Nuevo Laredo",
+      "uk": "Нуево-Ларедо"
+    },
+    "3526617": {
+      "_name": "Xalapa",
+      "uk": "Халапа"
+    },
+    "3576022": {
+      "_name": "Saint John’s",
+      "uk": "Сент-Джонс"
+    },
+    "3579925": {
+      "_name": "Saint George's",
+      "uk": "Сент-Джорджес"
+    },
+    "3598132": {
+      "_name": "Guatemala City",
+      "uk": "Гватемала"
+    },
+    "3601782": {
+      "_name": "San Pedro Sula",
+      "uk": "Сан-Педро-Сула"
+    },
+    "3648559": {
+      "_name": "Barcelona",
+      "uk": "Барселона"
+    },
+    "3668605": {
+      "_name": "Santa Marta",
+      "uk": "Санта-Марта"
+    },
+    "3672486": {
+      "_name": "Pereira",
+      "uk": "Перейра"
+    },
+    "3703443": {
+      "_name": "Panama City",
+      "uk": "Панама"
+    },
+    "3836277": {
+      "_name": "Santa Fe",
+      "uk": "Санта-Фе"
+    },
+    "3871336": {
+      "_name": "Santiago",
+      "uk": "Сантьяго",
+      "akaUk": [
+        "Сантьяго-де-Чилі"
+      ]
+    },
+    "3979770": {
+      "_name": "Zapopan",
+      "uk": "Сапопан"
+    },
+    "3985606": {
+      "_name": "San Luis Potosí",
+      "uk": "Сан-Луїс-Потосі"
+    },
+    "4006702": {
+      "_name": "Ensenada",
+      "uk": "Енсенада"
+    },
+    "4012176": {
+      "_name": "Culiacán",
+      "uk": "Кульякан"
+    },
+    "4553433": {
+      "_name": "Tulsa",
+      "uk": "Талса"
+    },
+    "5110266": {
+      "_name": "The Bronx (New York City borough, not a city)",
+      "exclude": true
+    },
+    "5110302": {
+      "_name": "Brooklyn (New York City borough, not a city)",
+      "exclude": true
+    },
+    "5125771": {
+      "_name": "Manhattan, NYC (borough, not a city; Manhattan, Kansas stays)",
+      "exclude": true
+    },
+    "5133273": {
+      "_name": "Queens (New York City borough, not a city)",
+      "exclude": true
+    },
+    "5139568": {
+      "_name": "Staten Island (New York City borough, not a city)",
+      "exclude": true
+    },
+    "6295587": {
+      "_name": "Batam",
+      "uk": "Батам"
+    },
+    "6324729": {
+      "_name": "Halifax",
+      "uk": "Галіфакс"
+    },
+    "6691831": {
+      "_name": "Vatican City",
+      "uk": "Ватикан"
+    },
+    "6940394": {
+      "_name": "Saitama",
+      "uk": "Сайтама"
+    },
+    "7304591": {
+      "_name": "West Island",
+      "uk": "Вест-Айленд"
+    },
+    "7828758": {
+      "_name": "Saipan",
+      "uk": "Сайпан"
+    },
+    "8063361": {
+      "_name": "Ngerulmud",
+      "uk": "Нгерулмуд"
+    },
+    "8504651": {
+      "_name": "Sofiyivska Borschagivka",
+      "uk": "Софіївська Борщагівка"
+    },
+    "9983718": {
+      "_name": "Cheremushky (city district, not a town)",
+      "exclude": true
+    },
+    "12492662": {
+      "_name": "Mianzhu, Deyang, Sichuan",
+      "en": "Mianzhu"
+    },
+    "13607655": {
+      "_name": "Khanzhonkivskyi (city district, not a town)",
+      "exclude": true
+    }
+  }
+}

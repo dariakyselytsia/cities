@@ -165,6 +165,110 @@ void main() {
     });
   });
 
+  group('overrides', () {
+    const geonamesDelhi = CityNames(
+      uk: 'Старе Делі',
+      en: 'Sharjah city',
+      akaUk: [],
+      akaEn: [],
+    );
+
+    test('a uk override replaces the GeoNames name without keeping it', () {
+      final names = applyOverride(geonamesDelhi, const CityOverride(uk: 'Делі'));
+
+      expect(names.uk, 'Делі');
+      expect(names.akaUk, isEmpty);
+    });
+
+    test('an en override keeps the old English name as an alias', () {
+      final names =
+          applyOverride(geonamesDelhi, const CityOverride(en: 'Sharjah'));
+
+      expect(names.en, 'Sharjah');
+      expect(names.akaEn, ['Sharjah city']);
+    });
+
+    test('override aliases are merged in', () {
+      final names = applyOverride(
+        const CityNames(uk: 'Хрустальний', en: 'Khrustalnyi', akaUk: [], akaEn: []),
+        const CityOverride(akaUk: ['Красний Луч']),
+      );
+
+      expect(names.akaUk, ['Красний Луч']);
+    });
+
+    test('parseOverrides reads ids and fields', () {
+      final overrides = parseOverrides({
+        'cities': {
+          '1273294': {'_name': 'Delhi', 'uk': 'Делі'},
+          '1': {'exclude': true},
+        },
+      });
+
+      expect(overrides.keys, [1273294, 1]);
+      expect(overrides[1273294]?.uk, 'Делі');
+      expect(overrides[1]?.exclude, isTrue);
+    });
+
+    test('parseOverrides rejects typos instead of ignoring them', () {
+      expect(
+        () => parseOverrides({
+          'cities': {'1': {'ukk': 'Делі'}},
+        }),
+        throwsFormatException,
+      );
+      expect(
+        () => parseOverrides({
+          'cities': {'1': {'uk': 'Delhi'}},
+        }),
+        throwsFormatException,
+        reason: 'uk must be Cyrillic',
+      );
+      expect(
+        () => parseOverrides({
+          'cities': {'Delhi': {'uk': 'Делі'}},
+        }),
+        throwsFormatException,
+        reason: 'keys must be ids',
+      );
+    });
+  });
+
+  group('withOfficialUkrainianEnglish', () {
+    test('replaces an outdated romanization and keeps it as an alias', () {
+      final names = withOfficialUkrainianEnglish(
+        const CityNames(
+          uk: 'Запоріжжя',
+          en: 'Zaporizhzhya',
+          akaUk: [],
+          akaEn: ['Zaporozhye'],
+        ),
+      );
+
+      expect(names.en, 'Zaporizhzhia');
+      expect(names.akaEn, ['Zaporizhzhya', 'Zaporozhye']);
+    });
+
+    test('transliterates pre-renaming uk aliases into en aliases', () {
+      final names = withOfficialUkrainianEnglish(
+        const CityNames(
+          uk: 'Хрустальний',
+          en: 'Khrustalnyi',
+          akaUk: ['Красний Луч'],
+          akaEn: [],
+        ),
+      );
+
+      expect(names.akaEn, ['Krasnyi Luch']);
+    });
+
+    test('leaves a city without a uk name unchanged', () {
+      const names = CityNames(uk: null, en: 'X', akaUk: [], akaEn: []);
+
+      expect(withOfficialUkrainianEnglish(names), same(names));
+    });
+  });
+
   group('cityRecord', () {
     test('omits empty and default fields', () {
       final record = cityRecord(

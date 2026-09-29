@@ -34,8 +34,15 @@ cities that have **no Ukrainian name**; those are candidates for manual fixes
 - **Ids** are GeoNames ids, unique across both lists.
 - **Ukrainian name:** a real `uk` name from GeoNames, Cyrillic only.
   - When none exists, the city has no `uk` field and isn't playable in
-    Ukrainian. The script never machine-transliterates names.
+    Ukrainian. The script never machine-transliterates names *into*
+    Ukrainian: that's what produced the old "лес Ескалдес".
 - **English name:** the preferred `en` name, else GeoNames' main name.
+  - **Ukrainian cities** use the **official transliteration** of their
+    Ukrainian name instead (Cabinet of Ministers Resolution No. 55, 2010,
+    which is still the standard for place names): Zaporizhzhia, Kryvyi Rih,
+    Kamianske. GeoNames' older spellings (Zaporizhzhya) and the
+    transliterated old names (Chervonohrad) become aliases. See
+    `src/ua_translit.dart`.
 - **Aliases:** every other `uk`/`en` name, **including historic ones**
   (Kiev, Кіровоград, Bombay).
   - Nicknames ("Big Apple") and other languages (e.g. Russian) are excluded.
@@ -45,4 +52,57 @@ cities that have **no Ukrainian name**; those are candidates for manual fixes
   always give a byte-identical file. The format is in `tech_design.md` §4.
 
 The name-selection logic lives in `tool/src/city_builder.dart` and is tested
-in `test/tool/city_builder_test.dart`.
+in `test/tool/`.
+
+## Fixing names: `overrides.json`
+
+GeoNames has gaps and errors. Each fix goes in `tool/overrides.json`, keyed by
+GeoNames id, and is applied on every build, so fixes survive re-runs.
+
+```json
+"710554": {
+  "_name": "Sheptytskyi (renamed from Червоноград)",
+  "uk": "Шептицький",
+  "akaUk": ["Червоноград"]
+}
+```
+
+| Field | Effect |
+|---|---|
+| `uk` | Replaces the Ukrainian name. The old one is dropped; list it in `akaUk` if it's still a valid alias, e.g. a pre-renaming name. Must be Cyrillic. |
+| `en` | Replaces the English name. The old one is kept as an alias. |
+| `akaUk`, `akaEn` | Extra aliases. |
+| `exclude` | `true` drops the place (e.g. a city district listed as a town). |
+| `_name` | A note for humans; ignored by the build. |
+
+The build **fails** on an unknown field, a non-Cyrillic `uk`, or an id that
+isn't in the lists, so typos can't slip through.
+
+To find an id, search `tool/review/cities_review.csv`, or the GeoNames dump
+by name.
+
+### What's in it (T04, 209 entries)
+- 13 Ukrainian cities where GeoNames still shows the pre-renaming name
+  (Червоноград → Шептицький, Кіровськ → Голубівка, …). The old name is kept
+  as an alias.
+- Ukrainian towns with no `uk` name, a typo ("Часткове" → Чистякове), and 4
+  city districts excluded.
+- The 5 New York City boroughs excluded: they're parts of New York, not
+  cities. Manhattan, Kansas stays.
+- All 36 capitals GeoNames has no Ukrainian name for (Лісабон, Тегеран,
+  Белград, …).
+- ~130 well-known cities without one (Йокогама, Ізмір, Франкфурт-на-Майні,
+  Марракеш, …).
+- Wrong names (Delhi was "Старе Делі"), and awkward English names
+  ("Sharjah city" → Sharjah).
+
+## Review sheet: `review/cities_review.csv`
+
+Each build also writes a sheet for human review. It's UTF-8 with a BOM, so it
+opens correctly in Excel.
+
+- **Sections:** the World top 1,500 and Ukraine top 150 by population, plus
+  any capital or Ukrainian city still missing a Ukrainian name.
+- **`status` column:** `missing_uk` or `override`.
+- It's committed, so a diff shows what a GeoNames update or an override
+  changed.

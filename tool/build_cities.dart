@@ -18,6 +18,18 @@ const String _altNamesDump = 'alternateNamesV2';
 
 const String _outPath = 'assets/data/cities.json';
 
+/// Manual fixes on top of GeoNames, keyed by GeoNames id (see tool/README.md).
+const String _overridesPath = 'tool/overrides.json';
+
+/// Human review sheet of the most visible cities (T04). UTF-8 with a BOM so
+/// Excel shows Cyrillic correctly.
+const String _reviewPath = 'tool/review/cities_review.csv';
+
+/// Rows in the review sheet: the World cities the bot and players meet most
+/// (≈ tiers 1–2), and the Ukraine top tier.
+const int _reviewWorldTop = 1500;
+const int _reviewUkraineTop = 150;
+
 Future<void> main() async {
   final watch = Stopwatch()..start();
   final root = File.fromUri(Platform.script).parent.parent;
@@ -41,13 +53,29 @@ Future<void> main() async {
     byId.keys.toSet(),
   );
 
+  final overrides = await _readOverrides(File('${root.path}/$_overridesPath'));
+  final unknownIds = overrides.keys.where((id) => !byId.containsKey(id));
+  if (unknownIds.isNotEmpty) {
+    stderr.writeln('overrides.json refers to ids not in the city lists: '
+        '${unknownIds.join(', ')}');
+    exit(1);
+  }
+
   final ids = byId.keys.toList()..sort();
   final records = <Map<String, Object>>[];
   final namesById = <int, CityNames>{};
   for (final id in ids) {
     final city = byId[id];
     if (city == null) continue;
-    final names = pickNames(city, alts[id] ?? const []);
+    final override = overrides[id];
+    if (override != null && override.exclude) continue;
+    var names = pickNames(city, alts[id] ?? const []);
+    if (override != null) names = applyOverride(names, override);
+    // Official romanization for Ukrainian cities, unless an override set the
+    // English name deliberately.
+    if (city.countryCode == 'UA' && override?.en == null) {
+      names = withOfficialUkrainianEnglish(names);
+    }
     namesById[id] = names;
     records.add(cityRecord(city, names, uaOnly: !worldIds.contains(id)));
   }
@@ -56,13 +84,96 @@ Future<void> main() async {
   await out.parent.create(recursive: true);
   await out.writeAsString('${jsonEncode({'v': 1, 'cities': records})}\n');
 
-  _report(
-    world: world,
-    ukraine: ukraine,
+  final kept = namesById.keys.toSet();
+  final keptWorld = [for (final c in world) if (kept.contains(c.id)) c];
+  final keptUkraine = [for (final c in ukraine) if (kept.contains(c.id)) c];
+
+  await _writeReview(
+    File('${root.path}/$_reviewPath'),
+    world: keptWorld,
+    ukraine: keptUkraine,
     namesById: namesById,
+    overridden: overrides.keys.toSet(),
+  );
+
+  _report(
+    world: keptWorld,
+    ukraine: keptUkraine,
+    namesById: namesById,
+    overrideCount: overrides.length,
     outBytes: await out.length(),
     elapsed: watch.elapsed,
   );
+}
+
+Future<Map<int, CityOverride>> _readOverrides(File file) async {
+  if (!file.existsSync()) return const {};
+  try {
+    return parseOverrides(jsonDecode(await file.readAsString()));
+  } on FormatException catch (e) {
+    stderr.writeln('Invalid ${file.path}: ${e.message}');
+    exit(1);
+  }
+}
+
+/// Writes the review sheet: World top-N and Ukraine top-N by population, plus
+/// every capital and Ukrainian city still missing a `uk` name.
+///
+/// It is sorted and deterministic, so a diff shows exactly what a GeoNames
+/// update or an override changed.
+Future<void> _writeReview(
+  File file, {
+  required List<GeoCity> world,
+  required List<GeoCity> ukraine,
+  required Map<int, CityNames> namesById,
+  required Set<int> overridden,
+}) async {
+  int byPopulation(GeoCity a, GeoCity b) {
+    final byPop = b.population.compareTo(a.population);
+    return byPop != 0 ? byPop : a.id.compareTo(b.id);
+  }
+
+  final worldSorted = [...world]..sort(byPopulation);
+  final ukraineSorted = [...ukraine]..sort(byPopulation);
+  bool missingUk(GeoCity c) => namesById[c.id]?.uk == null;
+
+  final sections = <(String, List<GeoCity>)>[
+    ('world_top$_reviewWorldTop', worldSorted.take(_reviewWorldTop).toList()),
+    ('ukraine_top$_reviewUkraineTop', ukraineSorted.take(_reviewUkraineTop).toList()),
+    ('capital_missing_uk', [for (final c in worldSorted) if (c.isCapital && missingUk(c)) c]),
+    ('ukraine_missing_uk', [for (final c in ukraineSorted) if (missingUk(c)) c]),
+  ];
+
+  String cell(String value) =>
+      value.contains(RegExp('[",\n]')) ? '"${value.replaceAll('"', '""')}"' : value;
+
+  final buffer = StringBuffer('﻿')
+    ..writeln('section,rank,id,cc,population,capital,uk,en,akaUk,akaEn,status');
+  for (final (section, cities) in sections) {
+    for (final (index, city) in cities.indexed) {
+      final names = namesById[city.id];
+      if (names == null) continue;
+      final status = [
+        if (names.uk == null) 'missing_uk',
+        if (overridden.contains(city.id)) 'override',
+      ].join(' ');
+      buffer.writeln([
+        section,
+        '${index + 1}',
+        '${city.id}',
+        city.countryCode,
+        '${city.population}',
+        city.isCapital ? 'yes' : '',
+        names.uk ?? '',
+        names.en,
+        names.akaUk.join(' | '),
+        names.akaEn.join(' | '),
+        status,
+      ].map(cell).join(','));
+    }
+  }
+  await file.parent.create(recursive: true);
+  await file.writeAsString(buffer.toString());
 }
 
 /// Unzips `<dump>.zip` when the `.txt` isn't there yet. Uses `tar`, which
@@ -121,6 +232,7 @@ void _report({
   required List<GeoCity> world,
   required List<GeoCity> ukraine,
   required Map<int, CityNames> namesById,
+  required int overrideCount,
   required int outBytes,
   required Duration elapsed,
 }) {
@@ -141,6 +253,7 @@ void _report({
     ..writeln('')
     ..writeln('Wrote $_outPath: ${(outBytes / 1024 / 1024).toStringAsFixed(2)} MB '
         'in ${elapsed.inSeconds}s')
+    ..writeln('Overrides applied: $overrideCount · review sheet: $_reviewPath')
     ..writeln('World:   ${world.length} cities, $worldUk with a Ukrainian name')
     ..writeln('Ukraine: ${ukraine.length} cities ($uaOnly below 15k), '
         '$ukraineUk with a Ukrainian name')

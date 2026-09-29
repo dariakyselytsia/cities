@@ -40,7 +40,8 @@
 | T01 | Reset project skeleton | M0 Reset | M | [x] |
 | T02 | Update CLAUDE.md & project skills | M0 Reset | S | [x] |
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [x] |
-| T04 | Name review & overrides | M1 Data | M | [ ] |
+| T04 | Name review & overrides | M1 Data | M | [x] |
+| T23 | World list: filter big-city districts | M1 Data | M | [ ] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [ ] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [ ] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [ ] |
@@ -206,6 +207,49 @@ The script:
 **Done when:** the top-tier names read correctly in both languages, and the
 overrides are applied automatically.
 
+**Result (2026-09-30):**
+- `tool/overrides.json` has 209 fixes, validated at build time: unknown
+  fields, non-Cyrillic `uk` and unknown ids all fail the build.
+- The review sheet is `tool/review/cities_review.csv`.
+- Coverage now:
+  - every capital has a `uk` name;
+  - all 848 Ukrainian cities have one;
+  - World in Ukrainian has 7,185 cities (up from 7,021).
+- 13 renamed Ukrainian cities that GeoNames still showed under their old
+  names are fixed (Червоноград → Шептицький, …). They were found by checking
+  where the `uk` and `en` names disagree; the old names remain aliases.
+  - Айдар (Новопсков), Вільне (Просяна) and Любимівка (Дзержинський) rely on
+    GeoNames alone and haven't been independently confirmed.
+- Excluded: 4 Ukrainian city districts (Черемушки, Біличі, …) and the 5 New
+  York City boroughs.
+- The overrides were reviewed. The only junk left is the alias "Топез" on
+  Чистякове (a GeoNames typo, harmless). Removing aliases isn't supported.
+- **Extra:** Ukrainian cities' English names now follow the official
+  transliteration (KMU No. 55, 2010), e.g. Zaporizhzhia, Kryvyi Rih.
+  GeoNames' spellings and transliterated old names are aliases.
+- The old `cities_ua.json` and `cities_world.json` are deleted. The output is
+  1.93 MB and deterministic.
+- Known limit: names are as current as GeoNames plus the overrides. A
+  renaming GeoNames doesn't know yet needs a one-line override.
+
+### T23 · World list: filter big-city districts · M
+Added after the T04 review.
+
+GeoNames codes many big-city districts as ordinary towns (`PPLA2`/`PPLA3`),
+not `PPLX`. Examples: Pudong and Minhang (Shanghai), Üsküdar and Esenyurt
+(Istanbul), Iztapalapa (Mexico City), Tokyo's wards (Ōta-ku). Hard CityBot
+could play them.
+- Find candidates automatically: places whose coordinates fall inside a much
+  larger city in the same country (e.g. within ~15 km of a city ≥ 5× their
+  population), plus name patterns (`-ku`, `District`, `Qū`).
+- Review the list and add `exclude` overrides. Or, if the heuristic proves
+  reliable, have the build apply it.
+
+**Done when:** the World top 1,500 contains no known districts, and the rule
+or overrides are documented in `tool/README.md`.
+
+Do this before T20 (balance tuning), because districts distort the tiers.
+
 ---
 
 ## M2 — Engine (pure Dart, `lib/engine/`)
@@ -228,6 +272,11 @@ Build it from the decoded JSON. It stays pure and takes no asset I/O.
   - the set of playable first letters.
 - Tiers come from population rank within each list, with capitals forced to
   T1. Tier sizes come from constants.
+  - Only capitals of **sovereign states** get the T1 boost. GeoNames `PPLC`
+    also marks territory capitals (Флаїнг-Фіш-Коув, 1,355 people;
+    Вест-Айленд, 120), which Easy CityBot must not play.
+  - E.g. require a minimum population for the boost, or keep a list of
+    territory country codes.
 
 **Done when:** tests on a small fixture JSON cover alias lookup, duplicate
 names (the most populous wins), tier boundaries and the capital override.

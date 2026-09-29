@@ -1,0 +1,1651 @@
+﻿section,rank,id,cc,population,capital,uk,en,akaUk,akaEn,status
+world_top1500,1,1796236,CN,24874500,,Шанхай,Shanghai,,,
+world_top1500,2,1814906,CN,22000000,,Чунцін,Chongqing,,,
+world_top1500,3,1815286,CN,20937757,,Ченду,Chengdu,,,
+world_top1500,4,1816670,CN,18960744,yes,Пекін,Beijing,,,
+world_top1500,5,1809858,CN,18676605,,Гуанчжоу,Guangzhou,,,
+world_top1500,6,1795565,CN,17494398,,Шеньчжень,Shenzhen,,,
+world_top1500,7,2314302,CD,16000000,yes,Кіншаса,Kinshasa,,,
+world_top1500,8,745044,TR,15701602,,Стамбул,Istanbul,,Byzantium | Constantinople,
+world_top1500,9,2332459,NG,15388000,,Лагос,Lagos,,,
+world_top1500,10,1566083,VN,14002598,,Хошимін,Ho Chi Minh City,Сайгон,Saigon,
+world_top1500,11,1792947,CN,13866009,,Тяньцзінь,Tianjin,,,
+world_top1500,12,1791247,CN,13739000,,Ухань,Wuhan,,,
+world_top1500,13,1172451,PK,13004135,,Лахор,Lahore,,,
+world_top1500,14,1790630,CN,12952907,,Сіань,Xi'an,,,
+world_top1500,15,1275339,IN,12691836,,Мумбаї,Mumbai,,Bombay,
+world_top1500,16,3448439,BR,12400232,,Сан-Паулу,São Paulo,,,
+world_top1500,17,3530597,MX,12294193,yes,Мехіко,Mexico City,,,
+world_top1500,18,1808926,CN,11936010,,Ханчжоу,Hangzhou,,,
+world_top1500,19,1174872,PK,11624219,,Карачі,Karachi,,Karanchi | Karāchi,
+world_top1500,20,1273294,IN,11034555,,Делі,Delhi,,,override
+world_top1500,21,524901,RU,10381222,yes,Москва,Moscow,,,
+world_top1500,22,1185241,BD,10356500,yes,Дакка,Dhaka,,,
+world_top1500,23,1835848,KR,10349312,yes,Сеул,Seoul,,Hanyang | Seoul-si,
+world_top1500,24,2037013,CN,10009854,,Харбін,Harbin,,,
+world_top1500,25,1850147,JP,9733276,yes,Токіо,Tokyo,,Edo,
+world_top1500,26,1812545,CN,9644871,,Дунґуань,Dongguan,,,
+world_top1500,27,360630,EG,9606916,yes,Каїр,Cairo,,,
+world_top1500,28,1808722,CN,9465881,,Хефей,Hefei,,,
+world_top1500,29,993800,ZA,9418183,,Йоганнесбург,Johannesburg,,Jo'anna,
+world_top1500,30,1791681,CN,9386705,,Вейфан,Weifang,,,
+world_top1500,31,1799962,CN,9314685,,Нанкін,Nanjing,,,
+world_top1500,32,2034937,CN,9070093,,Шеньян,Shenyang,,,
+world_top1500,33,1811103,CN,9042509,,Фошань,Foshan,,,
+world_top1500,34,2643743,GB,8961989,yes,Лондон,London,,,
+world_top1500,35,5128581,US,8804190,,Нью-Йорк,New York,,New York City,
+world_top1500,36,1642911,ID,8540121,yes,Джакарта,Jakarta,,Batavia | Djakarta | Sunda Kelapa | Sundapura,
+world_top1500,37,1277333,IN,8495492,,Бенґалуру,Bengaluru,,Bangalore,
+world_top1500,38,1805753,CN,8352574,,Цзінань,Jinan,,,
+world_top1500,39,1581130,VN,8053663,yes,Ханой,Hanoi,Ганой,,
+world_top1500,40,1668341,TW,7871900,yes,Тайбей,Taipei,,,
+world_top1500,41,3936456,PE,7737002,yes,Ліма,Lima,,,
+world_top1500,42,3688689,CO,7674366,yes,Богота,Bogotá,,,
+world_top1500,43,1814087,CN,7450785,,Далянь,Dalian,,Luta | Lüda,
+world_top1500,44,1819729,HK,7396076,yes,Гонконг,Hong Kong,,,
+world_top1500,45,98182,IQ,7216000,yes,Багдад,Baghdad,,,
+world_top1500,46,1790842,CN,7202654,,,Wuzhong,,,missing_uk
+world_top1500,47,1797929,CN,7172451,,Ціндао,Qingdao,,,
+world_top1500,48,112931,IR,7153309,yes,Тегеран,Tehran,,,override
+world_top1500,49,1787093,CN,7102100,,Яньтай,Yantai,,Chefoo,
+world_top1500,50,1269843,IN,6993262,,Хайдарабад,Hyderabad,,,override
+world_top1500,51,3451190,BR,6747815,,Ріо-де-Жанейро,Rio de Janeiro,,,
+world_top1500,52,1886760,CN,6715559,,Сучжоу,Suzhou,,,
+world_top1500,53,1784658,CN,6650532,,Чженчжоу,Zhengzhou,,,
+world_top1500,54,1279233,IN,6357693,,Ахмедабад,Ahmedabad,,,
+world_top1500,55,2293538,CI,6321017,,Абіджан,Abidjan,,,
+world_top1500,56,1799869,CN,5977185,,Наньнін,Nanning,,,
+world_top1500,57,1804651,CN,5950578,,Куньмін,Kunming,,,
+world_top1500,58,1795270,CN,5758403,,Шицзячжуан,Shijiazhuang,,,
+world_top1500,59,2038180,CN,5691024,,Чанчунь,Changchun,,,
+world_top1500,60,1798524,CN,5681512,,,Pudong,,,missing_uk
+world_top1500,61,2147714,AU,5638830,,Сідней,Sydney,,Syd | Sydney City,
+world_top1500,62,1880252,SG,5638700,yes,Сінгапур,Singapore,,Temasek,
+world_top1500,63,2158177,AU,5435590,,Мельбурн,Melbourne,,Greater Melbourne | Melbourne City,
+world_top1500,64,160263,TZ,5383728,,Дар-ес-Салам,Dar es Salaam,,,
+world_top1500,65,498817,RU,5351935,,Санкт-Петербург,Saint Petersburg,,Leningrad | Petrograd | St Petersburg | St. Petersburg,
+world_top1500,66,1793511,CN,5305061,,Тайюань,Taiyuan,,,
+world_top1500,67,361058,EG,5263542,,Александрія,Alexandria,,,
+world_top1500,68,1609350,TH,5104476,yes,Бангкок,Bangkok,,,
+world_top1500,69,2335204,NG,4910000,,Кано,Kano,,,
+world_top1500,70,3871336,CL,4837295,yes,Сантьяго,Santiago,Сантьяго-де-Чилі,Santiago de Chile,override
+world_top1500,71,3369157,ZA,4772846,,Кейптаун,Cape Town,,,
+world_top1500,72,1168197,PK,4758762,,Пешавар,Peshawar,,,
+world_top1500,73,1785286,CN,4704138,,,Zibo,,,missing_uk
+world_top1500,74,105343,SA,4697000,,Джидда,Jeddah,,,
+world_top1500,75,1264527,IN,4681087,,Ченнаї,Chennai,,Madras,
+world_top1500,76,1275004,IN,4631392,,Колката,Kolkata,,Calcutta,
+world_top1500,77,1790645,CN,4617251,,Сямень,Xiamen,,Amoy,
+world_top1500,78,1255364,IN,4591246,,Сурат,Surat,,,override
+world_top1500,79,1787227,CN,4559797,,Янчжоу,Yangzhou,,,
+world_top1500,80,1797873,CN,4556230,,Хуайань,Huai'an,,Huaiyin,
+world_top1500,81,1809461,CN,4506134,,Ґуйян,Guiyang,,,
+world_top1500,82,1298824,MM,4477638,,Янгон,Yangon,,Rangoon,
+world_top1500,83,13308620,CN,4476554,,,Bao'an,,,missing_uk
+world_top1500,84,1138958,AF,4434550,yes,Кабул,Kabul,,,
+world_top1500,85,184745,KE,4397073,yes,Найробі,Nairobi,,,
+world_top1500,86,1790923,CN,4396835,,Усі,Wuxi,,,
+world_top1500,87,360995,EG,4367343,,Гіза,Giza,,,override
+world_top1500,88,1804430,CN,4359446,,Ланьчжоу,Lanzhou,,,
+world_top1500,89,2460596,ML,4227569,yes,Бамако,Bamako,,,
+world_top1500,90,108410,SA,4205961,yes,Ер-Ріяд,Riyadh,,,
+world_top1500,91,1810821,CN,4094491,,Фучжоу,Fuzhou,,,
+world_top1500,92,1529102,CN,4054000,,Урумчі,Ürümqi,,Dihua | Urumchi,
+world_top1500,93,12908892,TW,4004367,,Новий Тайбей,New Taipei City,,New Taipei | Xinbei City,
+world_top1500,94,1205733,BD,3920222,,Читтаґонґ,Chittagong,,Chattogram,
+world_top1500,95,344979,ET,3860000,yes,Аддис-Абеба,Addis Ababa,,,
+world_top1500,96,1785453,CN,3855601,,,Zaozhuang,,,missing_uk
+world_top1500,97,6986104,CN,3841873,,,Zhongshan,,Xiangshan,missing_uk
+world_top1500,98,1795940,CN,3838900,,Шаньтоу,Shantou,,,
+world_top1500,99,5368361,US,3820914,,Лос-Анджелес,Los Angeles,,L.A.,
+world_top1500,100,1179400,PK,3800193,,Фейсалабад,Faisalabad,,Lyallpur,
+world_top1500,101,292223,AE,3790000,,Дубай,Dubai,,Dubai City,
+world_top1500,102,1848354,JP,3777491,,Йокогама,Yokohama,,,override
+world_top1500,103,1799397,CN,3731203,,Нінбо,Ningbo,,,
+world_top1500,104,2553604,MA,3665954,,Касабланка,Casablanca,,White House,
+world_top1500,105,2339354,NG,3649000,,Ібадан,Ibadan,,,
+world_top1500,106,1798425,CN,3590000,,,Pujiang,,Puyang,missing_uk
+world_top1500,107,323786,TR,3517182,yes,Анкара,Ankara,,,
+world_top1500,108,1794903,CN,3460000,,,Shiyan,,,missing_uk
+world_top1500,109,2036892,CN,3446100,,Хух-Хото,Hohhot,,Kweisui,
+world_top1500,110,2950159,DE,3426354,yes,Берлін,Berlin,,,
+world_top1500,111,1793346,CN,3372102,,Таншань,Tangshan,,,
+world_top1500,112,1166993,PK,3357612,,Равалпінді,Rawalpindi,,,
+world_top1500,113,13512505,CN,3346500,,,Lüliang,,,missing_uk
+world_top1500,114,1007311,ZA,3338026,,Дурбан,Durban,,Port Natal,
+world_top1500,115,2038632,CN,3325372,,Аньшань,Anshan,,,
+world_top1500,116,1815456,CN,3290918,,Чанчжоу,Changzhou,,,
+world_top1500,117,1838524,KR,3285147,,Пусан,Busan,,Busan-si,
+world_top1500,118,3117735,ES,3255944,yes,Мадрид,Madrid,,,
+world_top1500,119,1871859,KP,3222000,yes,Пхеньян,Pyongyang,,P'yŏngyang | P'yŏngyang-si | Pyongyang-si,
+world_top1500,120,1259229,IN,3124458,,Пуне,Pune,,,
+world_top1500,121,2037799,CN,3105591,,Датун,Datong,,,
+world_top1500,122,750269,TR,3101833,,Бурса,Bursa,,,
+world_top1500,123,1815577,CN,3093980,,Чанша,Changsha,,,
+world_top1500,124,1692192,PH,3084270,,Кесон-Сіті,Quezon City,,,
+world_top1500,125,1269515,IN,3046163,,Джайпур,Jaipur,,,
+world_top1500,126,1807681,CN,3033528,,,Huainan,,,missing_uk
+world_top1500,127,1625822,ID,3018022,,Сурабая,Surabaya,,,
+world_top1500,128,1843564,KR,3015482,,Інчхон,Incheon,,Chemulpo | Incheon-si,
+world_top1500,129,1809078,CN,3001600,,Хайкоу,Haikou,,,
+world_top1500,130,3646738,VE,3000000,yes,Каракас,Caracas,,,
+world_top1500,131,703448,UA,2952301,yes,Київ,Kyiv,,Kiev,
+world_top1500,132,311046,TR,2938292,,Ізмір,İzmir,,,override
+world_top1500,133,1806776,CN,2900113,,Хуейчжоу,Huizhou,,,
+world_top1500,134,3435910,AR,2891082,yes,Буенос-Айрес,Buenos Aires,,,
+world_top1500,135,1786657,CN,2859074,,Їньчуань,Yinchuan,,,
+world_top1500,136,1668399,TW,2850285,,Тайчжун,Taichung,,,override
+world_top1500,137,1267995,IN,2823249,,Канпур,Kanpur,,Cawnporne,
+world_top1500,138,6167865,CA,2794356,,Торонто,Toronto,,,
+world_top1500,139,3652462,EC,2781641,yes,Кіто,Quito,,,
+world_top1500,140,2174003,AU,2780063,,Брисбен,Brisbane,,Brisbane City,
+world_top1500,141,2240449,AO,2776168,yes,Луанда,Luanda,,,
+world_top1500,142,2038432,CN,2761700,,Баотоу,Baotou,,,
+world_top1500,143,1853909,JP,2753862,,Осака,Osaka,,,
+world_top1500,144,1803318,CN,2743843,,,Linyi,,,missing_uk
+world_top1500,145,1816971,CN,2739887,,Баодін,Baoding,,,
+world_top1500,146,1673820,TW,2737660,,Гаосюн,Kaohsiung,,Gaoxiong | Kaohsiung City | Takao,override
+world_top1500,147,3657509,EC,2723665,,Ґуаякіль,Guayaquil,,,
+world_top1500,148,3470127,BR,2721564,,Белу-Оризонті,Belo Horizonte,,,
+world_top1500,149,1800480,CN,2716600,,,Minhang,,,missing_uk
+world_top1500,150,11995100,CN,2712894,,,Bazhong,,,missing_uk
+world_top1500,151,3450554,BR,2711840,,Салвадор,Salvador,,,
+world_top1500,152,2352778,NG,2690000,yes,Абуджа,Abuja,,,
+world_top1500,153,1200109,BD,2674697,,Газіпур,Gazipur,,,
+world_top1500,154,4887398,US,2664452,,Чикаго,Chicago,Чикаґо,,
+world_top1500,155,1791388,CN,2650000,,Веньчжоу,Wenzhou,,Yongjia,
+world_top1500,156,1649378,ID,2648272,,Бекасі,Bekasi,,,
+world_top1500,157,2253354,SN,2646503,yes,Дакар,Dakar,,,
+world_top1500,158,1581298,VN,2625200,,Хайфон,Haiphong,,,override
+world_top1500,159,1785725,CN,2612800,,,Yunfu,,,missing_uk
+world_top1500,160,53654,SO,2587183,yes,Могадішо,Mogadishu,,,
+world_top1500,161,2298890,GH,2544530,,Кумасі,Kumasi,,,
+world_top1500,162,1650357,ID,2528163,,Бандунг,Bandung,,,
+world_top1500,163,1177662,PK,2511118,,Гуджранвала,Gujranwala,,,
+world_top1500,164,1214520,ID,2486283,,Медан,Medan,,,
+world_top1500,165,1264733,IN,2472011,,Лакнау,Lucknow,,,
+world_top1500,166,1788852,CN,2467965,,Сінін,Xining,,Sining,
+world_top1500,167,2357048,BF,2415266,yes,Уагадугу,Ouagadougou,,,
+world_top1500,168,1262180,IN,2405665,,Наґпур,Nagpur,,,
+world_top1500,169,3399415,BR,2400000,,Форталеза,Fortaleza,,,
+world_top1500,170,3687925,CO,2392877,,Калі,Cali,,Santiago de Cali,
+world_top1500,171,2063523,AU,2384371,,Перт,Perth,,,
+world_top1500,172,1835329,KR,2365523,,Тегу,Daegu,,Daegu-si,
+world_top1500,173,2507480,DZ,2364230,yes,Алжир,Algiers,,,
+world_top1500,174,1800163,CN,2357839,,Наньчан,Nanchang,,,
+world_top1500,175,587084,AZ,2351300,yes,Баку,Baku,,,
+world_top1500,176,1856057,JP,2332176,,Нагоя,Nagoya,,Nagoya City,
+world_top1500,177,3169070,IT,2318895,yes,Рим,Rome,,Roma,
+world_top1500,178,4699066,US,2314157,,Х’юстон,Houston,,,
+world_top1500,179,124665,IR,2307177,,Мешхед,Mashhad,,Alexandria | Mashad | Sanaabad,
+world_top1500,180,1795855,CN,2300000,,Шаосін,Shaoxing,,,
+world_top1500,181,1799722,CN,2273326,,Наньтун,Nantong,,,
+world_top1500,182,1816917,CN,2265900,,,Baoshan,,,missing_uk
+world_top1500,183,314830,TR,2222415,,Ґазіантеп,Gaziantep,,,
+world_top1500,184,922704,CD,2221925,,Лубумбаші,Lubumbashi,,,
+world_top1500,185,3663517,BR,2219580,,Манаус,Manaus,,,
+world_top1500,186,909137,ZM,2212301,yes,Лусака,Lusaka,,,
+world_top1500,187,3469058,BR,2207718,yes,Бразиліа,Brasília,,,
+world_top1500,188,1790437,CN,2207090,,Чжухай,Zhuhai,,,
+world_top1500,189,3492908,DO,2201941,yes,Санто-Домінго,Santo Domingo,,Santo Domingo City,
+world_top1500,190,2365267,TG,2188376,yes,Ломе,Lomé,,,
+world_top1500,191,1169825,PK,2169915,,Мултан,Multan,,,
+world_top1500,192,3553478,CU,2163824,yes,Гавана,Havana,,,
+world_top1500,193,1645524,ID,2163635,,Депок,Depok,,,
+world_top1500,194,8347664,CN,2153638,,,Ordos,,,missing_uk
+world_top1500,195,2988507,FR,2138551,yes,Париж,Paris,,,
+world_top1500,196,1273865,IN,2136916,,Коїмбатор,Coimbatore,,,
+world_top1500,197,12359313,CN,2125400,,,Qingyang,,,missing_uk
+world_top1500,198,2324774,NG,2120000,,Порт-Харкорт,Port Harcourt,,,
+world_top1500,199,964137,ZA,2112693,yes,Преторія,Pretoria,,,
+world_top1500,200,3860259,AR,2106734,,Кордова,Córdoba,,,
+world_top1500,201,209228,CD,2101332,,Мбужі-Маї,Mbuji-Mayi,,,
+world_top1500,202,170063,SY,2098210,,Алеппо,Aleppo,,,
+world_top1500,203,1785623,CN,2092496,,Куншан,Kunshan,,,
+world_top1500,204,1783621,CN,2037775,,Цзуньї,Zunyi,,,
+world_top1500,205,3911925,BO,2004652,,Ла-Пас,La Paz,,,
+world_top1500,206,10859300,CN,2001009,,,Lianyungang,,,missing_uk
+world_top1500,207,3674962,CO,1999979,,Медельїн,Medellín,,,
+world_top1500,208,1802940,CN,1998619,,,Puning,,,missing_uk
+world_top1500,209,1269743,IN,1994397,,Індаур,Indore,,Indhur,
+world_top1500,210,2260535,CG,1982000,yes,Браззавіль,Brazzaville,,,
+world_top1500,211,1512569,UZ,1978028,yes,Ташкент,Tashkent,,,
+world_top1500,212,1810638,CN,1977253,,Ґаньчжоу,Ganzhou,,,
+world_top1500,213,1526384,KZ,1977011,,Алмати,Almaty,Алма-Ата | Вірний,Alma-Ata,
+world_top1500,214,379252,SD,1974647,yes,Хартум,Khartoum,,,
+world_top1500,215,2911298,DE,1973896,,Гамбурґ,Hamburg,,,
+world_top1500,216,2128295,JP,1973832,,Саппоро,Sapporo,,,
+world_top1500,217,1794035,CN,1973500,,,Songjiang,,,missing_uk
+world_top1500,218,2306104,GH,1963264,yes,Аккра,Accra,,,
+world_top1500,219,3464975,BR,1948626,,Куритиба,Curitiba,,,
+world_top1500,220,71137,YE,1937451,yes,Сана,Sanaa,,,
+world_top1500,221,2422465,GN,1928389,yes,Конакрі,Conakry,,,override
+world_top1500,222,1625084,ID,1927815,,Тангеранг,Tangerang,,,
+world_top1500,223,3981609,MX,1922523,,Тіхуана,Tijuana,,,
+world_top1500,224,1176734,PK,1921275,,Хайдарабад,Hyderabad,,Hyderābād,override
+world_top1500,225,276781,LB,1916100,yes,Бейрут,Beirut,,,
+world_top1500,226,1797121,CN,1899394,,,Jieyang,,,missing_uk
+world_top1500,227,2036502,CN,1895865,,Цзілінь,Jilin,,Jilin City,override
+world_top1500,228,1806508,CN,1886100,,,Jiading,,,missing_uk
+world_top1500,229,683506,RO,1877155,yes,Бухарест,Bucharest,,,
+world_top1500,230,2422488,GN,1871242,,,Camayenne,,,missing_uk
+world_top1500,231,195272,KE,1867579,,,Kakamega,,,missing_uk
+world_top1500,232,1796134,CN,1859723,,,Shangqiu,,,missing_uk
+world_top1500,233,1800146,CN,1858875,,,Nanchong,,,missing_uk
+world_top1500,234,1668355,TW,1856642,,Тайнань,Tainan,,Tainan City,
+world_top1500,235,2335727,NG,1850000,,Кадуна,Kaduna,,,
+world_top1500,236,365137,SD,1849659,,Омдурман,Omdurman,,,
+world_top1500,237,1715348,PH,1848947,,Давао,Davao,,Davao City,override
+world_top1500,238,1254661,IN,1841488,,Тхане,Thane,,Thana | Thāne,
+world_top1500,239,3526683,MX,1835486,,,Iztapalapa,,,missing_uk
+world_top1500,240,316541,TR,1833684,,Діярбакир,Diyarbakır,,,
+world_top1500,241,3904906,BO,1831434,,Санта-Крус-де-ла-Сьєрра,Santa Cruz de la Sierra,,Santa Cruz,
+world_top1500,242,1253573,IN,1822221,,Вадодара,Vadodara,,,
+world_top1500,243,325363,TR,1816750,,Адана,Adana,,Antioch on Sarus,
+world_top1500,244,1799629,CN,1811812,,,Nanyang,,,missing_uk
+world_top1500,245,292968,AE,1807000,yes,Абу-Дабі,Abu Dhabi,,Abu Dhabi Island and Internal Islands City,
+world_top1500,246,1633070,ID,1801367,,Палембанг,Palembang,,,
+world_top1500,247,292672,AE,1800000,,Шарджа,Sharjah,,Sharjah city,override
+world_top1500,248,1275841,IN,1798218,,Бхопал,Bhopal,,,
+world_top1500,249,1806299,CN,1795459,,Цзянмень,Jiangmen,,Kongmoon,
+world_top1500,250,2347283,NG,1782000,,Бенін-Сіті,Benin City,,,
+world_top1500,251,1815251,CN,1779515,,,Jiangyin,,Kiang Ying,missing_uk
+world_top1500,252,1810845,CN,1768947,,,Fuyang,,,missing_uk
+world_top1500,253,6077243,CA,1762949,,Монреаль,Montreal,,Montreal City | Montréal,
+world_top1500,254,11838258,CN,1760000,,,Bayan Nur,,,missing_uk
+world_top1500,255,1793036,CN,1756300,,,Chengtangcun,,Tengzhou,missing_uk
+world_top1500,256,3633009,VE,1752602,,Маракайбо,Maracaibo,,,
+world_top1500,257,1815395,CN,1750945,,,Chaozhou,,,missing_uk
+world_top1500,258,625144,BY,1742124,yes,Мінськ,Minsk,,,
+world_top1500,259,3054643,HU,1741041,yes,Будапешт,Budapest,,,
+world_top1500,260,1797945,CN,1738424,,,Qingyuan,,,missing_uk
+world_top1500,261,1793724,CN,1735425,,,Tai’an,,,missing_uk
+world_top1500,262,1258393,IN,1728128,,,Rasapūdipalem,,,missing_uk
+world_top1500,263,7626690,IN,1727692,,Пімпрі-Чінчвад,Pimpri-Chinchwad,,,
+world_top1500,264,1720151,PH,1712945,,Калоокан,Caloocan,,Caloocan City,
+world_top1500,265,756135,PL,1702139,yes,Варшава,Warsaw,,,
+world_top1500,266,953781,ZA,1695047,,Совето,Soweto,,,
+world_top1500,267,1627896,ID,1694740,,Семаранг,Semarang,,,
+world_top1500,268,3521081,MX,1692181,,Пуебла,Puebla,,Puebla City,
+world_top1500,269,2761369,AT,1691468,yes,Відень,Vienna,,,
+world_top1500,270,3128760,ES,1686208,,Барселона,Barcelona,,,
+world_top1500,271,1260086,IN,1684297,,Патна,Patna,,,
+world_top1500,272,99072,IQ,1683000,,Мосул,Mosul,,,
+world_top1500,273,12165956,IN,1682687,,,Kallakurichi,,,missing_uk
+world_top1500,274,232422,UG,1680600,yes,Кампала,Kampala,,,
+world_top1500,275,7283386,CN,1677050,,,Changshu,,,missing_uk
+world_top1500,276,2538475,MA,1655753,yes,Рабат,Rabat,,,
+world_top1500,277,3390760,BR,1653461,,Ресіфі,Recife,,,
+world_top1500,278,5308655,US,1650070,,Фінікс,Phoenix,,,
+world_top1500,279,1793743,CN,1647642,,,Suzhou,,,missing_uk
+world_top1500,280,3529612,MX,1645352,,,Ecatepec de Morelos,,Ecatepec,missing_uk
+world_top1500,281,1802206,CN,1644344,,,Lu’an,,,missing_uk
+world_top1500,282,3625549,VE,1619470,,Валенсія,Valencia,,,
+world_top1500,283,1264728,IN,1618879,,Лудхіана,Ludhiana,,,
+world_top1500,284,1787746,CN,1615717,,,Yancheng,,,missing_uk
+world_top1500,285,1496747,RU,1612833,,Новосибірськ,Novosibirsk,,Novo-Nikolaevsk | Novonikolayevsk,
+world_top1500,286,95446,IQ,1612700,,Ербіль,Erbil,,Hawler,
+world_top1500,287,1863967,JP,1612392,,Фукуока,Fukuoka,,,
+world_top1500,288,1793505,CN,1607108,,,Taizhou,,,missing_uk
+world_top1500,289,2037860,CN,1604027,,Дацин,Daqing,,Taching,
+world_top1500,290,212730,CD,1602144,,Кісангані,Kisangani,,,
+world_top1500,291,1701668,PH,1600000,yes,Маніла,Manila,,City of Manila | Manila City,
+world_top1500,292,1791236,CN,1598165,,Уху,Wuhu,,,
+world_top1500,293,3991164,MX,1594212,,Сантьяго-де-Керетаро,Santiago de Querétaro,,Querétaro City,
+world_top1500,294,1813325,CN,1589435,,,Dazhou,,,missing_uk
+world_top1500,295,3998655,MX,1579803,,,León de los Aldama,,León,missing_uk
+world_top1500,296,104515,SA,1578722,,Мекка,Mecca,,Makkah | Makkah al Mukarramah,
+world_top1500,297,4560349,US,1573916,,Філадельфія,Philadelphia,,,
+world_top1500,298,1821306,KH,1573544,yes,Пномпень,Phnom Penh,,,
+world_top1500,299,1809498,CN,1572300,,Гуйлінь,Guilin,,,override
+world_top1500,300,170654,SY,1569394,yes,Дамаск,Damascus,,,
+world_top1500,301,1167528,PK,1565546,,Кветта,Quetta,,,
+world_top1500,302,1784853,CN,1553109,,,Zhaoqing,,Shiu Hing,missing_uk
+world_top1500,303,2326016,NG,1553000,,Оніча,Onitsha,,,
+world_top1500,304,1800627,CN,1550000,,,Mianyang,,,missing_uk
+world_top1500,305,2193733,NZ,1547200,,Окленд,Auckland,,,
+world_top1500,306,418863,IR,1547164,,Ісфахан,Isfahan,,,
+world_top1500,307,12358576,CN,1545900,,,Wanzhou,,,missing_uk
+world_top1500,308,1526273,KZ,1544142,yes,Астана,Astana,,Akmolinsk | Nur-Sultan | Tselinograd,override
+world_top1500,309,890299,ZW,1542813,yes,Хараре,Harare,,,
+world_top1500,310,2274895,LR,1542549,yes,Монровія,Monrovia,,,
+world_top1500,311,1798449,CN,1539389,,,Putian,,,missing_uk
+world_top1500,312,1859642,JP,1538262,,Кавасакі,Kawasaki,,Kawasaki City,
+world_top1500,313,3462377,BR,1536097,,Гоянія,Goiânia,,,
+world_top1500,314,4726206,US,1526656,,Сан-Антоніо,San Antonio,,,
+world_top1500,315,1859171,JP,1525152,,Кобе,Kobe,,,
+world_top1500,316,2036427,CN,1524362,,Цзіньчжоу,Jinzhou,,,
+world_top1500,317,2673730,SE,1515017,yes,Стокгольм,Stockholm,,,
+world_top1500,318,4013708,MX,1512450,,Сьюдад-Хуарес,Ciudad Juárez,,,
+world_top1500,319,1586203,VN,1507187,,Кантхо,Cần Thơ,,Can Tho,override
+world_top1500,320,2867714,DE,1505005,,Мюнхен,Munich,,,
+world_top1500,321,1336135,BD,1500689,,Кхулна,Khulna,,,
+world_top1500,322,3405870,BR,1499641,,Белен,Belém,,,
+world_top1500,323,1486209,RU,1495066,,Єкатеринбург,Yekaterinburg,Екатеринбург,Ekaterinburg,override
+world_top1500,324,3452925,BR,1488252,,Порту-Алегрі,Porto Alegre,,,
+world_top1500,325,1261731,IN,1486053,,Нашік,Nashik,,,
+world_top1500,326,8400694,CN,1485502,,,Taizhou,,,missing_uk
+world_top1500,327,3439389,PY,1482200,yes,Асунсьйон,Asunción,,,
+world_top1500,328,1814870,CN,1481384,,,Yiwu,,,missing_uk
+world_top1500,329,3979770,MX,1476491,,Сапопан,Zapopan,,,override
+world_top1500,330,1622786,ID,1474393,,Макасар,Makassar,,,override
+world_top1500,331,2078025,AU,1469163,,Аделаїда,Adelaide,,,
+world_top1500,332,1797353,CN,1469157,,,Quanzhou,,Chinchew | Chinchu | Zayton,missing_uk
+world_top1500,333,1264521,IN,1465625,,Мадурай,Madurai,,,
+world_top1500,334,1805528,CN,1463990,,,Jinhua,,,missing_uk
+world_top1500,335,1857910,JP,1463723,,Кіото,Kyoto,,,
+world_top1500,336,1806602,CN,1457510,,,Cixi,,,missing_uk
+world_top1500,337,1791121,CN,1457419,,,Changde,,Changteh,missing_uk
+world_top1500,338,1735161,MY,1453975,yes,Куала-Лумпур,Kuala Lumpur,,KL,
+world_top1500,339,308464,TR,1452458,,Кайсері,Kayseri,,,
+world_top1500,340,1804879,CN,1451741,,Кайфен,Kaifeng,,,
+world_top1500,341,128747,IR,1448075,,Кередж,Karaj,,,
+world_top1500,342,1283240,NP,1442271,yes,Катманду,Kathmandu,,,
+world_top1500,343,1835235,KR,1441203,,Теджон,Daejeon,,Daejeon-si,override
+world_top1500,344,10942359,CN,1437802,,,Baoji,,,missing_uk
+world_top1500,345,1793771,CN,1437685,,,Suqian,,,missing_uk
+world_top1500,346,1803300,CN,1436599,,Лючжоу,Liuzhou,,Liuchow,
+world_top1500,347,1254361,IN,1435844,,,Tirunelveli,,,missing_uk
+world_top1500,348,306571,TR,1433861,,Конья,Konya,,,
+world_top1500,349,1787331,CN,1432044,,,Zhangjiagang,,,missing_uk
+world_top1500,350,1279259,IN,1430055,,Аґра,Agra,,,
+world_top1500,351,8581443,ID,1429529,,,South Tangerang,,,missing_uk
+world_top1500,352,113646,IR,1424641,,Тебриз,Tabriz,,,
+world_top1500,353,706483,UA,1421125,,Харків,Kharkiv,,,
+world_top1500,354,1788534,CN,1416800,,,Xinyang,,,missing_uk
+world_top1500,355,1797658,CN,1416151,,,Jinjiang,,,missing_uk
+world_top1500,356,1271951,IN,1414050,,Фаридабад,Faridabad,,,
+world_top1500,357,1816234,CN,1409436,,,Bozhou,,,missing_uk
+world_top1500,358,1797318,CN,1408500,,,Qujing,,,missing_uk
+world_top1500,359,5391811,US,1404452,,Сан-Дієго,San Diego,,,
+world_top1500,360,1841811,KR,1401235,,Кванджу,Gwangju,,Gwangju-si,
+world_top1500,361,1784990,CN,1400709,,,Zhanjiang,,,missing_uk
+world_top1500,362,2037355,CN,1400646,,Фушунь,Fushun,,,
+world_top1500,363,1258847,IN,1390640,,Раджкот,Rajkot,,Rājkot,override
+world_top1500,364,1801792,CN,1390581,,Лоян,Luoyang,,,
+world_top1500,365,4005539,MX,1385629,,Гвадалахара,Guadalajara,,,
+world_top1500,366,1580240,VN,1380000,,Хюе,Huế,,,
+world_top1500,367,1802875,CN,1380000,,,Guankou,,,missing_uk
+world_top1500,368,3173435,IT,1371498,,Мілан,Milan,,,
+world_top1500,369,1262111,IN,1365000,,,Najafgarh,,,missing_uk
+world_top1500,370,1804120,CN,1363470,,,Lianjiang,,,missing_uk
+world_top1500,371,2427123,TD,1359526,yes,Нджамена,N'Djamena,,,override
+world_top1500,372,1808963,CN,1358318,,Ханьдань,Handan,,,
+world_top1500,373,1183460,PK,1357890,,,Bannu,,,missing_uk
+world_top1500,374,1786764,CN,1350150,,Ічан,Yichang,,,
+world_top1500,375,1070940,MG,1349501,yes,Антананаріву,Antananarivo,,,
+world_top1500,376,1808198,CN,1346717,,,Heze,,,missing_uk
+world_top1500,377,3461786,BR,1345364,,Гуарульюс,Guarulhos,,,override
+world_top1500,378,2293521,CI,1340083,,,Abobo,,,missing_uk
+world_top1500,379,1269300,IN,1339438,,Джамшедпур,Jamshedpur,,,
+world_top1500,380,2232593,CM,1338082,,Дуала,Douala,,,
+world_top1500,381,323777,TR,1335002,,Анталья,Antalya,,,
+world_top1500,382,99532,IQ,1326564,,Басра,Basra,,Basrah,
+world_top1500,383,4684888,US,1326087,,Даллас,Dallas,,,
+world_top1500,384,6940394,JP,1324854,,Сайтама,Saitama,,,override
+world_top1500,385,2440485,NE,1323691,yes,Ніамей,Niamey,,,
+world_top1500,386,8533133,CN,1320825,,,Liupanshui,,,missing_uk
+world_top1500,387,1684308,PH,1308085,,,Taguig,,City of Taguig,missing_uk override
+world_top1500,388,1801180,CN,1307802,,,Maoming,,,missing_uk
+world_top1500,389,5913490,CA,1306784,,Калгарі,Calgary,,,
+world_top1500,390,2210247,LY,1302947,yes,Триполі,Tripoli,,,
+world_top1500,391,109223,SA,1300000,,Медіна,Medina,,Al-Madinah al-Munawwarah | Madinah,override
+world_top1500,392,2220957,CM,1299369,yes,Яунде,Yaoundé,,,
+world_top1500,393,6295587,ID,1296960,,Батам,Batam,,,override
+world_top1500,394,1797551,CN,1296300,,,Qinzhou,,,missing_uk
+world_top1500,395,1801934,CN,1294974,,,Luohe,,,missing_uk
+world_top1500,396,1790587,CN,1294733,,Сян'ян,Xiangyang,,Xiangfan,
+world_top1500,397,1806408,CN,1292987,,,Yangjiang,,,missing_uk
+world_top1500,398,1786760,CN,1285785,,,Yixing,,,missing_uk
+world_top1500,399,1259652,IN,1284606,,Пімпрі,Pimpri,,,
+world_top1500,400,1583992,VN,1276000,,Дананґ,Da Nang,,,
+world_top1500,401,250441,JO,1275857,yes,Амман,Amman,,,
+world_top1500,402,1723510,PH,1273715,,,Budta,,,missing_uk
+world_top1500,403,792680,RS,1273651,yes,Белград,Belgrade,,,override
+world_top1500,404,1587923,VN,1272235,,Б'єнхоа,Biên Hòa,,Bien Hoa,override
+world_top1500,405,214481,CD,1271704,,Кананга,Kananga,,,
+world_top1500,406,1797798,CN,1271424,,,Qingpu,,,missing_uk
+world_top1500,407,3441575,UY,1270737,yes,Монтевідео,Montevideo,,,
+world_top1500,408,1788046,CN,1265536,,,Xuchang,,,missing_uk
+world_top1500,409,1268295,IN,1262255,,,Kalyān,,,missing_uk
+world_top1500,410,1783745,CN,1262064,,,Zigong,,,missing_uk
+world_top1500,411,520555,RU,1259013,,Нижній Новгород,Nizhny Novgorod,,Nizhniy Novgorod,
+world_top1500,412,1642548,ID,1257912,,,Jepara,,,missing_uk
+world_top1500,413,1040652,MZ,1254837,yes,Мапуту,Maputo,,,
+world_top1500,414,10630003,CN,1253991,,,Xuzhou,,Pengcheng,missing_uk
+world_top1500,415,110336,SA,1252523,,Даммам,Dammam,,,
+world_top1500,416,1799491,CN,1251095,,,Neijiang,,,missing_uk
+world_top1500,417,115019,IR,1249942,,Шираз,Shiraz,,,
+world_top1500,418,1808316,CN,1249807,,,Heshan,,,missing_uk
+world_top1500,419,1272423,IN,1247327,,,Dombivali,,,missing_uk
+world_top1500,420,551487,RU,1243500,,Казань,Kazan’,,,
+world_top1500,421,1805518,CN,1241012,,Цзінін,Jining,,,
+world_top1500,422,3648522,VE,1240714,,Баркісімето,Barquisimeto,,,
+world_top1500,423,349076,EG,1240289,,,Shubrā al Khaymah,,,missing_uk
+world_top1500,424,1798439,CN,1239100,,,Putuo,,,missing_uk
+world_top1500,425,3718426,HT,1234742,yes,Порт-о-Пренс,Port-au-Prince,,,
+world_top1500,426,1835553,KR,1234582,,Сувон,Suwon,,Suwon-si,override
+world_top1500,427,1803834,CN,1229768,,,Liaocheng,,,missing_uk
+world_top1500,428,10942283,CN,1226617,,,Jinzhong,,,missing_uk
+world_top1500,429,3946083,PE,1226200,,Каяо,Callao,,,
+world_top1500,430,1263214,IN,1223184,,Мірут,Meerut,,,
+world_top1500,431,1253133,IN,1222390,,,Virār,,,missing_uk
+world_top1500,432,1261162,IN,1220946,,,Nowrangapur,,,missing_uk
+world_top1500,433,94824,IQ,1218732,,Кербела,Karbala,,,
+world_top1500,434,1808956,CN,1214940,,,Changzhi,,,missing_uk
+world_top1500,435,1792892,CN,1212791,,,Tianshui,,,missing_uk
+world_top1500,436,7802746,IQ,1211849,,,Sadr City,,,missing_uk
+world_top1500,437,1787375,CN,1210800,,,Yangpu,,,missing_uk
+world_top1500,438,186301,KE,1208333,,Момбаса,Mombasa,,,
+world_top1500,439,1311874,MM,1208099,,Мандалай,Mandalay,,,
+world_top1500,440,1255634,IN,1206419,,Срінагар,Srinagar,,,
+world_top1500,441,3689147,CO,1206319,,Барранкілья,Barranquilla,,,
+world_top1500,442,1508291,RU,1202371,,Челябінськ,Chelyabinsk,,,
+world_top1500,443,3523349,MX,1201000,,Меріда,Mérida,,,
+world_top1500,444,1862415,JP,1200754,,Хіросіма,Hiroshima,,,
+world_top1500,445,1518980,KZ,1200000,,Шимкент,Shymkent,,,
+world_top1500,446,3492914,DO,1200000,,Сантьяго-де-лос-Трейнта-Кабальєрос,Santiago de los Caballeros,,Santiago,
+world_top1500,447,1791636,CN,1199290,,,Weinan,,,missing_uk
+world_top1500,448,1271308,IN,1199191,,Газіабад,Ghāziābād,,Ghaziabad,
+world_top1500,449,1039854,MZ,1198988,,,Matola,,,missing_uk
+world_top1500,450,1272979,IN,1196214,,,Dhanbad,,,missing_uk
+world_top1500,451,3947322,PE,1195700,,Арекіпа,Arequipa,,,
+world_top1500,452,2548885,MA,1191905,,Фес,Fes,,,override
+world_top1500,453,3514674,MX,1185772,,,Gustavo Adolfo Madero,,,missing_uk
+world_top1500,454,2377450,MR,1184530,yes,Нуакшот,Nouakchott,,,
+world_top1500,455,1805953,CN,1180000,,Цзясін,Jiaxing,,,
+world_top1500,456,1278149,IN,1175116,,Аурангабад,Aurangabad,,,override
+world_top1500,457,1784285,CN,1174600,,,Zhongwei,,,missing_uk
+world_top1500,458,1496153,RU,1172070,,Омськ,Omsk,,,
+world_top1500,459,2246678,SN,1170791,,,Pikine,,,missing_uk
+world_top1500,460,1631761,ID,1167599,,Пеканбару,Pekanbaru,,,override
+world_top1500,461,10794003,CN,1166481,,,Panjin,,,missing_uk
+world_top1500,462,1624917,ID,1166066,,Бандар-Лампунг,Bandar Lampung,,,override
+world_top1500,463,3067696,CZ,1165581,yes,Прага,Prague,,,
+world_top1500,464,1253405,IN,1164404,,Варанасі,Varanasi,,,
+world_top1500,465,1805179,CN,1164268,,,Jiujiang,,,missing_uk
+world_top1500,466,499099,RU,1163399,,Самара,Samara,,Kuibyschew | Kuibyshev | Kuybyshev,
+world_top1500,467,2353151,NG,1160000,,Аба,Aba,,,
+world_top1500,468,1278710,IN,1159227,,Амрітсар,Amritsar,,,
+world_top1500,469,2655603,GB,1157603,,Бірмінгем,Birmingham,,,
+world_top1500,470,2618425,DK,1153615,yes,Копенгаген,Copenhagen,,,
+world_top1500,471,727011,BG,1152556,yes,Софія,Sofia,,,
+world_top1500,472,1785294,CN,1146839,,,Anyang,,,missing_uk
+world_top1500,473,616052,AM,1144700,yes,Єреван,Yerevan,,,
+world_top1500,474,1253184,IN,1143232,,Віджаявада,Vijayawada,,Bejawada,
+world_top1500,475,13608002,CN,1140872,,,Fengxiang,,,missing_uk
+world_top1500,476,1816373,CN,1137383,,,Bijie,,,missing_uk
+world_top1500,477,3995465,MX,1135512,,Монтеррей,Monterrey,,,
+world_top1500,478,202061,RW,1132686,yes,Кігалі,Kigali,,,
+world_top1500,479,501175,RU,1130305,,Ростов-на-Дону,Rostov-on-Don,,,
+world_top1500,480,1783763,CN,1129687,,Чжучжоу,Zhuzhou,,Jianning,
+world_top1500,481,1797063,CN,1125000,,,Rui’an,,,missing_uk
+world_top1500,482,1978681,PH,1121974,,,Malingao,,,missing_uk
+world_top1500,483,2244322,SN,1120824,,Туба,Touba,,,override
+world_top1500,484,479561,RU,1120547,,Уфа,Ufa,,,override
+world_top1500,485,1258526,IN,1120374,,Ранчі,Ranchi,,,
+world_top1500,486,1783633,CN,1116692,,Цзоучен,Zoucheng,,,
+world_top1500,487,1787858,CN,1116486,,,Shangrao,,,missing_uk
+world_top1500,488,927967,MW,1115815,yes,Лілонгве,Lilongwe,,,
+world_top1500,489,1807700,CN,1113321,,,Huaibei,,,missing_uk
+world_top1500,490,2331447,NG,1110000,,Майдугурі,Maiduguri,,,
+world_top1500,491,1787957,CN,1109800,,,Xuhui,,,missing_uk
+world_top1500,492,1800818,CN,1107742,,,Meishan,,,missing_uk
+world_top1500,493,152224,TZ,1104521,,Мванза,Mwanza,,,override
+world_top1500,494,1833747,KR,1098421,,Ульсан,Ulsan,,Ulsan-si,override
+world_top1500,495,2111149,JP,1096704,,Сендай,Sendai,,,override
+world_top1500,496,1502026,RU,1090811,,Красноярськ,Krasnoyarsk,,,override
+world_top1500,497,1810820,CN,1089888,,,Fuzhou,,,missing_uk
+world_top1500,498,1809532,CN,1086327,,Гуйган,Guigang,,,
+world_top1500,499,3143244,NO,1082575,yes,Осло,Oslo,,,
+world_top1500,500,1269633,IN,1081677,,Джабалпур,Jabalpur,,,
+world_top1500,501,2337639,NG,1080000,,Ілорин,Ilorin,,,override
+world_top1500,502,415189,YE,1079670,,Аден,Aden,,,
+world_top1500,503,1648473,ID,1078351,,Богор,Bogor,,,
+world_top1500,504,3530589,MX,1077208,,,Ciudad Nezahualcoyotl,,,missing_uk
+world_top1500,505,1808370,CN,1075516,,,Hengyang,,,missing_uk
+world_top1500,506,1278994,IN,1073438,,Праяградж,Prayagraj,Аллахабад,Allahabad,override
+world_top1500,507,3691175,PE,1067700,,Трухійо,Trujillo,,,
+world_top1500,508,1253102,IN,1063178,,Вішакхапатнам,Visakhapatnam,,Vizag,
+world_top1500,509,1842485,KR,1061752,,,Goyang-si,,Goyang,missing_uk
+world_top1500,510,1785781,CN,1056743,,,Yulin,,,missing_uk
+world_top1500,511,1268865,IN,1056191,,Джодхпур,Jodhpur,,,
+world_top1500,512,1270583,IN,1054420,,Гваліор,Gwalior,,,override
+world_top1500,513,1805540,CN,1052282,,,Jingzhou,,,missing_uk
+world_top1500,514,964420,ZA,1050078,,Порт-Елізабет,Gqeberha,,Port Elizabeth,
+world_top1500,515,611717,GE,1049498,yes,Тбілісі,Tbilisi,,,
+world_top1500,516,472045,RU,1047549,,Воронеж,Voronezh,,,override
+world_top1500,517,1788572,CN,1047088,,,Xinxiang,,,missing_uk
+world_top1500,518,1786746,CN,1045952,,,Yichun,,,missing_uk
+world_top1500,519,2322911,NG,1040000,,Сокото,Sokoto,,,
+world_top1500,520,2335953,NG,1040000,,Джос,Jos,,,
+world_top1500,521,2530335,MA,1035141,,Танжер,Tangier,,,override
+world_top1500,522,1790353,CN,1034081,,Сяньян,Xianyang,,,
+world_top1500,523,3996069,MX,1032686,,Мехікалі,Mexicali,,,
+world_top1500,524,2255414,CG,1032000,,Пуент-Нуар,Pointe-Noire,,,override
+world_top1500,525,3395981,BR,1031597,,Масейо,Maceió,,Macelo,
+world_top1500,526,3467865,BR,1031554,,Кампінас,Campinas,,,
+world_top1500,527,1796556,CN,1031396,,Санья,Sanya,,,override
+world_top1500,528,1185188,BD,1031388,,Рангпур,Rangpur,,Rangpur City,
+world_top1500,529,94787,IQ,1031000,,Кіркук,Kirkuk,,,
+world_top1500,530,162183,TM,1030063,yes,Ашгабат,Ashgabat,,Ashkabad | Ashkhabad,
+world_top1500,531,1795874,CN,1028460,,,Shaoguan,,,missing_uk
+world_top1500,532,1270396,IN,1027672,,Хаора,Howrah,,,override
+world_top1500,533,1258980,IN,1027264,,Райпур,Raipur,,,
+world_top1500,534,1846326,KR,1025702,,Чханвон,Changwon,,,
+world_top1500,535,1802276,CN,1025087,,,Longyan,,,missing_uk
+world_top1500,536,2886242,DE,1024621,,Кельн,Cologne,,Köln,
+world_top1500,537,2964574,IE,1024027,yes,Дублін,Dublin,,Dublin city,
+world_top1500,538,1254388,IN,1022518,,Тіручірапаллі,Tiruchirappalli,,Tiruchchirappalli | Tiruchi | Trichinopoly | Trichy,
+world_top1500,539,1786217,CN,1020715,,,Yongzhou,,Lingling,missing_uk
+world_top1500,540,2800866,BE,1019022,yes,Брюсель,Brussels,Брюссель,City of Brussels,
+world_top1500,541,1679432,PH,1018849,,Замбоанга,Zamboanga,,Zamboanga City,
+world_top1500,542,6094817,CA,1017449,yes,Оттава,Ottawa,,,
+world_top1500,543,1806535,CN,1015937,,,Huzhou,,,missing_uk
+world_top1500,544,1812057,CN,1014577,,,Xinyi,,,missing_uk
+world_top1500,545,472757,RU,1013533,,Волгоград,Volgograd,,Stalingrad | Tsaritsyn,
+world_top1500,546,379251,SD,1012211,,Північний Хартум,Bahri,,Khartoum North,
+world_top1500,547,5946768,CA,1010899,,Едмонтон,Edmonton,,,
+world_top1500,548,698740,UA,1010537,,Одеса,Odesa,Коцюбіїв,Khadjibey | Kotsiubiiv | Odessa,
+world_top1500,549,1803936,CN,1010295,,,Wuwei,,,missing_uk
+world_top1500,550,4160021,US,1009833,,Джексонвілл,Jacksonville,,,
+world_top1500,551,4691930,US,1008106,,Форт-Ворт,Fort Worth,,Ft Worth,
+world_top1500,552,1786455,CN,1007100,,,Yishui,,,missing_uk
+world_top1500,553,1808857,CN,1006557,,,Hanzhong,,,missing_uk
+world_top1500,554,7576887,CN,1005490,,,Hezhou,,,missing_uk
+world_top1500,555,1266049,IN,1001694,,Кота,Kota,,,
+world_top1500,556,7602670,CN,1000000,,,Zhu Cheng City,,,missing_uk
+world_top1500,557,1812101,CN,998968,,,Dongying,,,missing_uk
+world_top1500,558,1801640,CN,998900,,,Luzhou,,,missing_uk
+world_top1500,559,5392171,US,997368,,Сан-Хосе,San Jose,,San José,
+world_top1500,560,1256436,IN,997281,,,Solapur,,Sholapur,missing_uk
+world_top1500,561,2542997,MA,995871,,Марракеш,Marrakesh,,Marrakech,override
+world_top1500,562,3598132,GT,994938,yes,Гватемала,Guatemala City,,New Guatemala,override
+world_top1500,563,1800779,CN,992351,,,Meizhou,,,missing_uk
+world_top1500,564,1927639,CN,991465,,,Yueyang,,,missing_uk
+world_top1500,565,1804591,CN,989535,,,Laiwu,,,missing_uk
+world_top1500,566,747323,TR,983571,,,Esenyurt,,,missing_uk
+world_top1500,567,511196,RU,982419,,Перм,Perm,,Molotov,
+world_top1500,568,2317765,NG,980000,,,Zaria,,,missing_uk
+world_top1500,569,2113015,JP,979768,,Тіба,Chiba,,,override
+world_top1500,570,1798827,CN,979130,,,Pingdingshan,,,missing_uk
+world_top1500,571,3645528,VE,978202,,,Ciudad Guayana,,,missing_uk
+world_top1500,572,1166000,PK,975886,,,Sargodha,,,missing_uk
+world_top1500,573,4671654,US,974447,,Остін,Austin,,,
+world_top1500,574,3617763,NI,973087,yes,Манагуа,Managua,,,
+world_top1500,575,1816440,CN,972784,,,Bengbu,,,missing_uk
+world_top1500,576,2537763,MA,972299,,Сале,Salé,,,override
+world_top1500,577,281184,IL,971800,,Єрусалим,Jerusalem,,Al-Quds | Ariel | Zion,
+world_top1500,578,1274746,IN,970602,,Чандігарх,Chandigarh,,,override
+world_top1500,579,709930,UA,968502,,Дніпро,Dnipro,Дніпропетровськ | Дніпрослав | Катеринослав | Новий Кодак | Січослав,Catherinoslav | Dnipropetrovsk | Dniproslav | Katerynoslav | Novorosiynsk | Novyi Kodak | Novyy Kodak | Sicheslav | Sichoslav,
+world_top1500,580,1789176,CN,968100,,,Feicheng,,,missing_uk
+world_top1500,581,1717512,PH,965332,,Себу,Cebu City,,City of Cebu,
+world_top1500,582,1796823,CN,965075,,,Sanhe,,,missing_uk
+world_top1500,583,1809412,CN,964203,,,Guli,,,missing_uk
+world_top1500,584,1254348,IN,963173,,,Tiruppur,,Tirupur,missing_uk
+world_top1500,585,1271476,IN,962334,,Ґувахаті,Guwahati,,Gauhati,
+world_top1500,586,1790492,CN,959303,,,Xiangtan,,,missing_uk
+world_top1500,587,1803567,CN,959198,,,Linfen,,,missing_uk
+world_top1500,588,1931681,HK,956800,,,Victoria,,,missing_uk
+world_top1500,589,1784642,CN,950516,,,Zhenjiang,,Chinkiang,missing_uk
+world_top1500,590,2343279,NG,950000,,Енугу,Enugu,,,override
+world_top1500,591,3838583,AR,948312,,Росаріо,Rosario,,,
+world_top1500,592,101760,SA,946697,,,Sulţānah,,,missing_uk
+world_top1500,593,2036662,CN,944495,,,Huludao,,,missing_uk
+world_top1500,594,1269920,IN,943788,,,Hubballi,,Hubli,missing_uk
+world_top1500,595,1633419,ID,942938,,Паданг,Padang,,,override
+world_top1500,596,1859307,JP,940978,,Кіта-Кюшю,Kitakyushu,,,
+world_top1500,597,70225,YE,940600,,Таїз,Taiz,,,override
+world_top1500,598,3489854,JM,937700,yes,Кінгстон,Kingston,,,override
+world_top1500,599,1281673,CN,935618,,,Baoshan,,,missing_uk
+world_top1500,600,4014338,MX,925762,,Чіуауа,Chihuahua,,Chihuahua City,
+world_top1500,601,6611854,MM,925000,yes,Найп’їдо,Nay Pyi Taw,,Naypyidaw | Naypyitaw,
+world_top1500,602,315202,TR,921630,,Ескішехір,Eskişehir,,,
+world_top1500,603,1262321,IN,920550,,Майсур,Mysuru,,Mysore,
+world_top1500,604,2038087,CN,920395,,,Chengde,,,missing_uk
+world_top1500,605,1257629,IN,917414,,,Salem,,,missing_uk
+world_top1500,606,3388368,BR,917237,,Сан-Луїс,São Luís,,Maranham,
+world_top1500,607,1897000,KR,914832,,,Seongnam-si,,Seongnam,missing_uk
+world_top1500,608,3687238,CO,914552,,Картахена,Cartagena,,Cartagena de Indias,
+world_top1500,609,1730501,PH,913712,,,Antipolo City,,Antipolo,missing_uk
+world_top1500,610,4509177,US,913175,,Колумбус,Columbus,,,
+world_top1500,611,1164909,PK,911817,,Сіялкот,Sialkot,,,
+world_top1500,612,4460243,US,911311,,Шарлотт,Charlotte,,,
+world_top1500,613,1804609,CN,910282,,,Laibin,,,missing_uk
+world_top1500,614,2319133,NG,910000,,,Warri,,,missing_uk
+world_top1500,615,3172394,IT,909048,,Неаполь,Naples,,,
+world_top1500,616,1790254,CN,908266,,,Xiaogan,,,missing_uk
+world_top1500,617,1800829,CN,907354,,,Wuchuan,,,missing_uk
+world_top1500,618,3467747,BR,906092,,Кампу-Гранді,Campo Grande,,,
+world_top1500,619,1783683,CN,905729,,,Ziyang,,,missing_uk
+world_top1500,620,2362344,BF,904920,,Бобо-Діуласо,Bobo-Dioulasso,,,
+world_top1500,621,1183880,PK,903795,,,Bahawalpur,,,missing_uk
+world_top1500,622,1797264,CN,902767,,,Quzhou,,,missing_uk
+world_top1500,623,931755,MW,902588,,Блантайр,Blantyre,,,
+world_top1500,624,709717,UA,901645,,Донецьк,Donetsk,Дінецьк | Дінецьке | Олександрівка | Сталіне | Сталіно | Юзове | Юзів | Юзівка,Dinetsk | Dinetske | Oleksandrivka | Staline | Stalino | Yuziv | Yuzivka | Yuzove,
+world_top1500,625,100077,IQ,900000,,,Abū Ghurayb,,Abu Ghraib,missing_uk
+world_top1500,626,119208,IR,900000,,Кум,Qom,,,
+world_top1500,627,1528675,KG,900000,yes,Бішкек,Bishkek,,,
+world_top1500,628,542420,RU,899541,,Краснодар,Krasnodar,,,override
+world_top1500,629,3394023,BR,896708,,Натал,Natal,,,override
+world_top1500,630,1798654,CN,893550,,,Pingxiang,,,missing_uk
+world_top1500,631,1636722,ID,889359,,Маланг,Malang,,,override
+world_top1500,632,3531673,MX,888797,,Канкун,Cancún,,,
+world_top1500,633,4259418,US,887642,,Індіанаполіс,Indianapolis,,,
+world_top1500,634,1270642,IN,886519,,Ґурґаон,Gurugram,,Gurgaon,
+world_top1500,635,1275817,IN,885363,,Бхубанешвар,Bhubaneswar,,,override
+world_top1500,636,1886762,CN,882932,,,Zhoushan,,,missing_uk
+world_top1500,637,2035265,CN,882364,,Ціцікар,Qiqihar,,,
+world_top1500,638,8307074,AO,882014,,,Mulenvos,,,missing_uk
+world_top1500,639,98463,IQ,878146,,Сулейманія,Sulaymaniyah,,Slemani,
+world_top1500,640,2995469,FR,877215,,Марсель,Marseille,,,
+world_top1500,641,1275901,IN,874032,,,Bhiwandi,,,missing_uk
+world_top1500,642,954013,ZA,872309,,,Soshanguve,,,missing_uk
+world_top1500,643,1804586,CN,872000,,,Laiyang,,,missing_uk
+world_top1500,644,1813206,CN,871214,,,Daye,,,missing_uk
+world_top1500,645,3386496,BR,871126,,Терезіна,Teresina,,,
+world_top1500,646,1789065,CN,870126,,,Ankang,,,missing_uk
+world_top1500,647,1268782,IN,868929,,Джаландхар,Jalandhar,,,
+world_top1500,648,2747891,NL,868135,,Роттердам,Rotterdam,,,
+world_top1500,649,1804540,CN,868066,,,Langfang,,,missing_uk
+world_top1500,650,1280737,CN,867900,,Лхаса,Lhasa,,,
+world_top1500,651,3464374,BR,866347,,,Duque de Caxias,,,missing_uk
+world_top1500,652,2236500,AO,865863,,,Viana,,,missing_uk
+world_top1500,653,1805987,CN,865413,,,Jiaozuo,,,missing_uk
+world_top1500,654,1629001,ID,865306,,,Samarinda,,,missing_uk
+world_top1500,655,2038300,CN,865215,,Беньсі,Benxi,,,
+world_top1500,656,1791748,CN,859662,,,Wanxian,,Wan-Hsien | Wanshien,missing_uk
+world_top1500,657,1799194,CN,858159,,,Guang’an,,,missing_uk
+world_top1500,658,1732752,MY,858118,,Джохор-Бару,Johor Bahru,,,
+world_top1500,659,1184370,PK,854462,,,Arifwala,,,missing_uk
+world_top1500,660,7290466,PH,853050,,,Pasig City,,Pasig,missing_uk
+world_top1500,661,1845604,KR,852147,,,Cheongju-si,,Cheongju,missing_uk
+world_top1500,662,12501153,IN,851406,,,Kanayannur,,,missing_uk
+world_top1500,663,3600949,HN,850848,yes,Тегусігальпа,Tegucigalpa,,,
+world_top1500,664,1838716,KR,850731,,,Bucheon-si,,Bucheon,missing_uk
+world_top1500,665,1566166,VN,850000,,Тханьхоа,Thanh Hóa,,,
+world_top1500,666,3165524,IT,847287,,Турин,Turin,,,
+world_top1500,667,292913,AE,846747,,,Al Ain City,,Al Ain,missing_uk
+world_top1500,668,2399697,GA,846090,yes,Лібревіль,Libreville,,,
+world_top1500,669,498677,RU,844858,,Саратов,Saratov,,,
+world_top1500,670,2028462,MN,844818,yes,Улан-Батор,Ulaanbaatar,,Ulaan Baatar | Ulan Bator,
+world_top1500,671,1791673,CN,844310,,,Weihai,,,missing_uk
+world_top1500,672,1821940,KH,843931,,,Takeo,,,missing_uk
+world_top1500,673,3456160,BR,843046,,Нова-Ігуасу,Nova Iguaçu,,,
+world_top1500,674,3919968,BO,841276,,Кочабамба,Cochabamba,,,
+world_top1500,675,144448,IR,841145,,Ахваз,Ahvāz,,Ahvaz,
+world_top1500,676,1651944,LA,840940,yes,Вєнтьян,Vientiane,,,
+world_top1500,677,3449344,BR,840499,,,São Bernardo do Campo,,,missing_uk
+world_top1500,678,1817720,CN,839747,,,Shangyu,,,missing_uk
+world_top1500,679,1788508,CN,839488,,,Xinyu,,,missing_uk
+world_top1500,680,965301,ZA,839327,,Пітермаріцбург,Pietermaritzburg,,,
+world_top1500,681,1786770,CN,836340,,,Yibin,,,missing_uk
+world_top1500,682,3522790,MX,834434,,,Naucalpan de Juárez,,Naucalpan,missing_uk
+world_top1500,683,1771023,MY,833571,,,Kampung Baru Subang,,,missing_uk
+world_top1500,684,2290956,CI,832371,,Буаке,Bouaké,,,override
+world_top1500,685,1793703,CN,831113,,,Taicang,,,missing_uk
+world_top1500,686,5391959,US,827526,,Сан-Франціско,San Francisco,Сан-Франциско,,
+world_top1500,687,1853195,JP,826161,,Сакаї,Sakai,,,override
+world_top1500,688,2509954,ES,824340,,Валенсія,Valencia,,,
+world_top1500,689,13608000,CN,822776,,,Jinshan,,,missing_uk
+world_top1500,690,1815059,CN,822534,,,Chenzhou,,,missing_uk
+world_top1500,691,3397277,BR,817511,,Жуан-Пессоа,João Pessoa,,,
+world_top1500,692,217831,CD,816811,,Букаву,Bukavu,,,override
+world_top1500,693,3094802,PL,816614,,Краків,Krakow,,Cracow | Kraków,
+world_top1500,694,2037886,CN,815858,,Даньдун,Dandong,,Andong,
+world_top1500,695,3648559,VE,815141,,Барселона,Barcelona,,,override
+world_top1500,696,2389853,CF,812407,yes,Бангі,Bangui,,,
+world_top1500,697,4004898,MX,812229,,Ермосійо,Hermosillo,,,
+world_top1500,698,1276014,IN,809378,,,Bhayandar,,,missing_uk
+world_top1500,699,4012176,MX,808416,,Кульякан,Culiacán,,,override
+world_top1500,700,1735158,MY,807879,,,Petaling Jaya,,,missing_uk
+world_top1500,701,1817993,CN,804493,,Аньцін,Anqing,,Anking,
+world_top1500,702,2485926,DZ,803329,,Оран,Oran,,,
+world_top1500,703,2409306,SL,802639,yes,Фрітаун,Freetown,,,
+world_top1500,704,3601782,HN,801259,,Сан-Педро-Сула,San Pedro Sula,,,override
+world_top1500,705,1261809,IN,800000,,,Narela,,,missing_uk
+world_top1500,706,1788927,CN,798770,,Сінтай,Xingtai,,,
+world_top1500,707,1855431,JP,797591,,Ніїгата,Niigata,,,override
+world_top1500,708,287286,OM,797000,yes,Маскат,Muscat,,,
+world_top1500,709,250090,JO,792665,,Ез-Зарка,Zarqa,,,override
+world_top1500,710,6955677,TR,792189,,,Çankaya,,,missing_uk
+world_top1500,711,742394,TR,792030,,,Küçükçekmece,,,missing_uk
+world_top1500,712,1863289,JP,791707,,Хамамацу,Hamamatsu,,Hamamatsu City | Hamamatsu-shi,
+world_top1500,713,922773,CD,790248,,Колвезі,Kolwezi,,,
+world_top1500,714,1562798,VN,790000,,Вінь,Vinh,,,
+world_top1500,715,1254163,IN,788271,,Тируванантапурам,Thiruvananthapuram,,Trivandrum,
+world_top1500,716,1784841,CN,787845,,,Zhaotong,,,missing_uk
+world_top1500,717,6929460,CN,787177,,,Panzhihua,,,missing_uk
+world_top1500,718,1814757,CN,782671,,,Chuzhou,,,missing_uk
+world_top1500,719,5809844,US,780995,,Сієтл,Seattle,,,
+world_top1500,720,358619,EG,780515,,Порт-Саїд,Port Said,,,override
+world_top1500,721,3685533,CO,777106,,Кукута,Cúcuta,,,
+world_top1500,722,169577,SY,775404,,Хомс,Homs,,Hums,
+world_top1500,723,1788081,CN,774332,,,Xuancheng,,,missing_uk
+world_top1500,724,74477,YE,771514,,Ібб,Ibb,,,
+world_top1500,725,1624647,ID,770839,,,Tasikmalaya,,,missing_uk
+world_top1500,726,1033356,MZ,770379,,Нампула,Nampula,,,
+world_top1500,727,425378,BI,769317,,Бужумбура,Bujumbura,,,
+world_top1500,728,1488754,RU,768358,,Тюмень,Tyumen,,,override
+world_top1500,729,315368,TR,767848,,Ерзурум,Erzurum,,,
+world_top1500,730,1817968,CN,765313,,,Anshun,,,missing_uk
+world_top1500,731,160196,TZ,765179,yes,Додома,Dodoma,,,
+world_top1500,732,1185128,BD,763580,,,Rajshahi,,,missing_uk
+world_top1500,733,1180281,PK,763195,,,Dera Ismail Khan,,,missing_uk
+world_top1500,734,3447399,BR,762172,,Сорокаба,Sorocaba,,,
+world_top1500,735,1790840,CN,761948,,,Wuzhou,,,missing_uk
+world_top1500,736,1734634,MY,759952,,Іпох,Ipoh,,,
+world_top1500,737,1797595,CN,759718,,Ціньхуандао,Qinhuangdao,,,
+world_top1500,738,88319,LY,757490,,Бенгазі,Benghazi,,,
+world_top1500,739,3445831,BR,754954,,,Uberlândia,,,missing_uk
+world_top1500,740,1279017,IN,753207,,,Alīgarh,,Aligarh,missing_uk
+world_top1500,741,1816920,CN,753194,,,Shaoyang,,,missing_uk
+world_top1500,742,304922,TR,750491,,Малатья,Malatya,,,
+world_top1500,743,6183235,CA,749607,,Вінніпег,Winnipeg,Вінніпеґ,Winnipeg City,
+world_top1500,744,8469289,JP,748081,,,Ōta-ku,,Ota | Ota-ku | Ōta,missing_uk
+world_top1500,745,1514588,UZ,747800,,Андижан,Andijon,,Andijan,
+world_top1500,746,1277013,IN,745435,,,Bareilly,,,missing_uk
+world_top1500,747,107304,SA,745353,,Бурайда,Buraydah,,Buraidah,
+world_top1500,748,2036986,CN,743307,,,Hegang,,,missing_uk
+world_top1500,749,3995402,MX,743275,,Морелія,Morelia,,,
+world_top1500,750,456172,LV,742572,yes,Рига,Riga,,,
+world_top1500,751,1784055,CN,742496,,,Zhuanghe,,,missing_uk
+world_top1500,752,2759794,NL,741636,yes,Амстердам,Amsterdam,,,
+world_top1500,753,1721080,PH,741617,,,Cagayan de Oro,,,missing_uk
+world_top1500,754,1801620,CN,741531,,,Ma’anshan,,,missing_uk
+world_top1500,755,1732903,MY,740750,,Шах-Алам,Shah Alam,,,
+world_top1500,756,751324,TR,740069,,,Bağcılar,,,missing_uk
+world_top1500,757,12324556,CN,739400,,,Shizuishan,,,missing_uk
+world_top1500,758,1858421,JP,738907,,Кумамото,Kumamoto,,,override
+world_top1500,759,2325200,NG,736072,,,Oyo,,,missing_uk
+world_top1500,760,1627549,ID,735651,,,Serang,,,missing_uk
+world_top1500,761,3981254,MX,735340,,,Torreón,,,missing_uk
+world_top1500,762,1812961,CN,735070,,,Deyang,,,missing_uk
+world_top1500,763,2352947,NG,735000,,Абеокута,Abeokuta,,,
+world_top1500,764,79415,YE,734699,,Ходейда,Al Ḩudaydah,,Al Hudaydah,override
+world_top1500,765,1787351,CN,731228,,,Yangquan,,,missing_uk
+world_top1500,766,2350841,NG,730000,,Акуре,Akure,,,
+world_top1500,767,5419384,US,729019,,Денвер,Denver,,,
+world_top1500,768,3455775,BR,728615,,,Osasco,,,missing_uk
+world_top1500,769,7758790,AO,728205,,,Kikolo,,,missing_uk
+world_top1500,770,2239888,AO,727681,,,Maianga,,,missing_uk
+world_top1500,771,3448636,BR,727078,,Сан-Жозе-дус-Кампус,São José dos Campos,,,
+world_top1500,772,1865689,JP,725493,,,Aihara,,,missing_uk
+world_top1500,773,1004866,ZA,725468,,,Evaton,,,missing_uk
+world_top1500,774,1680102,PH,725173,,,Valenzuela,,,missing_uk
+world_top1500,775,1169607,PK,725000,,Музаффарабад,Muzaffarabad,,Muzaffarābād,
+world_top1500,776,1854383,JP,724691,,Окаяма,Okayama,,,override
+world_top1500,777,3985606,MX,722772,,Сан-Луїс-Потосі,San Luis Potosí,,San Luis Potosí City,override
+world_top1500,778,4019233,MX,722250,,Аґуаскальєнтес,Aguascalientes,,Aguascalientes City,
+world_top1500,779,1713022,PH,722059,,,General Santos,,,missing_uk
+world_top1500,780,1783873,CN,721670,,,Zhumadian,,,missing_uk
+world_top1500,781,1262801,IN,721139,,,Morādābād,,,missing_uk
+world_top1500,782,11611609,JP,720780,,,Sagamihara,,,missing_uk
+world_top1500,783,6075357,CA,717961,,Міссісога,Mississauga,,,
+world_top1500,784,702550,UA,717273,,Львів,Lviv,,,
+world_top1500,785,1513157,UZ,713220,,Наманган,Namangan,,,
+world_top1500,786,687700,UA,710052,,Запоріжжя,Zaporizhzhia,,Alexandrovsk | Zaporizhzhya | Zaporozhye,
+world_top1500,787,148730,TZ,709809,,Занзібар,Zanzibar,,,
+world_top1500,788,3988086,MX,709671,,Сальтільйо,Saltillo,,,
+world_top1500,789,173576,SY,709000,,Латакія,Latakia,,,
+world_top1500,790,1252948,IN,704570,,,Warangal,,,missing_uk
+world_top1500,791,1694781,PH,703245,,,Paranaque City,,,missing_uk
+world_top1500,792,482283,RU,702879,,Тольятті,Tolyatti,,,override
+world_top1500,793,7874116,DO,701269,,,Santo Domingo Oeste,,,missing_uk
+world_top1500,794,1183105,PK,700000,,,Battagram,,Battagram City,missing_uk
+world_top1500,795,8601412,DO,700000,,,Santo Domingo Este,,,missing_uk
+world_top1500,796,359796,EG,699541,,Суец,Suez,,,
+world_top1500,797,1815463,CN,699514,,,Changzhi,,,missing_uk
+world_top1500,798,3451328,BR,698642,,Рібейран-Прету,Ribeirão Preto,,,
+world_top1500,799,2561668,MA,698310,,Агадір,Agadir,,Santa Cruz,
+world_top1500,800,3191281,BA,696731,yes,Сараєво,Sarajevo,,,
+world_top1500,801,1650527,ID,695287,,Балікпапан,Balikpapan,,,override
+world_top1500,802,1815611,CN,694900,,,Changning,,,missing_uk
+world_top1500,803,2347470,NG,693700,,,Bauchi,,,missing_uk
+world_top1500,804,1851717,JP,693389,,Сідзуока,Shizuoka,,,
+world_top1500,805,2464470,TN,693210,yes,Туніс,Tunis,,,
+world_top1500,806,2033196,CN,692602,,,Zhangjiakou,,,missing_uk
+world_top1500,807,4140963,US,689545,yes,Вашингтон,Washington D.C.,,District of Columbia | Territory of Columbia | Washington | Washington DC,
+world_top1500,808,4644585,US,689447,,Нашвілл,Nashville,,,
+world_top1500,809,2037346,CN,689050,,,Fuxin,,,missing_uk
+world_top1500,810,107968,SA,688693,,Таїф,Ta'if,,,
+world_top1500,811,1796989,CN,688242,,,Changsha,,,missing_uk
+world_top1500,812,1807234,CN,688090,,,Huangshi,,,missing_uk
+world_top1500,813,2036113,CN,687890,,,Liaoyang,,,missing_uk
+world_top1500,814,8740157,MM,687867,,,Hlaingthaya,,,missing_uk
+world_top1500,815,1052373,MZ,687764,,Бейра,Beira,,,
+world_top1500,816,1808090,CN,687500,,,Hongkou,,,missing_uk
+world_top1500,817,3104324,ES,686986,,Сарагоса,Zaragoza,,,
+world_top1500,818,2510911,ES,686741,,Севілья,Seville,,Sevilla,
+world_top1500,819,1816269,CN,686078,,,Baise,,Baise City,missing_uk
+world_top1500,820,1630789,ID,686019,,Понтіанак,Pontianak,,,
+world_top1500,821,1626801,ID,685967,,,Situbondo,,,missing_uk
+world_top1500,822,2351943,NG,683600,,,Agege,,,missing_uk
+world_top1500,823,1816336,CN,682717,,,Binzhou,,,missing_uk
+world_top1500,824,4544349,US,681054,,Оклахома-Сіті,Oklahoma City,,Okla city,
+world_top1500,825,1785738,CN,680036,,,Yuncheng,,,missing_uk
+world_top1500,826,1812955,CN,679535,,,Dezhou,,,missing_uk
+world_top1500,827,1221874,TJ,679400,yes,Душанбе,Dushanbe,,,override
+world_top1500,828,2394819,BJ,679012,,Котону,Cotonou,,,
+world_top1500,829,5520993,US,678815,,Ель-Пасо,El Paso,,,
+world_top1500,830,1270927,IN,674246,,Горакхпур,Gorakhpur,,,
+world_top1500,831,4005492,MX,673616,,,Guadalupe,,,missing_uk
+world_top1500,832,3081368,PL,672545,,Вроцлав,Wroclaw,,Wrocław,
+world_top1500,833,1645528,ID,670210,,Денпасар,Denpasar,,,
+world_top1500,834,1270668,IN,670073,,Гунтур,Guntur,,,
+world_top1500,835,2334802,NG,670000,,,Katsina,,,missing_uk
+world_top1500,836,1796669,CN,669307,,,Sanmenxia,,,missing_uk
+world_top1500,837,6642286,CN,668727,,,E’zhou,,Wuchang,missing_uk
+world_top1500,838,2591957,AO,667094,,,Camama,,,missing_uk
+world_top1500,839,101628,SA,667000,,Табук,Tabuk,,,
+world_top1500,840,911148,ZM,665961,,Кітве,Kitwe,,,
+world_top1500,841,894701,ZW,665952,,Булавайо,Bulawayo,,,
+world_top1500,842,2035715,CN,665915,,,Mudanjiang,,,missing_uk
+world_top1500,843,3471872,BR,664908,,Аракажу,Aracaju,,,
+world_top1500,844,3459712,BR,664500,,Жоінвілі,Joinville,,,override
+world_top1500,845,264371,GR,664046,yes,Афіни,Athens,,,
+world_top1500,846,3186886,HR,663592,yes,Загреб,Zagreb,,,
+world_top1500,847,1804153,CN,662814,,,Leshan,,,missing_uk
+world_top1500,848,3449701,BR,662373,,,Santo André,,,missing_uk
+world_top1500,849,6173331,CA,662248,,Ванкувер,Vancouver,,,
+world_top1500,850,9072919,CN,661943,,,Rizhao,,,missing_uk
+world_top1500,851,658225,FI,658864,yes,Гельсінкі,Helsinki,,Helsingfors,
+world_top1500,852,1845759,KR,658831,,Чхонан,Cheonan,,,
+world_top1500,853,3533462,MX,658609,,Акапулько,Acapulco de Juárez,,Acapulco,
+world_top1500,854,1812621,CN,658000,,,Dongcun,,,missing_uk
+world_top1500,855,1650213,ID,657663,,Банджармасін,Banjarmasin,,,override
+world_top1500,856,1259425,IN,657209,,Пондішері,Puducherry,,Pondicherri | Pondicherry,
+world_top1500,857,1793900,CN,656760,,,Suining,,,missing_uk
+world_top1500,858,5907364,CA,656480,,Брамптон,Brampton,,,
+world_top1500,859,8307452,CN,656200,,,Huangpu,,,missing_uk
+world_top1500,860,2591953,AO,655796,,,Golfe,,,missing_uk
+world_top1500,861,9181182,CN,655674,,,Puyang,,,missing_uk
+world_top1500,862,3667905,CO,655025,,,Soacha,,,missing_uk
+world_top1500,863,4930956,US,653833,,Бостон,Boston,,,
+world_top1500,864,3515431,MX,653410,,,Tlalnepantla,,,missing_uk
+world_top1500,865,5746545,US,652503,,Портленд,Portland,,,
+world_top1500,866,2242906,AO,652270,,,Calumbo,,,missing_uk
+world_top1500,867,3981461,MX,650123,,,Tlaquepaque,,,missing_uk
+world_top1500,868,2925533,DE,650000,,Франкфурт-на-Майні,Frankfurt am Main,Франкфурт,Frankfurt,override
+world_top1500,869,1821274,MO,649335,yes,Аоминь,Macau,,Macao,
+world_top1500,870,2523920,IT,648260,,Палермо,Palermo,,,override
+world_top1500,871,554840,RU,648213,,Іжевськ,Izhevsk,,,
+world_top1500,872,1248991,LK,648034,yes,Коломбо,Colombo,,,
+world_top1500,873,3778045,VE,647459,,Матурін,Maturín,,,
+world_top1500,874,1278718,IN,647057,,,Amravati,,,missing_uk
+world_top1500,875,2036075,CN,646000,,,Lingyuan,,,missing_uk
+world_top1500,876,4990729,US,645705,,Детройт,Detroit,,,
+world_top1500,877,1800519,CN,645000,,,Mingguang,,,missing_uk
+world_top1500,878,2325590,NG,645000,,,Osogbo,,,missing_uk
+world_top1500,879,1275665,IN,644406,,,Bikaner,,,missing_uk
+world_top1500,880,6317344,BR,644037,,Жабуатан-дус-Гуарарапіс,Jaboatão dos Guararapes,,,
+world_top1500,881,13631351,AO,642050,,,Hoji ya Henda,,,missing_uk
+world_top1500,882,5506956,US,641903,,Лас-Вегас,Las Vegas,,,
+world_top1500,883,1843847,KR,640890,,,Hwaseong-si,,Hwaseong,missing_uk
+world_top1500,884,2165087,AU,640778,,Голд-Кост,Gold Coast,,Gold,override
+world_top1500,885,3093133,PL,639890,,Лодзь,Lodz,,Łódź,
+world_top1500,886,1845457,KR,638421,,Чонджу,Jeonju,,,
+world_top1500,887,13608003,CN,637921,,,Chongming,,,missing_uk
+world_top1500,888,285839,KW,637411,,,Al Aḩmadī,,Al Ahmadi,missing_uk
+world_top1500,889,3658666,EC,636996,,Куенка,Cuenca,,,
+world_top1500,890,618426,MD,635994,yes,Кишинів,Chisinau,,Chișinău,override
+world_top1500,891,922741,CD,635768,,Лікасі,Likasi,,,
+world_top1500,892,1642858,ID,635101,,,Jambi City,,,missing_uk
+world_top1500,893,1808770,CN,634721,,,Hebi,,,missing_uk
+world_top1500,894,1185186,BD,634654,,,Comilla,,,missing_uk
+world_top1500,895,204953,CD,634529,,Чикапа,Tshikapa,,,
+world_top1500,896,1180942,PK,634236,,,Chunian,,,missing_uk
+world_top1500,897,1273874,IN,633553,,Коччі,Kochi,,Ernakulam,override
+world_top1500,898,4641239,US,633104,,Мемфіс,Memphis,,,
+world_top1500,899,1805611,CN,632954,,,Jingmen,,,missing_uk
+world_top1500,900,1510853,RU,632372,,Барнаул,Barnaul,,,
+world_top1500,901,3693528,PE,630000,,Піура,Piura,,,
+world_top1500,902,2034714,CN,627957,,,Siping,,Ssupingkai,missing_uk
+world_top1500,903,1275971,IN,627734,,,Bhilai,,,missing_uk
+world_top1500,904,901344,ZM,627503,,Ндола,Ndola,,,
+world_top1500,905,3465624,BR,627123,,,Contagem,,,missing_uk
+world_top1500,906,479123,RU,626540,,Ульяновськ,Ulyanovsk,,,
+world_top1500,907,223817,DJ,626512,yes,Джибуті,Djibouti,,,
+world_top1500,908,2648579,GB,626410,,Глазго,Glasgow,,,
+world_top1500,909,2035513,CN,625040,,,Panshan,,,missing_uk
+world_top1500,910,4299276,US,624444,,Луїсвілл,Louisville,,,
+world_top1500,911,2023469,RU,623869,,Іркутськ,Irkutsk,,,
+world_top1500,912,1846918,KR,623256,,,Ansan-si,,Ansan,missing_uk
+world_top1500,913,360761,EG,621953,,Ель-Мансура,Al Mansurah,,,override
+world_top1500,914,128226,IR,621100,,Керманшах,Kermanshah,,,override
+world_top1500,915,1806096,CN,619266,,,Jiaozhou,,,missing_uk
+world_top1500,916,2934246,DE,618685,,Дюссельдорф,Düsseldorf,,Duesseldorf | Dusseldorf,
+world_top1500,917,1793879,CN,618582,,Суйчжоу,Suizhou,,,
+world_top1500,918,3587902,GT,618397,,,Villa Nueva,,,missing_uk
+world_top1500,919,2022890,RU,618150,,Хабаровськ,Khabarovsk,,,
+world_top1500,920,3465038,BR,618124,,Куяба,Cuiabá,,Culaba,
+world_top1500,921,161325,TZ,617631,,Аруша,Arusha,,,override
+world_top1500,922,3463478,BR,616272,,,Feira de Santana,,,missing_uk
+world_top1500,923,1707174,PH,615549,,,Las Piñas,,,missing_uk
+world_top1500,924,1814934,CN,615274,,,Chizhou,,,missing_uk
+world_top1500,925,3530139,MX,614447,,,Coyoacán,,,missing_uk
+world_top1500,926,2825297,DE,612663,,Штутгарт,Stuttgart,,,
+world_top1500,927,1787816,CN,612056,,,Ya'an,,,missing_uk
+world_top1500,928,1273780,IN,610189,,,Cuttack,,,missing_uk
+world_top1500,929,1275248,IN,609617,,,Borivli,,Borivali,missing_uk
+world_top1500,930,3698350,PE,609400,,Чіклайо,Chiclayo,,,
+world_top1500,931,468902,RU,608722,,Ярославль,Yaroslavl,,,
+world_top1500,932,2711537,SE,608462,,Гетеборг,Gothenburg,,Goteborg,
+world_top1500,933,1859730,JP,607373,,Каваґуті,Kawaguchi,,,
+world_top1500,934,13118225,MY,607000,,,Bukit Rahman Putra,,,missing_uk
+world_top1500,935,1175892,PK,606533,,Джанг-Садар,Jhang Sadr,,Jhang Sadar,
+world_top1500,936,106281,SA,605930,,,Ha'il,,,missing_uk
+world_top1500,937,1276032,IN,605882,,,Bhavnagar,,,missing_uk
+world_top1500,938,1020098,ZA,605344,,Беноні,Benoni,,,
+world_top1500,939,2013348,RU,604901,,Владивосток,Vladivostok,,,
+world_top1500,940,3515001,MX,604147,,Тустла-Ґутьєррес,Tuxtla,,Tuxtla Gutiérrez,
+world_top1500,941,703845,UA,603904,,Кривий Ріг,Kryvyi Rih,,Kryvyy Rih,
+world_top1500,942,1796663,CN,602166,,,Sanming,,,missing_uk
+world_top1500,943,1176615,PK,601600,yes,Ісламабад,Islamabad,,,
+world_top1500,944,1257416,IN,601214,,,Sangli,,Sāngli | Turmeric city,missing_uk
+world_top1500,945,1269317,IN,600943,,Джамнагар,Jamnagar,,,
+world_top1500,946,3347762,AO,600751,,Лубанго,Lubango,,,
+world_top1500,947,1282898,NP,600051,,Покхара,Pokhara,,,
+world_top1500,948,2034786,CN,600000,,,Shuangyashan,,,missing_uk
+world_top1500,949,64021,SO,597842,,Борама,Borama,,Boorama,
+world_top1500,950,1802204,CN,597130,,,Luancheng,,,missing_uk
+world_top1500,951,532096,RU,596356,,Махачкала,Makhachkala,,,
+world_top1500,952,1846898,KR,595644,,,Anyang-si,,Anyang,missing_uk
+world_top1500,953,3348313,AO,595304,,Уамбо,Huambo,,,
+world_top1500,954,1216265,UZ,595200,,Самарканд,Samarkand,,,override
+world_top1500,955,13512502,CN,595100,,,Mengzi,,,missing_uk
+world_top1500,956,1860827,JP,595049,,Кагосіма,Kagoshima,,,override
+world_top1500,957,78754,YE,594951,,Ель-Мукалла,Mukalla,,Al Mukalla,
+world_top1500,958,118743,IR,594590,,Решт,Rasht,,,
+world_top1500,959,3430863,AR,593337,,Мар-дель-Плата,Mar del Plata,,,
+world_top1500,960,2928810,DE,593085,,Ессен,Essen,,,
+world_top1500,961,360829,EG,592573,,,Al Maḩallah al Kubrá,,,missing_uk
+world_top1500,962,2514256,ES,592346,,Малага,Málaga,,,
+world_top1500,963,1165221,PK,591424,,,Shekhupura,,,missing_uk
+world_top1500,964,2033370,CN,591159,,,Yingkou,,Eiko | Newchwang,missing_uk
+world_top1500,965,1785018,CN,589831,,,Zhangzhou,,,missing_uk
+world_top1500,966,3520339,MX,589466,,Рейноса,Reynosa,,,override
+world_top1500,967,12382296,VN,588616,,,Thuận An,,,missing_uk
+world_top1500,968,2935517,DE,588462,,Дортмунд,Dortmund,,,
+world_top1500,969,4347778,US,585708,,Балтимор,Baltimore,,,
+world_top1500,970,1732747,MY,583640,,,Pelentong,,,missing_uk
+world_top1500,971,1646448,ID,581994,,,Cimahi,,,missing_uk
+world_top1500,972,3458449,BR,581382,,,Londrina,,,missing_uk
+world_top1500,973,3688465,CO,581130,,Букараманґа,Bucaramanga,,,
+world_top1500,974,3176219,IT,580097,,Генуя,Genoa,,,override
+world_top1500,975,1863440,JP,579355,,Хатіодзі,Hachiōji,,,
+world_top1500,976,1572151,VN,579000,,Нячанг,Nha Trang,,,
+world_top1500,977,1734759,MY,579000,,Малакка,Malacca,,,override
+world_top1500,978,128234,IR,577514,,Керман,Kerman,,,
+world_top1500,979,121801,IR,577307,,Урмія,Orūmīyeh,,Urmia,override
+world_top1500,980,7627067,TR,576799,,,Bahçelievler,,,missing_uk
+world_top1500,981,347497,EG,576648,,Танта,Tanta,,,override
+world_top1500,982,1269321,IN,576198,,Джамму,Jammu,,,override
+world_top1500,983,10063567,MY,575977,,,Iskandar Puteri,,,missing_uk
+world_top1500,984,1720681,PH,575046,,,Calamba,,,missing_uk
+world_top1500,985,3515428,MX,574577,,,Tlalpan,,,missing_uk
+world_top1500,986,1140026,AF,574300,,Герат,Herāt,,Herat,override
+world_top1500,987,1812256,CN,574242,,,Dongsheng,,,missing_uk
+world_top1500,988,1177654,PK,574240,,,Gujrat,,,missing_uk
+world_top1500,989,1489425,RU,574002,,Томськ,Tomsk,,,
+world_top1500,990,738377,TR,573265,,,Umraniye,,,missing_uk
+world_top1500,991,1529195,CN,572772,,,Shihezi,,,missing_uk
+world_top1500,992,184622,KE,570674,,Накуру,Nakuru,,,
+world_top1500,993,5969782,CA,569353,,Гамільтон,Hamilton,,,
+world_top1500,994,248946,JO,569068,,Ірбід,Irbid,,,
+world_top1500,995,2643123,GB,568996,,Манчестер,Manchester,,,
+world_top1500,996,1736376,MY,568900,,Кота-Бару,Kota Bharu,,,
+world_top1500,997,6159905,CA,568322,,Суррей,Surrey,,,
+world_top1500,998,2542715,MA,568295,,Мекнес,Meknes,,,override
+world_top1500,999,3875024,CL,568106,,,Puente Alto,,,missing_uk
+world_top1500,1000,369004,SD,565734,,Ньяла,Nyala,,,
+world_top1500,1001,2033675,CN,565634,,,Xinmin,,,missing_uk
+world_top1500,1002,2935022,DE,564904,,Дрезден,Dresden,,,
+world_top1500,1003,515003,RU,564773,,Оренбург,Orenburg,,,override
+world_top1500,1004,5454711,US,564559,,Альбукерке,Albuquerque,,Methville,
+world_top1500,1005,1275362,IN,564319,,,Bokāro,,Bokaro | Bokaro Steel City,missing_uk
+world_top1500,1006,343300,ER,563930,yes,Асмара,Asmara,,,
+world_top1500,1007,1164408,PK,563851,,,Sukkur,,,missing_uk
+world_top1500,1008,5263045,US,563531,,Мілуокі,Milwaukee,,,
+world_top1500,1009,1791544,CN,560894,,,Wenchang,,,missing_uk
+world_top1500,1010,2338900,NG,560000,,,Ile-Ife,,,missing_uk
+world_top1500,1011,2340451,NG,560000,,,Gombe,,,missing_uk
+world_top1500,1012,1877449,KP,559056,,,Hamhŭng,,Hamhung,missing_uk
+world_top1500,1013,1503901,RU,558973,,Кемерово,Kemerovo,,,
+world_top1500,1014,98854,IQ,558400,,,Nasiriyah,,,missing_uk
+world_top1500,1015,1018725,ZA,556637,,Блумфонтейн,Bloemfontein,,,
+world_top1500,1016,2638077,GB,556500,,Шеффілд,Sheffield,,,
+world_top1500,1017,3536729,CU,555865,,Сантьяго-де-Куба,Santiago de Cuba,,,
+world_top1500,1018,3515807,MX,555163,,,Cuautitlán Izcalli,,,missing_uk
+world_top1500,1019,3351663,AO,555124,,Бенгела,Benguela,,,override
+world_top1500,1020,1814760,CN,555081,,,Chuxiong,,,missing_uk
+world_top1500,1021,7648070,DJ,554350,,,Balbala,,,missing_uk
+world_top1500,1022,1807689,CN,552622,,,Huaihua,,,missing_uk
+world_top1500,1023,1794140,CN,552300,,,Sishui,,,missing_uk
+world_top1500,1024,1699076,PH,552225,,,Muntinlupa,,City of Muntinlupa,missing_uk override
+world_top1500,1025,1159301,IR,551980,,Захедан,Zahedan,,,
+world_top1500,1026,1670029,TW,551221,,,Banqiao District,,Banciao | Banciao District | Banqiao,missing_uk
+world_top1500,1027,1261977,IN,550564,,,Nanded,,,missing_uk
+world_top1500,1028,1265873,IN,550440,,Кожикоде,Kozhikode,,Calicut,
+world_top1500,1029,8335361,CN,550231,,,Ulanqab,,,missing_uk
+world_top1500,1030,786714,XK,550000,yes,Приштина,Pristina,,Prishtina,
+world_top1500,1031,2243271,AO,550000,,Кабінда,Cabinda,,,override
+world_top1500,1032,2566636,NG,550000,,,Ajegunle,,,missing_uk
+world_top1500,1033,2036581,CN,549549,,,Jiamusi,,,missing_uk
+world_top1500,1034,1529376,CN,549324,,Корла,Korla,,,
+world_top1500,1035,1266285,IN,549236,,,Kolhāpur,,,missing_uk
+world_top1500,1036,3662762,BR,548952,,Порту-Велью,Porto Velho,,,
+world_top1500,1037,3836873,AR,548866,,Сан-Мігель-де-Тукуман,San Miguel de Tucumán,,Tucumán,
+world_top1500,1038,1735227,MY,548014,,Куантан,Kuantan,,,
+world_top1500,1039,694423,UA,547820,,Севастополь,Sevastopol,,Sebastopol,
+world_top1500,1040,1261529,IN,547621,,,Nellore,,,missing_uk
+world_top1500,1041,2944388,DE,546501,,Бремен,Bremen,,,
+world_top1500,1042,1791779,CN,545992,,,Wanning,,,missing_uk
+world_top1500,1043,2325330,NG,545000,,,Owerri,,,missing_uk
+world_top1500,1044,6847550,MY,544984,,,Kota Kuala Muda,,,missing_uk
+world_top1500,1045,1735498,MY,544851,,,Sungai Petani,,,missing_uk
+world_top1500,1046,1788450,CN,544683,,,Xinzhou,,,missing_uk
+world_top1500,1047,11209896,JP,543730,,,Kotō,,Kōtō City,missing_uk
+world_top1500,1048,1270752,IN,543147,,,Kalaburagi,,Gulbarga | Kalaburgi,missing_uk
+world_top1500,1049,5318313,US,542629,,Тусон,Tucson,,,
+world_top1500,1050,7795834,MY,542409,,,Selayang Baru Utara,,,missing_uk
+world_top1500,1051,593116,LT,542366,yes,Вільнюс,Vilnius,,,
+world_top1500,1052,1279159,IN,542321,,Аджмер,Ajmer,,,
+world_top1500,1053,1798821,CN,542234,,,Pingdu,,,missing_uk
+world_top1500,1054,5350937,US,542107,,Фресно,Fresno,,,
+world_top1500,1055,154380,TZ,541603,,Мбея,Mbeya,,,
+world_top1500,1056,3459505,BR,540756,,Жуїз-ді-Фора,Juiz de Fora,,,
+world_top1500,1057,2346229,NG,540000,,Калабар,Calabar,,,
+world_top1500,1058,2540483,MA,539711,,Уджда,Oujda,,,
+world_top1500,1059,1496990,RU,539616,,Новокузнецьк,Novokuznetsk,,,
+world_top1500,1060,500096,RU,538962,,Рязань,Ryazan,,,override
+world_top1500,1061,1806445,CN,538699,,,Ji’an,,,missing_uk
+world_top1500,1062,1166547,PK,538344,,,Sahiwal,,,missing_uk
+world_top1500,1063,1166548,PK,538344,,,Sahiwal,,Montgomery,missing_uk
+world_top1500,1064,304531,TR,537842,,Мерсін,Mersin,,,override
+world_top1500,1065,10346824,TR,536365,,,Nilüfer,,Nilufer,missing_uk
+world_top1500,1066,2644688,GB,536280,,Лідс,Leeds,,,
+world_top1500,1067,3088171,PL,536151,,Познань,Poznan,,Poznań,
+world_top1500,1068,1529660,CN,535657,,Аксу,Aqsu,,Aksu,
+world_top1500,1069,2344082,NG,535619,,,Ebute Ikorodu,,,missing_uk
+world_top1500,1070,3407669,BR,535547,,Ананіндеуа,Ananindeua,,,
+world_top1500,1071,1793424,CN,535298,,,Tanggu,,Taku,missing_uk
+world_top1500,1072,1732722,MY,534659,,,Pasir Gudang,,,missing_uk
+world_top1500,1073,580497,RU,533925,,Астрахань,Astrakhan,,,
+world_top1500,1074,1168718,PK,533693,,,Okara,,,missing_uk
+world_top1500,1075,10943053,UG,532800,,,Nansana,,,missing_uk
+world_top1500,1076,1842943,KR,531966,,,Gimhae,,Kimhae,missing_uk
+world_top1500,1077,172955,SY,531952,,Ракка,Raqqa,,Ar Raqqah,
+world_top1500,1078,6325494,CA,531902,,Квебек,Québec,,Quebec | Quebec City,
+world_top1500,1079,3827409,MX,531831,,,Cuauhtémoc,,,missing_uk
+world_top1500,1080,1796068,CN,531696,,,Shangluo,,,missing_uk
+world_top1500,1081,1862627,JP,530495,,Хімедзі,Himeji,,,
+world_top1500,1082,3680656,CO,529635,,Ібаге,Ibagué,,Ibague,
+world_top1500,1083,2803138,BE,529247,,Антверпен,Antwerp,,,
+world_top1500,1084,359783,EG,528669,,Асьют,Asyut,,Assiut,override
+world_top1500,1085,132144,IR,528256,,Хамадан,Hamadān,,Hamadan,override
+world_top1500,1086,1806488,CN,528238,,,Qionghai,,,missing_uk
+world_top1500,1087,6316406,BR,527796,,,Aparecida de Goiânia,,,missing_uk
+world_top1500,1088,1816080,CN,527681,,,Cangzhou,,,missing_uk
+world_top1500,1089,1194041,BD,527571,,,Mohammadpur,,,missing_uk
+world_top1500,1090,1625812,ID,526870,,,Surakarta,,,missing_uk
+world_top1500,1091,1786060,CN,526000,,,Yuanping,,,missing_uk
+world_top1500,1092,3583361,SV,525990,yes,Сан-Сальвадор,San Salvador,,,
+world_top1500,1093,1816705,CN,525329,,Бейхай,Beihai,,,
+world_top1500,1094,298117,TR,525016,,Ван,Van,,,
+world_top1500,1095,5389489,US,524943,,Сакраменто,Sacramento,,,
+world_top1500,1096,1565019,VN,524670,,,Thủ Đức,,,missing_uk
+world_top1500,1097,738329,TR,524452,,,Üsküdar,,Scutari | Skutari,missing_uk
+world_top1500,1098,511565,RU,523553,,Пенза,Penza,,,override
+world_top1500,1099,1133616,AF,523300,,Мазарі-Шариф,Mazār-e Sharīf,,Mazari Sharif,override
+world_top1500,1100,1138336,AF,523300,,Кандагар,Kandahār,,Kandahar,override
+world_top1500,1101,1808392,CN,522147,,,Hengshui,,,missing_uk
+world_top1500,1102,1273313,IN,522081,,Деградун,Dehradun,,,
+world_top1500,1103,1272013,IN,521891,,,Erode,,,missing_uk
+world_top1500,1104,2996944,FR,520774,,Ліон,Lyon,,,
+world_top1500,1105,3838233,AR,520683,,Сальта,Salta,,,
+world_top1500,1106,3447779,BR,520653,,,Serra,,,missing_uk
+world_top1500,1107,747340,TR,520235,,,Esenler,,,missing_uk
+world_top1500,1108,12446699,CN,520000,,,Daxing’anling,,,missing_uk
+world_top1500,1109,1568574,VN,519208,,,Qui Nhon,,,missing_uk
+world_top1500,1110,361320,EG,519047,,,Al Fayyum,,,missing_uk
+world_top1500,1111,1272175,IN,518872,,,Durgapur,,,missing_uk
+world_top1500,1112,1849053,JP,518757,,Уцуномія,Utsunomiya,,,override
+world_top1500,1113,4011743,MX,518709,,,Victoria de Durango,,Durango,missing_uk
+world_top1500,1114,3470142,BR,518384,,,Belford Roxo,,,missing_uk
+world_top1500,1115,2267057,PT,517802,yes,Лісабон,Lisbon,,,override
+world_top1500,1116,1167460,PK,517000,,Рагім Яр Хан,Rahim Yar Khan,,,
+world_top1500,1117,1253894,IN,516584,,Улхаснагар,Ulhasnagar,,,
+world_top1500,1118,1806466,CN,516424,,,Guangyuan,,,missing_uk
+world_top1500,1119,1264773,IN,516082,,,Loni,,,missing_uk
+world_top1500,1120,1256525,IN,515574,,,Siliguri,,,missing_uk
+world_top1500,1121,2861650,DE,515543,,Нюрнберг,Nuremberg,,,
+world_top1500,1122,3456283,BR,515317,,Нітерой,Niterói,,,override
+world_top1500,1123,1253914,IN,515215,,Удджайн,Ujjain,,,
+world_top1500,1124,2910831,DE,515140,,Ганновер,Hanover,,Hannover,
+world_top1500,1125,2650225,GB,514990,,Единбург,Edinburgh,,,
+world_top1500,1126,3396016,BR,512902,,Макапа,Macapá,,,
+world_top1500,1127,1790396,CN,512517,,,Xianning,,,missing_uk
+world_top1500,1128,2972315,FR,511684,,Тулуза,Toulouse,,,
+world_top1500,1129,949880,ZA,511655,,,Thembisa,,,missing_uk
+world_top1500,1130,6201369,HT,511345,,,Carrefour,,,missing_uk
+world_top1500,1131,1926099,JP,511192,,Мацуяма,Matsuyama,,,
+world_top1500,1132,1275610,IN,510879,,,Bilimora,,,missing_uk
+world_top1500,1133,1174625,PK,510875,,,Kasur,,,missing_uk
+world_top1500,1134,4180439,US,510823,,Атланта,Atlanta,,,
+world_top1500,1135,3523466,MX,510739,,,Heroica Matamoros,,Matamoros,missing_uk
+world_top1500,1136,1703417,PH,510383,,Макаті,Makati,,Makati City,override
+world_top1500,1137,2034414,CN,510000,,,Tonghua,,,missing_uk
+world_top1500,1138,12492662,CN,510000,,,Mianzhu,,"Mianzhu, Deyang, Sichuan",missing_uk override
+world_top1500,1139,523750,RU,509870,,Набережні Челни,Naberezhnye Chelny,,Brezhnev | Naberezhnyye Chelny,override
+world_top1500,1140,535121,RU,509735,,Липецьк,Lipetsk,,,
+world_top1500,1141,2314705,CD,509367,,Кіквіт,Kikwit,,,
+world_top1500,1142,3463237,BR,508826,,Флоріанополіс,Florianópolis,,Santa Catherina,
+world_top1500,1143,1909733,CN,508703,,,Banan,,,missing_uk
+world_top1500,1144,2155472,AU,508437,,Ньюкасл,Newcastle,,,
+world_top1500,1145,1818446,HK,507900,,,Tuen Mun,,Tuenmen,missing_uk
+world_top1500,1146,1785036,CN,507433,,,Zhangye,,,missing_uk
+world_top1500,1147,548408,RU,507155,,Кіров,Kirov,,,
+world_top1500,1148,1280849,CN,506640,,Кашгар,Kashgar,,,
+world_top1500,1149,12750654,MY,505661,,,Mukim Pulai,,,missing_uk
+world_top1500,1150,103630,SA,505652,,,Najrān,,Najran,missing_uk
+world_top1500,1151,1784130,CN,505171,,,Zhoukou,,,missing_uk
+world_top1500,1152,2879139,DE,504971,,Лейпциг,Leipzig,,,
+world_top1500,1153,1798760,CN,504848,,,Pingliang,,,missing_uk
+world_top1500,1154,2934691,DE,504358,,Дуйсбург,Duisburg,,,
+world_top1500,1155,1278314,IN,504271,,,Āsansol,,Asansol,missing_uk
+world_top1500,1156,143127,IR,503647,,,Arāk,,Arak,missing_uk
+world_top1500,1157,3880980,CL,503635,,,Maipú,,,missing_uk
+world_top1500,1158,627907,BY,501193,,Гомєль,Homyel,Гомель,,
+world_top1500,1159,610611,KZ,500757,,Актобе,Aktobe,,Aktyubinsk,
+world_top1500,1160,1733432,MY,500421,,Кота-Кінабалу,Kota Kinabalu,,,override
+world_top1500,1161,1176358,PK,500000,,,Jalalpur Pirwala,,,missing_uk
+world_top1500,1162,1732724,MY,500000,,,Kampung Larkin Lama,,,missing_uk
+world_top1500,1163,2591976,AO,500000,,,Talatona,,,missing_uk
+world_top1500,1164,12514556,MY,500000,,,Kota Damansara,,,missing_uk
+world_top1500,1165,1263780,IN,499487,,Мангалур,Mangaluru,,Mangalore,
+world_top1500,1166,1783988,CN,499285,,,Zhucheng,,,missing_uk
+world_top1500,1167,3668605,CO,499192,,Санта-Марта,Santa Marta,,,override
+world_top1500,1168,1857553,JP,498575,,Мацудо,Matsudo,,,
+world_top1500,1169,1462674,BD,498179,,,Hāthazāri,,,missing_uk
+world_top1500,1170,1707267,PH,497813,,,Lapu-Lapu City,,,missing_uk
+world_top1500,1171,609655,KZ,497777,,Караганда,Karaganda,,Karagandy | Qaraghandy,override
+world_top1500,1172,1802238,CN,497171,,,Loudi,,,missing_uk
+world_top1500,1173,2644210,GB,496770,,Ліверпуль,Liverpool,,,
+world_top1500,1174,1818920,HK,495200,,,Sha Tin,,Shatin,missing_uk
+world_top1500,1175,1180289,PK,494464,,,Dera Ghazi Khan,,,missing_uk
+world_top1500,1176,1808747,CN,494412,,,Hecun,,,missing_uk
+world_top1500,1177,1862752,JP,493940,,,Higashiosaka,,,missing_uk
+world_top1500,1178,1168021,PK,493222,,,Pindi Bhattian,,,missing_uk
+world_top1500,1179,569696,RU,492331,,Чебоксари,Cheboksary,,,
+world_top1500,1180,1839071,KR,492041,,Пхохан,Pohang,,,override
+world_top1500,1181,1795928,CN,491766,,,Shanwei,,,missing_uk
+world_top1500,1182,3674453,CO,490935,,,Montería,,,missing_uk
+world_top1500,1183,181032,KE,490120,,Руїру,Ruiru,,,
+world_top1500,1184,3666304,CO,490075,,,Valledupar,,,missing_uk
+world_top1500,1185,1276533,IN,490045,,,Belagavi,,Belgaum,missing_uk
+world_top1500,1186,292932,AE,490035,,Аджман,Ajman,,Ajman City | Ujman,
+world_top1500,1187,9931406,CN,490000,,,Jianshui,,,missing_uk
+world_top1500,1188,7628420,TR,489848,,,Sancaktepe,,,missing_uk
+world_top1500,1189,377039,SD,489725,,Порт-Судан,Port Sudan,,,
+world_top1500,1190,3515302,MX,489333,,Толука,Toluca,,,override
+world_top1500,1191,3532624,MX,489160,,,Ciudad López Mateos,,,missing_uk
+world_top1500,1192,360890,EG,488904,,,Al Khuşūş,,,missing_uk
+world_top1500,1193,1846266,KR,488844,,Чеджу,Jeju,,Jeju City,override
+world_top1500,1194,3099434,PL,487371,,Гданськ,Gdansk,,Gdańsk,
+world_top1500,1195,4164138,US,487014,,Маямі,Miami,,,
+world_top1500,1196,5074472,US,486051,,Омаха,Omaha,,,
+world_top1500,1197,1855207,JP,485587,,,Nishinomiya,,,missing_uk
+world_top1500,1198,2593460,CD,485167,,,Masina,,,missing_uk
+world_top1500,1199,1257806,IN,484873,,,Sahāranpur,,,missing_uk
+world_top1500,1200,1253286,IN,484690,,,Vellore,,,missing_uk
+world_top1500,1201,1858311,JP,483576,,Курасікі,Kurashiki,,,
+world_top1500,1202,3467693,BR,483540,,Кампус-дус-Гойтаказіс,Campos dos Goytacazes,,,
+world_top1500,1203,1730737,PH,483452,,,Angeles City,,,missing_uk
+world_top1500,1204,1276058,IN,483129,,,Bhātpāra,,,missing_uk
+world_top1500,1205,333795,ET,483000,,,Jijiga,,,missing_uk
+world_top1500,1206,480562,RU,482873,,Тула,Tula,,,
+world_top1500,1207,98860,IQ,482576,,Ан-Наджаф,Najaf,,,
+world_top1500,1208,4487042,US,482295,,Ралі,Raleigh,,,
+world_top1500,1209,1710914,PH,481949,,,Imus,,,missing_uk
+world_top1500,1210,1789647,CN,481796,,,Xichang,,,missing_uk
+world_top1500,1211,1264115,IN,481228,,,Malegaon,,,missing_uk
+world_top1500,1212,1785462,CN,481004,,,Zaoyang,,,missing_uk
+world_top1500,1213,3448639,BR,480393,,Сан-Жозе-ду-Ріу-Прету,São José do Rio Preto,,,
+world_top1500,1214,3466537,BR,479599,,,Caxias do Sul,,,missing_uk
+world_top1500,1215,7701384,TR,479338,,,Karabağlar,,,missing_uk
+world_top1500,1216,2327220,NG,479178,,,Okene,,,missing_uk
+world_top1500,1217,1833788,KR,479141,,,Uijeongbu-si,,Uijeongbu,missing_uk
+world_top1500,1218,2654675,GB,479024,,Бристоль,Bristol,,,
+world_top1500,1219,1006984,ZA,478676,,Іст-Лондон,East London,,Buffalo City,
+world_top1500,1220,13527052,CN,478275,,,Chéngguān Qū,,,missing_uk
+world_top1500,1221,111822,IR,477905,,Язд,Yazd,,,
+world_top1500,1222,57289,SO,477876,,Харгейса,Hargeisa,,Hargeysa,override
+world_top1500,1223,1854487,JP,477715,,,Ōita,,,missing_uk
+world_top1500,1224,1805741,CN,476945,,,Jincheng,,,missing_uk
+world_top1500,1225,1808106,CN,476000,,,Hongjiang,,,missing_uk
+world_top1500,1226,8440756,IN,475843,,,Modīnagar,,,missing_uk
+world_top1500,1227,6696918,TW,475798,,Таоюань,Taoyuan,,Taoyuan City | Taoyuan District,
+world_top1500,1228,198629,KE,475716,,,Eldoret,,,missing_uk
+world_top1500,1229,4393217,US,475378,,Канзас-Сіті,Kansas City,,,
+world_top1500,1230,1787765,CN,475234,,,Yan’an,,,missing_uk
+world_top1500,1231,554234,RU,475056,,Калінінград,Kaliningrad,,,
+world_top1500,1232,785842,MK,474889,yes,Скоп'є,Skopje,,,
+world_top1500,1233,2057087,ID,474801,,Купанг,Kupang,,,
+world_top1500,1234,944385,ZA,474681,,Ферінігінг,Vereeniging,,,
+world_top1500,1235,2747373,NL,474292,,Гаага,The Hague,,,override
+world_top1500,1236,5367929,US,474140,,Лонг-Біч,Long Beach,,,
+world_top1500,1237,1271439,IN,474093,,,Gaya,,,missing_uk
+world_top1500,1238,1711005,PH,473728,,Ілоїло,Iloilo,,Iloilo City,override
+world_top1500,1239,1794794,CN,473620,,,Shouguang,,,missing_uk
+world_top1500,1240,1805680,CN,473561,,,Jingdezhen,,,missing_uk
+world_top1500,1241,2513416,ES,471982,,Мурсія,Murcia,,,override
+world_top1500,1242,5304391,US,471825,,Меса,Mesa,,,
+world_top1500,1243,6324729,CA,471559,,Галіфакс,Halifax,,,override
+world_top1500,1244,153220,TZ,471409,,Морогоро,Morogoro,,,
+world_top1500,1245,1700925,PH,471323,,,Marikina City,,,missing_uk
+world_top1500,1246,2544571,MA,470949,,Кенітра,Kenitra,,,override
+world_top1500,1247,288967,OM,470878,,,Seeb,,,missing_uk
+world_top1500,1248,1646511,ID,470378,,,Cilegon,,,missing_uk
+world_top1500,1249,700569,UA,470011,,Миколаїв,Mykolaiv,,Mykolayiv | Vernoleninsk,
+world_top1500,1250,1863917,JP,468812,,Фукуяма,Fukuyama,,,
+world_top1500,1251,1799846,CN,467875,,,Nanping,,,missing_uk
+world_top1500,1252,3672486,CO,467269,,Перейра,Pereira,,,override
+world_top1500,1253,4018390,MX,467157,,,Ciudad Apodaca,,Apodaca,missing_uk
+world_top1500,1254,3448877,BR,466536,,,São João de Meriti,,,missing_uk
+world_top1500,1255,1278840,IN,466205,,,Ambattur,,,missing_uk
+world_top1500,1256,1860243,JP,466029,,Канадзава,Kanazawa,,,override
+world_top1500,1257,336014,ET,466000,,Гондер,Gonder,,Gondar,override
+world_top1500,1258,1701966,PH,465902,,Мандалуйонг,Mandaluyong City,,Mandaluyong,
+world_top1500,1259,3592519,GT,465773,,,Mixco,,,missing_uk
+world_top1500,1260,2036109,CN,465249,,,Longshan,,Liaoyuan,missing_uk
+world_top1500,1261,2338325,NG,465000,,,Ikare,,,missing_uk
+world_top1500,1262,11592397,AO,464985,,,Nova Vida,,,missing_uk
+world_top1500,1263,1562414,VN,464860,,Вунгтау,Vũng Tàu,,Cape Saint James | Saint James | St. James,override
+world_top1500,1264,3632998,VE,464700,,Маракай,Maracay,,,
+world_top1500,1265,2294877,GH,464316,,,Tamale,,,missing_uk
+world_top1500,1266,1786112,CN,463907,,,Heyuan,,,missing_uk
+world_top1500,1267,1583518,VN,463023,,,Dĩ An,,,missing_uk
+world_top1500,1268,231165,UG,462900,,,Kira,,,missing_uk
+world_top1500,1269,355449,EG,462787,,,Esna,,,missing_uk
+world_top1500,1270,1792359,CN,460786,,Хуаншань,Huangshan,,Huangshan City,
+world_top1500,1271,170017,SY,460602,,Гама,Ḩamāh,Хама,Hama,
+world_top1500,1272,1269407,IN,460228,,,Jalgaon,,,missing_uk
+world_top1500,1273,1265491,IN,460184,,Карнул,Kurnool,,,
+world_top1500,1274,2318044,NG,460000,,Йола,Yola,,,
+world_top1500,1275,2034439,CN,459985,,,Tieling,,,missing_uk
+world_top1500,1276,1568510,VN,459860,,Ратьзя,Rạch Giá,,Rach Gia,
+world_top1500,1277,1865387,JP,459593,,,Amagasaki,,,missing_uk
+world_top1500,1278,1636544,ID,458582,,Манадо,Manado,,,
+world_top1500,1279,3651297,EC,458580,,,Santo Domingo de los Colorados,,,missing_uk
+world_top1500,1280,163345,SY,458327,,Тартус,Tartus,,Tartous | Ţarţūs,
+world_top1500,1281,331180,ET,457900,,,Mek'ele,,,missing_uk
+world_top1500,1282,330186,ET,456900,,,Nazrēt,,,missing_uk
+world_top1500,1283,5417598,US,456568,,Колорадо-Спрінгз,Colorado Springs,,Colorado Spgs,
+world_top1500,1284,3939459,PE,456250,,Уанкайо,Huancayo,,,
+world_top1500,1285,99347,IQ,455700,,,Hillah,,Al Hillah | Hilla,missing_uk
+world_top1500,1286,2312895,CD,455011,,Мбандака,Mbandaka,,,
+world_top1500,1287,1873757,KP,455000,,,Namp’o,,,missing_uk
+world_top1500,1288,2239862,AO,455000,,,Malanje,,,missing_uk
+world_top1500,1289,4005867,MX,454967,,,Ciudad General Escobedo,,General Escobedo,missing_uk
+world_top1500,1290,1729564,PH,454898,,,Bacolod City,,,missing_uk
+world_top1500,1291,4791259,US,454808,,Вірджинія-Біч,Virginia Beach,,Virginian Bch,
+world_top1500,1292,1792260,CN,454338,,,Wafangdian,,,missing_uk
+world_top1500,1293,1701500,PH,454150,,,Mansilingan,,,missing_uk
+world_top1500,1294,158597,TZ,453654,,Кахама,Kahama,,,
+world_top1500,1295,1675151,TW,453536,,Сіньчжу,Hsinchu,,,override
+world_top1500,1296,8469284,JP,453093,,,Katsushika-ku,,Katsushika | Katsushika City,missing_uk
+world_top1500,1297,320857,TR,452479,,,Bornova,,,missing_uk
+world_top1500,1298,1258662,IN,452261,,,Rāmgundam,,,missing_uk
+world_top1500,1299,321836,TR,452157,,Батман,Batman,,,
+world_top1500,1300,1784818,CN,452000,,,Yongji,,,missing_uk
+world_top1500,1301,1803245,CN,451418,,,Lishui,,,missing_uk
+world_top1500,1302,1253986,IN,451100,,Удайпур,Udaipur,,,
+world_top1500,1303,326282,ET,450400,,,Warder,,,missing_uk
+world_top1500,1304,373303,SS,450000,yes,Джуба,Juba,,,override
+world_top1500,1305,449504,IR,450000,,,Eslamshahr,,Shadshahr,missing_uk
+world_top1500,1306,1591527,VN,450000,,,Bắc Giang,,,missing_uk
+world_top1500,1307,8074174,TR,450000,,,Muratpaşa,,,missing_uk
+world_top1500,1308,8505006,CN,450000,,,Wenshan City,,,missing_uk
+world_top1500,1309,298333,TR,449549,,Шанлиурфа,Sanliurfa,,Antiochia | Justinianopolis | Urfa | Şanlıurfa,override
+world_top1500,1310,538560,RU,448733,,Курськ,Kursk,,,
+world_top1500,1311,1348843,IN,448317,,,Maheshtala,,,missing_uk
+world_top1500,1312,1573517,VN,448225,,,Nam Định,,,missing_uk
+world_top1500,1313,2501152,DZ,448028,,Константіна,Constantine,,,override
+world_top1500,1314,1260107,IN,446246,,,Patiāla,,,missing_uk
+world_top1500,1315,1017780,ZA,445168,,,Boksburg,,,missing_uk
+world_top1500,1316,1816858,CN,444458,,,Basuo,,,missing_uk
+world_top1500,1317,3403642,BR,443911,,,Campina Grande,,,missing_uk
+world_top1500,1318,4006702,MX,443807,,Енсенада,Ensenada,,,override
+world_top1500,1319,315808,TR,443363,,Елязиг,Elazığ,,Elâzığ,
+world_top1500,1320,3459462,BR,443221,,Жундіаї,Jundiaí,,,
+world_top1500,1321,3514450,MX,442178,,,Xochimilco,,,missing_uk
+world_top1500,1322,1256409,IN,441956,,,Shyamnagar,,,missing_uk
+world_top1500,1323,1715430,PH,441876,,,Dasmariñas,,,missing_uk
+world_top1500,1324,1813171,CN,441804,,,Zhangjiajie,,,missing_uk
+world_top1500,1325,1635882,ID,441147,,Матарам,Mataram,,,
+world_top1500,1326,2286304,CI,440926,,,Korhogo,,,missing_uk
+world_top1500,1327,3453643,BR,440835,,Пірасікаба,Piracicaba,,,
+world_top1500,1328,1864092,JP,439728,,Фудзісава,Fujisawa,,,
+world_top1500,1329,2374775,GW,439704,yes,Бісау,Bissau,,,
+world_top1500,1330,1786546,CN,439394,,,Zhongxiang,,Anlu,missing_uk
+world_top1500,1331,1734052,MY,439050,,,Sandakan,,,missing_uk
+world_top1500,1332,1308465,MM,438861,,Моламяйн,Mawlamyine,,,
+world_top1500,1333,6050610,CA,438366,,Лаваль,Laval,,,
+world_top1500,1334,2512989,ES,438234,,Пальма,Palma,Пальма-де-Мальорка,Palma de Mallorca,override
+world_top1500,1335,3456814,BR,437601,,,Montes Claros,,,missing_uk
+world_top1500,1336,1869012,KP,437000,,,Sunch’ŏn,,,missing_uk
+world_top1500,1337,7628416,TR,436935,,,Sultangazi,,,missing_uk
+world_top1500,1338,2319480,NG,436606,,,Uyo,,,missing_uk
+world_top1500,1339,2038365,CN,436444,,,Bei’an,,,missing_uk
+world_top1500,1340,1273368,IN,435128,,,Davangere,,,missing_uk
+world_top1500,1341,1801582,CN,435076,,,Macheng,,,missing_uk
+world_top1500,1342,2352379,NG,435000,,,Ado-Ekiti,,,missing_uk
+world_top1500,1343,3675443,CO,434403,,Манісалес,Manizales,,,
+world_top1500,1344,1841246,KR,434371,,,Masan,,,missing_uk
+world_top1500,1345,1586896,VN,434256,,,Buôn Ma Thuột,,Buon Ma Thuot,missing_uk
+world_top1500,1346,487846,RU,433931,,Ставрополь,Stavropol,,,override
+world_top1500,1347,1794328,CN,433700,,,Shuozhou,,,missing_uk
+world_top1500,1348,1859924,JP,433436,,Касіва,Kashiwa,,,
+world_top1500,1349,2327735,NG,433030,,,Ogbomoso,,,missing_uk
+world_top1500,1350,293397,IL,432892,,Тель-Авів,Tel Aviv,,Tel Aviv Yaffo | Tel Aviv Yafo,
+world_top1500,1351,3688452,CO,432385,,,Buenaventura,,,missing_uk
+world_top1500,1352,940909,ZA,431944,,,Welkom,,,missing_uk
+world_top1500,1353,1818953,HK,431090,,,Sham Shui Po,,,missing_uk
+world_top1500,1354,1857871,JP,431079,,Матіда,Machida,,,
+world_top1500,1355,359493,EG,430445,,,Zagazig,,,missing_uk
+world_top1500,1356,689558,UA,430091,,Вінниця,Vinnytsia,,Vinnytsya,
+world_top1500,1357,361055,EG,429465,,Ісмаїлія,Ismailia,,El Ismalia | Ismalia | Ismaïlia,
+world_top1500,1358,1806097,CN,429260,,,Ningde,,Ningteh,missing_uk
+world_top1500,1359,1279105,IN,428857,,,Akola,,,missing_uk
+world_top1500,1360,13608165,AO,428855,,,Kima Kieza,,,missing_uk
+world_top1500,1361,3941584,PE,428450,,Куско,Cusco,,Cuzco,
+world_top1500,1362,1279945,CN,428346,,Ґаньсю,Jiuquan,,,
+world_top1500,1363,3514783,MX,428323,,Веракрус,Veracruz,,,
+world_top1500,1364,571476,RU,427236,,Брянськ,Bryansk,,,override
+world_top1500,1365,741763,TR,427040,,,Maltepe,,,missing_uk
+world_top1500,1366,584923,AZ,427000,,Сумгаїт,Sumgayit,,Sumqayit,override
+world_top1500,1367,1163964,PK,426535,,,Tando Bago,,,missing_uk
+world_top1500,1368,1734705,MY,426500,,Куала-Тренггану,Kuala Terengganu,,,
+world_top1500,1369,1849814,JP,426162,,Тойота,Toyota,,,
+world_top1500,1370,2313002,CD,425662,,Матаді,Matadi,,,
+world_top1500,1371,109353,SA,425300,,,Al Kharj,,,missing_uk
+world_top1500,1372,1818304,HK,425235,,,Wong Tai Sin,,,missing_uk
+world_top1500,1373,2330100,NG,425000,,Мінна,Minna,,,
+world_top1500,1374,13118244,PH,425000,,,Mandaluyong,,,missing_uk
+world_top1500,1375,3526617,MX,424755,,Халапа,Xalapa,,Jalapa | Xalapa de Enríquez,override
+world_top1500,1376,1255783,IN,424368,,,Rajpur Sonarpur,,Rajpur | Sonarpur | Sonarpur Rajpur,missing_uk
+world_top1500,1377,3060972,SK,423737,yes,Братіслава,Bratislava,Братислава,,
+world_top1500,1378,12557764,MY,423062,,,Taman Petaling,,,missing_uk
+world_top1500,1379,1852139,JP,422488,,,Shinagawa,,Shinagawa City,missing_uk
+world_top1500,1380,173811,SY,422445,,Хасеке,Al-Hasakah,,Al Ḩasakah | Hasakah,
+world_top1500,1381,360502,EG,422407,,Луксор,Luxor,,,
+world_top1500,1382,6058560,CA,422324,,Лондон,London,,,
+world_top1500,1383,343137,ET,422200,,,Awasa,,,missing_uk
+world_top1500,1384,1049261,MZ,422046,,Шимойо,Chimoio,,,
+world_top1500,1385,1163965,PK,421923,,,Tando Allahyar,,,missing_uk
+world_top1500,1386,2290486,CI,421871,,,Daloa,,,missing_uk
+world_top1500,1387,7290718,BR,421438,,,Barra da Tijuca,,,missing_uk
+world_top1500,1388,1812749,CN,420614,,,Dingxi,,,missing_uk
+world_top1500,1389,2234974,CM,420445,,,Bamenda,,,missing_uk
+world_top1500,1390,480060,RU,420065,,Твер,Tver',,,
+world_top1500,1391,1566319,VN,420000,,,Thái Nguyên,,Thai Nguyen,missing_uk
+world_top1500,1392,3664980,BR,419652,,Боавішта,Boa Vista,,,
+world_top1500,1393,3662574,BR,419452,,Ріу-Бранку,Rio Branco,,,
+world_top1500,1394,5378538,US,419267,,Окленд,Oakland,,,
+world_top1500,1395,2192362,NZ,419200,,Крайстчерч,Christchurch,,,
+world_top1500,1396,1266122,IN,419146,,,Korba,,,missing_uk
+world_top1500,1397,1851100,JP,418994,,Такамацу,Takamatsu,,,
+world_top1500,1398,1819607,HK,418732,,,Kowloon City,,,missing_uk
+world_top1500,1399,3449433,BR,418608,,Сантус,Santos,,,
+world_top1500,1400,3183875,AL,418495,yes,Тирана,Tirana,,,
+world_top1500,1401,3392242,BR,418444,,Петроліна,Petrolina,,,
+world_top1500,1402,3457381,BR,418261,,Мауа,Mauá,,,
+world_top1500,1403,4568127,PR,418140,yes,Сан-Хуан,San Juan,,,
+world_top1500,1404,1736309,MY,417800,,Алор-Стар,Alor Setar,,Alor Star,
+world_top1500,1405,7064006,CN,417740,,,Tongchuan,,,missing_uk
+world_top1500,1406,1694611,PH,416522,,,Pasay,,,missing_uk
+world_top1500,1407,3522551,MX,416055,,Нуево-Ларедо,Nuevo Laredo,,,override
+world_top1500,1408,1849876,JP,415844,,Тояма,Toyama,,,override
+world_top1500,1409,2528910,MA,415810,,Тетуан,Tétouan,,,
+world_top1500,1410,2657896,CH,415367,,Цюрих,Zurich,,Zürich,
+world_top1500,1411,6947640,TR,415290,,,Beylikduzu,,Beylikdüzü,missing_uk
+world_top1500,1412,1562820,VN,415280,,,Việt Trì,,Viet Tri,missing_uk
+world_top1500,1413,3532497,MX,414711,,,Azcapotzalco,,,missing_uk
+world_top1500,1414,4174757,US,414547,,Тампа,Tampa,,,
+world_top1500,1415,234179,UG,413400,,,Bunamwaya,,,missing_uk
+world_top1500,1416,532288,RU,413351,,Магнітогорськ,Magnitogorsk,,,
+world_top1500,1417,4553433,US,413066,,Талса,Tulsa,,,override
+world_top1500,1418,1269006,IN,412927,,,Jhānsi,,,missing_uk
+world_top1500,1419,1818506,HK,412900,,,Tseung Kwan O,,,missing_uk
+world_top1500,1420,3645532,VE,412619,,Сьюдад-Болівар,Ciudad Bolívar,,Ciudad Bolivar,
+world_top1500,1421,1762110,MY,412373,,,Kampung Kangkar Teberau,,,missing_uk
+world_top1500,1422,2285853,CI,412282,,,Koumassi,,,missing_uk
+world_top1500,1423,3985241,MX,412199,,,San Nicolás de los Garza,,,missing_uk
+world_top1500,1424,1809152,CN,411854,,,Guyuan,,,missing_uk
+world_top1500,1425,5037649,US,410939,,Міннеаполіс,Minneapolis,,,
+world_top1500,1426,2082600,ID,410852,,Порт-Нумбай,Jayapura,,,
+world_top1500,1427,8629640,IN,410760,,,Thoothukudi,,Tuticorin,missing_uk
+world_top1500,1428,143083,IR,410753,,Ардебіль,Ardabīl,,Ardabil,override
+world_top1500,1429,1276509,IN,410445,,,Ballari,,Bellary,missing_uk
+world_top1500,1430,2038120,CN,410005,,,Chaoyang,,,missing_uk
+world_top1500,1431,281133,PS,410000,,Газа,Gaza,,Gaza City,
+world_top1500,1432,3457671,BR,409657,,,Maringá,,,missing_uk
+world_top1500,1433,1848313,JP,409478,,Йокосука,Yokosuka,,,
+world_top1500,1434,353802,EG,409311,,,Kom Ombo,,,missing_uk
+world_top1500,1435,1856177,JP,409118,,Нагасакі,Nagasaki,,,override
+world_top1500,1436,1281019,CN,408894,,Хотан,Gujangbagh,,Hotan,
+world_top1500,1437,3981369,MX,408759,,,Tonalá,,,missing_uk
+world_top1500,1438,1801455,CN,408487,,,Zhijiang,,Chikiang,missing_uk
+world_top1500,1439,3703443,PA,408168,yes,Панама,Panama City,,,override
+world_top1500,1440,204405,CD,407092,,,Uvira,,,missing_uk
+world_top1500,1441,1862540,JP,406331,,,Hirakata,,,missing_uk
+world_top1500,1442,555312,RU,406113,,Іваново,Ivanovo,,,
+world_top1500,1443,3644768,VE,405626,,Кумана,Cumaná,,,
+world_top1500,1444,971421,ZA,404838,,,Newcastle,,,missing_uk
+world_top1500,1445,1842225,KR,404691,,,Gumi,,,missing_uk
+world_top1500,1446,3078610,CZ,404296,,Брно,Brno,,,
+world_top1500,1447,2036389,CN,403759,,,Jixi,,,missing_uk
+world_top1500,1448,3464739,BR,403579,,,Diadema,,,missing_uk
+world_top1500,1449,1735634,MY,402738,,Кучинг,Kuching,,,
+world_top1500,1450,1863641,JP,402557,,,Gifu,,Gifu City,missing_uk
+world_top1500,1451,3402655,BR,402290,,,Caruaru,,,missing_uk
+world_top1500,1452,1792621,CN,402062,,,Tongling,,,missing_uk
+world_top1500,1453,1682812,PH,401892,,,Tarlac City,,,missing_uk
+world_top1500,1454,1849837,JP,401558,,,Toyonaka,,,missing_uk
+world_top1500,1455,372753,SD,401477,,Кассала,Kassala,,,
+world_top1500,1456,1856717,JP,401339,,Міядзакі,Miyazaki,,,override
+world_top1500,1457,7732748,NG,401272,,,Lekki,,,missing_uk
+world_top1500,1458,3899539,CL,401096,,Антофагаста,Antofagasta,,,
+world_top1500,1459,1276300,IN,400146,,,Bhāgalpur,,Bhagalpur,missing_uk
+world_top1500,1460,1279290,IN,400004,,Агартала,Agartala,,,
+world_top1500,1461,2347209,NG,400000,,,Bida,,,missing_uk
+world_top1500,1462,217695,CD,399282,,Буніа,Bunia,,,
+world_top1500,1463,323779,TR,399045,,Антак'я,Antakya,,Antioch | Teopolis,override
+world_top1500,1464,9645085,VN,399000,,,Quận Mười,,,missing_uk
+world_top1500,1465,10630449,AU,398840,,,Sunshine Coast,,,missing_uk
+world_top1500,1466,191245,KE,397957,,Кісуму,Kisumu,,,
+world_top1500,1467,702658,UA,397677,,Луганськ,Luhansk,Ворошиловград,Voroshilovgrad | Voroshylovhrad,
+world_top1500,1468,1649150,ID,397321,,,Bengkulu,,,missing_uk
+world_top1500,1469,3648546,VE,397279,,Барінас,Barinas,,,
+world_top1500,1470,1808981,CN,397020,,,Hancheng,,,missing_uk
+world_top1500,1471,3444914,BR,396613,,,Vitória da Conquista,,,missing_uk
+world_top1500,1472,4281730,US,396119,,Вічіта,Wichita,,,
+world_top1500,1473,2558545,MA,395644,,,Al Hoceïma,,Al Hoceima,missing_uk
+world_top1500,1474,3083829,PL,395513,,Щецин,Szczecin,,,
+world_top1500,1475,3726786,HT,395260,,,Delmas,,,missing_uk
+world_top1500,1476,2036106,CN,395017,,,Liaozhong,,,missing_uk
+world_top1500,1477,3445026,BR,394930,,,Vila Velha,,,missing_uk
+world_top1500,1478,3181928,IT,394843,,Болонья,Bologna,,,override
+world_top1500,1479,11523293,KR,394630,,,Sejong,,Sejong Special Self-Governing City | Yeongi,missing_uk
+world_top1500,1480,2591949,AO,394170,,Казенга,Cazenga,,,
+world_top1500,1481,740264,TR,394050,,Самсун,Samsun,,,
+world_top1500,1482,588409,EE,394024,yes,Таллінн,Tallinn,,Revel,
+world_top1500,1483,149606,TZ,393429,,,Tanga,,,missing_uk
+world_top1500,1484,379003,SD,393311,,,Al-Ubayyid,,El Obeid,missing_uk
+world_top1500,1485,3347939,AO,393079,,Лобіту,Lobito,,,
+world_top1500,1486,145531,AO,393000,,,Saurimo,,,missing_uk
+world_top1500,1487,3470279,BR,392947,,Бауру,Bauru,,,
+world_top1500,1488,3688928,CO,392939,,,Bello,,,missing_uk
+world_top1500,1489,3672778,CO,392930,,,Pasto,,,missing_uk
+world_top1500,1490,1810458,CN,391986,,,Gaomi,,,missing_uk
+world_top1500,1491,3836277,AR,391164,,Санта-Фе,Santa Fe,,,override
+world_top1500,1492,2282006,CI,390654,,,San-Pédro,,San-Pedro,missing_uk
+world_top1500,1493,2331140,NG,390000,,Макурді,Makurdi,,,
+world_top1500,1494,1633034,ID,389959,,,Palu,,,missing_uk
+world_top1500,1495,2294915,GH,389114,,,Takoradi,,Takoradze,missing_uk
+world_top1500,1496,1606590,TH,388920,,,Samut Prakan,,Mueang Samut Prakan | Paknam,missing_uk
+world_top1500,1497,4671240,US,388125,,Арлінгтон,Arlington,,,
+world_top1500,1498,105072,SA,387553,,Хаміс-Мушайт,Khamis Mushait,,,
+world_top1500,1499,3660689,EC,387309,,Амбато,Ambato,,,
+world_top1500,1500,3466998,BR,386984,,,Carapicuíba,,,missing_uk
+ukraine_top150,1,703448,UA,2952301,yes,Київ,Kyiv,,Kiev,
+ukraine_top150,2,706483,UA,1421125,,Харків,Kharkiv,,,
+ukraine_top150,3,698740,UA,1010537,,Одеса,Odesa,Коцюбіїв,Khadjibey | Kotsiubiiv | Odessa,
+ukraine_top150,4,709930,UA,968502,,Дніпро,Dnipro,Дніпропетровськ | Дніпрослав | Катеринослав | Новий Кодак | Січослав,Catherinoslav | Dnipropetrovsk | Dniproslav | Katerynoslav | Novorosiynsk | Novyi Kodak | Novyy Kodak | Sicheslav | Sichoslav,
+ukraine_top150,5,709717,UA,901645,,Донецьк,Donetsk,Дінецьк | Дінецьке | Олександрівка | Сталіне | Сталіно | Юзове | Юзів | Юзівка,Dinetsk | Dinetske | Oleksandrivka | Staline | Stalino | Yuziv | Yuzivka | Yuzove,
+ukraine_top150,6,702550,UA,717273,,Львів,Lviv,,,
+ukraine_top150,7,687700,UA,710052,,Запоріжжя,Zaporizhzhia,,Alexandrovsk | Zaporizhzhya | Zaporozhye,
+ukraine_top150,8,703845,UA,603904,,Кривий Ріг,Kryvyi Rih,,Kryvyy Rih,
+ukraine_top150,9,694423,UA,547820,,Севастополь,Sevastopol,,Sebastopol,
+ukraine_top150,10,700569,UA,470011,,Миколаїв,Mykolaiv,,Mykolayiv | Vernoleninsk,
+ukraine_top150,11,689558,UA,430091,,Вінниця,Vinnytsia,,Vinnytsya,
+ukraine_top150,12,702658,UA,397677,,Луганськ,Luhansk,Ворошиловград,Voroshilovgrad | Voroshylovhrad,
+ukraine_top150,13,702320,UA,338968,,Макіївка,Makiivka,,Makiyivka,
+ukraine_top150,14,693805,UA,336460,,Сімферополь,Simferopol,,,
+ukraine_top150,15,710735,UA,282747,,Чернігів,Chernihiv,,,
+ukraine_top150,16,696643,UA,279593,,Полтава,Poltava,Балтавар | Лтава,Baltavar | Ltava,
+ukraine_top150,17,706369,UA,274452,,Хмельницький,Khmelnytskyi,Плоскурів,Khmel'nyts'kyy | Ploskuriv,
+ukraine_top150,18,710791,UA,269836,,Черкаси,Cherkasy,,Cherkassy,
+ukraine_top150,19,710719,UA,264298,,Чернівці,Chernivtsi,,,
+ukraine_top150,20,686967,UA,261624,,Житомир,Zhytomyr,,,
+ukraine_top150,21,692194,UA,256474,,Суми,Sumy,,,
+ukraine_top150,22,695594,UA,243873,,Рівне,Rivne,,,
+ukraine_top150,23,707753,UA,239828,,Горлівка,Horlivka,,,
+ukraine_top150,24,707471,UA,238196,,Івано-Франківськ,Ivano-Frankivsk,,,
+ukraine_top150,25,701822,UA,230000,,Маріуполь,Mariupol,,,
+ukraine_top150,26,709932,UA,226845,,Кам'янське,Kamianske,Дніпродзержинськ,Dniprodzerzhynsk | Kamyanske,
+ukraine_top150,27,691650,UA,225238,,Тернопіль,Ternopil,,,
+ukraine_top150,28,704147,UA,224997,,Кременчук,Kremenchuk,Кремінчук,Kremenchug | Kreminchuk,
+ukraine_top150,29,705812,UA,219676,,Кропивницький,Kropyvnytskyi,Єлизаветград | Єлисавет | Зінов'євськ | Кірово | Кіровоград,Elisavetgrad | Elizabethgrad | Kirovo | Kirovograd | Kirovohrad | Yelisavetgrad | Yelysavet | Yelyzavethrad | Zinovievsk | Zinovyevsk,
+ukraine_top150,30,702569,UA,215986,,Луцьк,Lutsk,,,
+ukraine_top150,31,712165,UA,207273,,Біла Церква,Bila Tserkva,,,
+ukraine_top150,32,706524,UA,148932,,Керч,Kerch,,,
+ukraine_top150,33,701404,UA,148851,,Мелітополь,Melitopol,Киз-Яр | Мелитопіль | Мелітопіль | Новоолександрівка,Kyz-Yar | Kyzyl-Yar | Melitopil | Melytopil | Novoalexandrovka | Novooleksandrivka,
+ukraine_top150,34,704508,UA,147145,,Краматорськ,Kramatorsk,,,
+ukraine_top150,35,690548,UA,115449,,Ужгород,Uzhhorod,,Uzhgorod,
+ukraine_top150,36,711390,UA,109806,,Бровари,Brovary,Броварі,Brovari,
+ukraine_top150,37,688105,UA,107040,,Євпаторія,Yevpatoriia,,Eupatoria | Yevpatoria | Yevpatoriya,
+ukraine_top150,38,712451,UA,106311,,Бердянськ,Berdiansk,Осипенко,Berdyansk | Kutur-Ogly | Novo-Nogaisk | Osipenko | Osypenko,
+ukraine_top150,39,713716,UA,106062,,Алчевськ,Alchevsk,,,
+ukraine_top150,40,700051,UA,105160,,Нікополь,Nikopol,Микитин Ріг | Микитинська Січ | Микопіль | Никопіль | Нікопіль | Слов'янськ,Mykopil | Mykytyn Rih | Mykytynska Sich | Nikopil | Nykopil | Sloviansk,
+ukraine_top150,41,693468,UA,105141,,Слов'янськ,Sloviansk,Тор,Slovyansk | Tor,
+ukraine_top150,42,697889,UA,101430,,Павлоград,Pavlohrad,,,
+ukraine_top150,43,691999,UA,99067,,Сіверськодонецьк,Siverskodonetsk,Сєвєродонецьк,Sievierodonetsk | Syeverodonets'k,
+ukraine_top150,44,706950,UA,97908,,Кам’янець-Подільський,Kamianets-Podilskyi,,Kamyanets-Podilskyi,
+ukraine_top150,45,702972,UA,93340,,Лисичанськ,Lysychansk,,,
+ukraine_top150,46,700646,UA,85569,,Мукачево,Mukachevo,Мукачеве,Mukacheve,
+ukraine_top150,47,705135,UA,84787,,Конотоп,Konotop,,,
+ukraine_top150,48,690688,UA,81525,,Умань,Uman,Калинвар | Калингород | Куман,Kalynhorod | Kalynvar | Kuman,
+ukraine_top150,49,713174,UA,80500,,Бахмут,Bakhmut,Артемівськ,Artemivs'k,
+ukraine_top150,50,704202,UA,79533,,Хрустальний,Khrustalnyi,Красний Луч,Krasnyi Luch,override
+ukraine_top150,51,688533,UA,77003,,Ялта,Yalta,,,
+ukraine_top150,52,688148,UA,76673,,Єнакієве,Yenakiieve,,Yenakiyeve,
+ukraine_top150,53,698625,UA,76097,,Олександрія,Oleksandriia,,Oleksandriya,
+ukraine_top150,54,709611,UA,73682,,Дрогобич,Drohobych,,,
+ukraine_top150,55,692975,UA,73248,,Кадіївка,Kadiivka,Стаханов,Kadiyivka | Stakhanov,override
+ukraine_top150,56,693942,UA,73197,,Шостка,Shostka,,,
+ukraine_top150,57,712441,UA,73046,,Бердичів,Berdychiv,,,
+ukraine_top150,58,694382,UA,71700,,Шахтарськ,Shakhtarsk,,,
+ukraine_top150,59,699445,UA,70550,,Самар,Samar,Новомосковськ | Новоселиця | Самарчик,Novomoskovsk | Novoselytsia | Samarchyk,
+ukraine_top150,60,707308,UA,69932,,Ізмаїл,Izmail,Антиофілас | Антифіла | Мехмедабад | Сміл | Тучков,Antyfila | Antyofilas | Izmayil | Mekhmedabad | Smil | Tuchkov,
+ukraine_top150,61,709161,UA,68562,,Феодосія,Feodosiia,Теодосія,Feodosiya | Teodosiia,
+ukraine_top150,62,704617,UA,67575,,Ковель,Kovel,,,
+ukraine_top150,63,705104,UA,67350,,Костянтинівка,Kostiantynivka,,Kostyantynivka,
+ukraine_top150,64,699942,UA,66983,,Ніжин,Nizhyn,,,
+ukraine_top150,65,693457,UA,66475,,Сміла,Smila,,,
+ukraine_top150,66,706448,UA,66000,,Херсон,Kherson,,,
+ukraine_top150,67,707565,UA,65167,,Ірпінь,Irpin,Дачі Ірпінь | Пилипів Потік,Dachi Irpin | Pylypiv Potik,
+ukraine_top150,68,707099,UA,65088,,Калуш,Kalush,,,
+ukraine_top150,69,710554,UA,64297,,Шептицький,Sheptytskyi,Червоноград,Chervonohrad,override
+ukraine_top150,70,711660,UA,64117,,Бориспіль,Boryspil,,,
+ukraine_top150,71,692105,UA,62691,,Довжанськ,Dovzhansk,Свердловськ,Sverdlovsk,
+ukraine_top150,72,697593,UA,62426,,Первомайськ,Pervomaisk,,Pervomaysk,
+ukraine_top150,73,707601,UA,62173,,Інгулець,Inhulets,,,
+ukraine_top150,74,704901,UA,61496,,Коростень,Korosten,Іскоростень,Iskorosten,
+ukraine_top150,75,692372,UA,61404,,Стрий,Stryi,,,
+ukraine_top150,76,705392,UA,60821,,Коломия,Kolomyia,,,
+ukraine_top150,77,704422,UA,60127,,Покровськ,Pokrovsk,Красноармійськ,Krasnoarmiisk | Krasnoarmiys'k,
+ukraine_top150,78,707688,UA,57983,,Чорноморськ,Chornomorsk,Іллічівськ,Illichivsk,
+ukraine_top150,79,706466,UA,56182,,Харцизьк,Khartsyzk,,Khartsyzsk,
+ukraine_top150,80,699553,UA,55925,,Звягель,Zviahel,Новоград-Волинський,Novohrad-Volynskyi | Zvyahel,
+ukraine_top150,81,693381,UA,55587,,Сніжне,Snizhne,,,
+ukraine_top150,82,695274,UA,55247,,Рубіжне,Rubizhne,,,
+ukraine_top150,83,702760,UA,54026,,Лозова,Lozova,,,
+ukraine_top150,84,616743,UA,53977,,Дружківка,Druzhkivka,,,
+ukraine_top150,85,691374,UA,53462,,Чистякове,Chystiakove,Олексієве-Леонове | Олексіївка | Топез | Торез,Chystyakove | Oleksiieve-Leonove | Oleksiivka | Topez | Torez,override
+ukraine_top150,86,709276,UA,52887,,Енергодар,Enerhodar,,,
+ukraine_top150,87,696108,UA,52553,,Прилуки,Pryluky,,,
+ukraine_top150,88,713259,UA,52150,,Антрацит,Antratsyt,,,
+ukraine_top150,89,6559559,UA,49854,,Горішні Плавні,Horishni Plavni,Комсомольськ | Комсомольськ-на-Дніпрі,Komsomolsk | Komsomolsk-na-Dnipri,
+ukraine_top150,90,699035,UA,49772,,Нововолинськ,Novovolynsk,,,
+ukraine_top150,91,704403,UA,49352,,Сорокине,Sorokyne,Краснодон,Krasnodon,
+ukraine_top150,92,712160,UA,47727,,Білгород-Дністровський,Bilhorod-Dnistrovskyi,,,
+ukraine_top150,93,713749,UA,47216,,Охтирка,Okhtyrka,,,
+ukraine_top150,94,710035,UA,46098,,Мирноград,Myrnohrad,Димитров,Dimitrov | Dymytrov,
+ukraine_top150,95,707292,UA,45884,,Ізюм,Izium,,Izyum,
+ukraine_top150,96,695379,UA,45514,,Ровеньки,Rovenky,,,
+ukraine_top150,97,701855,UA,44980,,Марганець,Marhanets,,Komintern,
+ukraine_top150,98,711369,UA,44760,,Брянка,Brianka,,Bryanka,
+ukraine_top150,99,702723,UA,44595,,Лубни,Lubny,,,
+ukraine_top150,100,699839,UA,44427,,Нова Каховка,Nova Kakhovka,,,
+ukraine_top150,101,709248,UA,44014,,Фастів,Fastiv,,,
+ukraine_top150,102,692087,UA,43130,,Світловодськ,Svitlovodsk,Кремгес | Хрущов,Khrushchov | Kremhes,
+ukraine_top150,103,689487,UA,42983,,Вишневе,Vyshneve,,,
+ukraine_top150,104,711350,UA,42279,,Буча,Bucha,,,
+ukraine_top150,105,687196,UA,42052,,Жовті Води,Zhovti Vody,Жовта Ріка,Zhovta Rika,
+ukraine_top150,106,8341919,UA,42000,,Вараш,Varash,Кузнецовськ,Kuznetsovsk,
+ukraine_top150,107,709334,UA,41731,,Джанкой,Dzhankoi,,Dzhankoy,
+ukraine_top150,108,694216,UA,40802,,Шепетівка,Shepetivka,,,
+ukraine_top150,109,701075,UA,39575,,Миргород,Myrhorod,,Mirgorod,
+ukraine_top150,110,704679,UA,39220,,Подільськ,Podilsk,,,
+ukraine_top150,111,7525990,UA,38560,,Південноукраїнськ,Pivdennoukrainsk,Южноукраїнськ,Yuzhnoukrainsk,
+ukraine_top150,112,695464,UA,38305,,Ромни,Romny,,,
+ukraine_top150,113,689378,UA,37910,,Володимир,Volodymyr,Володимир-Волинський,Volodymyr-Volynskyi,
+ukraine_top150,114,688373,UA,37600,,Ясинувата,Yasynuvata,,Yasinovataya,
+ukraine_top150,115,698436,UA,37493,,Покров,Pokrov,Орджонікідзе,Ordzhonikidze,
+ukraine_top150,116,709540,UA,37257,,Дубно,Dubno,,,
+ukraine_top150,117,690412,UA,37068,,Васильків,Vasylkiv,,,
+ukraine_top150,118,710374,UA,36519,,Чугуїв,Chuhuiv,,Chuhuyiv,
+ukraine_top150,119,700261,UA,36492,,Нетішин,Netishyn,Атомодар | Корчагінськ | Островськ,Atomodar | Korchahinsk | Ostrovsk,
+ukraine_top150,120,697592,UA,36091,,Сокологірськ,Sokolohirsk,Первомайськ,Pervomaisk | Pervomaysk,override
+ukraine_top150,121,707244,UA,35983,,Каховка,Kakhovka,,,
+ukraine_top150,122,713122,UA,35826,,Авдіївка,Avdiivka,,Avdeyevka | Avdiyivka,
+ukraine_top150,123,693581,UA,35068,,Славута,Slavuta,,,
+ukraine_top150,124,687116,UA,34498,,Жмеринка,Zhmerynka,,,
+ukraine_top150,125,711515,UA,34394,,Боярка,Boiarka,,Boyarka,
+ukraine_top150,126,692818,UA,34232,,Старокостянтинів,Starokostiantyniv,Костянтинів,Kostiantyniv | Starokostyantyniv,
+ukraine_top150,127,694864,UA,34152,,Самбір,Sambir,Новий Самбір | Погонич,Novyi Sambir | Pohonych,
+ukraine_top150,128,688860,UA,33442,,Вознесенськ,Voznesensk,,,
+ukraine_top150,129,688723,UA,33109,,Вишгород,Vyshhorod,,,
+ukraine_top150,130,687997,UA,32677,,Південне,Pivdenne,Южне,Yuzhne,
+ukraine_top150,131,711669,UA,32473,,Борислав,Boryslav,,,
+ukraine_top150,132,707758,UA,31789,,Глухів,Hlukhiv,,,
+ukraine_top150,133,698782,UA,31557,,Обухів,Obukhiv,,,
+ukraine_top150,134,8468760,UA,31366,,Новояворівськ,Novoiavorivsk,,Novoyavorivs'k,
+ukraine_top150,135,709354,UA,30914,,Торецьк,Toretsk,Дзержинськ,Dzerzhyns'k,
+ukraine_top150,136,704737,UA,30838,,Костопіль,Kostopil,,,
+ukraine_top150,137,704362,UA,30700,,Яни Капу,Yany Kapu,Красноперекопськ,Bromzavod | Krasno-Perekopsk | Krasnoperekopsk | Yani Kapu,
+ukraine_top150,138,700918,UA,30589,,Могилів-Подільський,Mohyliv-Podilskyi,,Mohyliv-Podilskyy,
+ukraine_top150,139,693796,UA,30556,,Синельникове,Synelnykove,,,
+ukraine_top150,140,713513,UA,29586,,Алушта,Alushta,,,
+ukraine_top150,141,691469,UA,29573,,Токмак,Tokmak,Великий Токмак,Velykyi Tokmak,
+ukraine_top150,142,694792,UA,28865,,Сарни,Sarny,,,
+ukraine_top150,143,697576,UA,28510,,Златопіль,Zlatopil,Лихачеве | Первомайський,Likacheve | Lykhacheve | Pervomaiskyi,
+ukraine_top150,144,706165,UA,28424,,Хуст,Khust,,,
+ukraine_top150,145,710400,UA,28393,,Чортків,Chortkiv,,,
+ukraine_top150,146,694910,UA,28322,,Саки,Saky,,,
+ukraine_top150,147,698874,UA,28304,,Новий Розділ,Novyi Rozdil,,,
+ukraine_top150,148,691179,UA,28287,,Трускавець,Truskavets,,,
+ukraine_top150,149,709900,UA,28170,,Добропілля,Dobropillia,,Dobropillya,
+ukraine_top150,150,686875,UA,27818,,Золотоноша,Zolotonosha,,,
