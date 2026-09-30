@@ -110,7 +110,7 @@ Keeping the bot turn a discrete step is the seam for future PvP.
   (KMU No. 55, 2010) of the Ukrainian name. GeoNames' spellings become
   aliases.
 - Result:
-  - **World:** 31,724 cities, 7,185 of them with a Ukrainian name.
+  - **World:** 31,724 cities, 7,184 of them with a Ukrainian name.
   - **Ukraine:** 848 cities, all with a Ukrainian name.
 
 ### Build pipeline
@@ -154,15 +154,23 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
 
 The same normalization is applied to the player's input and to every dataset
 name/alias:
-1. Trim, lowercase, collapse whitespace.
-2. Unify hyphens with spaces, and remove the apostrophes `'` `’` `ʼ` `` ` ``.
-3. Latin: strip diacritics (ã→a, é→e, ł→l, ß→ss). Ukrainian: `ґ`→`г`.
-   Russian-style `ё`→`е`, and `ы`/`э` stay distinct.
-4. The letter rule runs on the **display name's** letters, with the same
+1. Lowercase.
+2. Remove apostrophes and quote marks (`'` `’` `ʼ` `` ` `` `ʻ` `ʾ` `ʿ` `”` …),
+   so "Кам'янець" = "Камянець".
+3. Latin: strip diacritics (ã→a, é→e, ł→l, ß→ss), including accents sent as
+   separate combining marks. Ukrainian: `ґ`→`г`. Russian-style `ё`→`е`, and
+   `ы`/`э` stay distinct. A decomposed `й`/`ї` is recomposed first, so it
+   doesn't lose its mark.
+4. Every run of non-letters (spaces, hyphens, dashes, dots, brackets,
+   slashes) becomes one space; trim. "St. Louis" = "St Louis",
+   "Івано-Франківськ" = "Івано Франківськ".
+5. The letter rule runs on the **display name's** letters, with the same
    folding applied, so "Кам'янець" ends in `ь`→`ц`.
 
-This lives in `engine/normalize.dart` and is table-driven and heavily
-unit-tested.
+This lives in `engine/normalize.dart` (`normalizeName`) and is table-driven
+and heavily unit-tested. A dataset test also checks that every name in
+`cities.json` normalizes to plain letters of its language, so a new accented
+letter from a GeoNames update can't silently become unmatchable.
 
 ## 6. Persistence
 

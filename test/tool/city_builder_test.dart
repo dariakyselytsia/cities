@@ -79,6 +79,16 @@ void main() {
       expect(names.akaUk, isEmpty);
     });
 
+    test('rejects uk rows with letters outside the Ukrainian alphabet', () {
+      final names = pickNames(city('Shyriaieve'), [
+        alt('uk', 'Ширяэве', preferred: true), // Russian э
+        alt('uk', 'Мохњин'), // Serbian њ
+      ]);
+
+      expect(names.uk, isNull);
+      expect(names.akaUk, isEmpty);
+    });
+
     test('leaves uk null when there is no real Ukrainian name', () {
       final names = pickNames(city('Andorra la Vella', cc: 'AD'), [
         alt('en', 'Andorra la Vella'),
@@ -223,6 +233,13 @@ void main() {
         }),
         throwsFormatException,
         reason: 'uk must be Cyrillic',
+      );
+      expect(
+        () => parseOverrides({
+          'cities': {'1': {'uk': 'Ширяэве'}},
+        }),
+        throwsFormatException,
+        reason: 'uk must use the Ukrainian alphabet',
       );
       expect(
         () => parseOverrides({

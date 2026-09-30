@@ -114,9 +114,17 @@ class CityNames {
   final List<String> akaEn;
 }
 
-/// A Ukrainian name must be Cyrillic. Some `uk` rows in GeoNames are Latin
-/// ("Bila Tserkva"). Spaces, hyphens, dots and apostrophes are allowed.
-final RegExp _cyrillicName = RegExp(r"^[Ѐ-ӿ][Ѐ-ӿ\s'’ʼ.\-]*$");
+/// A Ukrainian name must use the Ukrainian alphabet. That rules out Latin
+/// `uk` rows in GeoNames ("Bila Tserkva") and letters of other Cyrillic
+/// alphabets: Russian-spelled typos ("Ширяэве") and stray Serbian ones
+/// ("Мохњин"). Spaces, hyphens, dots and apostrophes are allowed.
+final RegExp _ukrainianName = RegExp(
+  "^[$_ukrainianLetters][$_ukrainianLetters\\s'’ʼ.\\-]*\$",
+);
+
+const String _ukrainianLetters =
+    'абвгґдеєжзиіїйклмнопрстуфхцчшщьюя'
+    'АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ';
 
 /// An English name must be free of Cyrillic, digits and list punctuation
 /// (GeoNames sometimes stores annotated variants like "Paris (Texas)").
@@ -138,7 +146,7 @@ final RegExp _englishName = RegExp(r'^[^Ѐ-ӿ\d(),/;]+$');
 CityNames pickNames(GeoCity city, List<AltName> alts) {
   final ukNames = [
     for (final a in alts)
-      if (a.language == 'uk' && !a.isColloquial && _cyrillicName.hasMatch(a.name))
+      if (a.language == 'uk' && !a.isColloquial && _ukrainianName.hasMatch(a.name))
         a,
   ];
   final enNames = [
@@ -241,13 +249,15 @@ class CityOverride {
       throw FormatException('Unknown override field(s): ${unknown.join(', ')}');
     }
     final uk = _optionalString(json, 'uk');
-    if (uk != null && !_cyrillicName.hasMatch(uk)) {
-      throw FormatException('"uk" must be Cyrillic: "$uk"');
+    if (uk != null && !_ukrainianName.hasMatch(uk)) {
+      throw FormatException('"uk" must use the Ukrainian alphabet: "$uk"');
     }
     final akaUk = _stringList(json, 'akaUk');
     for (final alias in akaUk) {
-      if (!_cyrillicName.hasMatch(alias)) {
-        throw FormatException('"akaUk" entries must be Cyrillic: "$alias"');
+      if (!_ukrainianName.hasMatch(alias)) {
+        throw FormatException(
+          '"akaUk" entries must use the Ukrainian alphabet: "$alias"',
+        );
       }
     }
     final exclude = json['exclude'];

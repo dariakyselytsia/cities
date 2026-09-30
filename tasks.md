@@ -42,7 +42,7 @@
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [x] |
 | T04 | Name review & overrides | M1 Data | M | [x] |
 | T23 | World list: filter big-city districts | M1 Data | M | [ ] |
-| T05 | `City` model + answer normalization | M2 Engine | M | [ ] |
+| T05 | `City` model + answer normalization | M2 Engine | M | [x] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [ ] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [ ] |
 | T08 | Difficulty + CityBot | M2 Engine | M | [ ] |
@@ -242,6 +242,10 @@ could play them.
 - Find candidates automatically: places whose coordinates fall inside a much
   larger city in the same country (e.g. within ~15 km of a city ≥ 5× their
   population), plus name patterns (`-ku`, `District`, `Qū`).
+- Also seen during T05: the Paris arrondissements ("Paris 15 Vaugirard") and
+  Marseille's ("Marseille 01"), Hong Kong housing estates ("Choi Wan Estate
+  (I & II)"), and Hawaiian census areas ("Makiki / Lower Punchbowl /
+  Tantalus").
 - Review the list and add `exclude` overrides. Or, if the heuristic proves
   reliable, have the build apply it.
 
@@ -262,6 +266,22 @@ Do this before T20 (balance tuning), because districts distort the tiers.
 
 **Done when:** a table-driven test covers each rule with real examples:
 Кам'янець-Подільський, São Paulo, Kraków, Ґалаґан.
+
+**Result (2026-09-30):**
+- `lib/engine/city.dart`: `City` + `NameLanguage { uk, en }`, with
+  `name(language)` / `aliases(language)`. `fromJson` is strict: a bad field
+  throws `FormatException`, which the loader (T10) turns into a typed
+  failure.
+- `lib/engine/normalize.dart`: `normalizeName()`. Beyond §5 as first written,
+  it also turns dots, brackets and slashes into spaces ("St. Louis"), removes
+  the transliteration marks `ʻ ʾ ʿ`, and recomposes a decomposed `й`/`ї` so
+  it doesn't lose its mark. tech_design §5 is updated.
+- The diacritic table covers every accented letter in the data. A dataset
+  test checks that each name in `cities.json` normalizes to plain letters of
+  its language.
+- **Data fix found by that test:** the build now accepts only the Ukrainian
+  alphabet in `uk` names. It dropped "Мохњин" (Myanmar; Serbian `њ`), and two
+  overrides fix typos with a Russian `э`: Ширяєве, Середнє Водяне.
 
 ### T06 · `CityCatalog` · M
 Build it from the decoded JSON. It stays pure and takes no asset I/O.

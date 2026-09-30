@@ -32,7 +32,9 @@ cities that have **no Ukrainian name**; those are candidates for manual fixes
 - **Drops non-cities:** city sections (`PPLX`, e.g. Obolon), historical
   (`PPLH`), abandoned (`PPLQ`) and destroyed (`PPLW`) places.
 - **Ids** are GeoNames ids, unique across both lists.
-- **Ukrainian name:** a real `uk` name from GeoNames, Cyrillic only.
+- **Ukrainian name:** a real `uk` name from GeoNames, in the Ukrainian
+  alphabet only. Latin rows and names with Russian or Serbian letters
+  ("Ширяэве", "Мохњин") are rejected.
   - When none exists, the city has no `uk` field and isn't playable in
     Ukrainian. The script never machine-transliterates names *into*
     Ukrainian: that's what produced the old "лес Ескалдес".
@@ -69,24 +71,25 @@ GeoNames id, and is applied on every build, so fixes survive re-runs.
 
 | Field | Effect |
 |---|---|
-| `uk` | Replaces the Ukrainian name. The old one is dropped; list it in `akaUk` if it's still a valid alias, e.g. a pre-renaming name. Must be Cyrillic. |
+| `uk` | Replaces the Ukrainian name. The old one is dropped; list it in `akaUk` if it's still a valid alias, e.g. a pre-renaming name. Must use the Ukrainian alphabet. |
 | `en` | Replaces the English name. The old one is kept as an alias. |
 | `akaUk`, `akaEn` | Extra aliases. |
 | `exclude` | `true` drops the place (e.g. a city district listed as a town). |
 | `_name` | A note for humans; ignored by the build. |
 
-The build **fails** on an unknown field, a non-Cyrillic `uk`, or an id that
-isn't in the lists, so typos can't slip through.
+The build **fails** on an unknown field, a `uk` name outside the Ukrainian
+alphabet, or an id that isn't in the lists, so typos can't slip through.
 
 To find an id, search `tool/review/cities_review.csv`, or the GeoNames dump
 by name.
 
-### What's in it (T04, 209 entries)
+### What's in it (211 entries)
 - 13 Ukrainian cities where GeoNames still shows the pre-renaming name
   (Червоноград → Шептицький, Кіровськ → Голубівка, …). The old name is kept
   as an alias.
-- Ukrainian towns with no `uk` name, a typo ("Часткове" → Чистякове), and 4
-  city districts excluded.
+- Ukrainian towns with no `uk` name, typos ("Часткове" → Чистякове;
+  "Ширяэве" → Ширяєве and "Середнэ Водяне" → Середнє Водяне, with a Russian
+  `э`), and 4 city districts excluded.
 - The 5 New York City boroughs excluded: they're parts of New York, not
   cities. Manhattan, Kansas stays.
 - All 36 capitals GeoNames has no Ukrainian name for (Лісабон, Тегеран,
