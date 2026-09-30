@@ -62,7 +62,8 @@ Ukrainian, a Latin-script answer like "Kyiv" is not accepted.
 
 ### 2.5 CityBot and difficulty
 Cities are ranked into **tiers** by fame. Fame is based on population rank
-within the active list, and capitals always count as tier 1. CityBot's
+within the active list, and capitals of sovereign states always count as
+tier 1 (territory capitals such as Flying Fish Cove don't). CityBot's
 vocabulary is the tiers its difficulty allows:
 
 | Difficulty | Bot knows | Player turn timer |

@@ -83,7 +83,7 @@ alphabet, or an id that isn't in the lists, so typos can't slip through.
 To find an id, search `tool/review/cities_review.csv`, or the GeoNames dump
 by name.
 
-### What's in it (409 entries)
+### What's in it (411 entries)
 - 13 Ukrainian cities where GeoNames still shows the pre-renaming name
   (Червоноград → Шептицький, Кіровськ → Голубівка, …). The old name is kept
   as an alias.
@@ -96,7 +96,8 @@ by name.
   Белград, …).
 - ~130 well-known cities without one (Йокогама, Ізмір, Франкфурт-на-Майні,
   Марракеш, …).
-- Wrong names (Delhi was "Старе Делі"), and awkward English names
+- Wrong names (Delhi was "Старе Делі"; Russian spellings "Испарта",
+  "Игдир" → Іспарта, Ігдир), and awkward English names
   ("Sharjah city" → Sharjah).
 - The T23 district review of the World top 1,500: 87 districts excluded
   (Pudong, Iztapalapa, Üsküdar, Luanda's communes, Soweto, Tokyo's wards, …),

@@ -10,7 +10,7 @@ void main() {
       ('lowercases Latin', 'NEW YORK', 'new york'),
       ('trims', '  Львів  ', 'львів'),
       ('collapses inner whitespace', 'Нова   Ушиця', 'нова ушиця'),
-      ('tabs and non-breaking spaces are spaces', 'Кривий \tРіг', 'кривий ріг'),
+      ('tabs and non-breaking spaces are spaces', 'Кривий\u00A0\tРіг', 'кривий ріг'),
       ('empty input stays empty', '   ', ''),
 
       // 2. Hyphens and other separators become one space.
@@ -48,7 +48,7 @@ void main() {
       ('Vietnamese stacked marks', 'Hà Nội', 'ha noi'),
       ('schwa', 'Gəncə', 'gence'),
       ('dot below', 'Ḩalab', 'halab'),
-      ('decomposed accent', 'Bogotá', 'bogota'),
+      ('decomposed accent', 'Bogota\u0301', 'bogota'),
 
       // 3. Ukrainian.
       ('ґ→г', 'Ґалаґан', 'галаган'),
@@ -56,9 +56,9 @@ void main() {
       ('ё→е', 'Орёл', 'орел'),
       ('й survives', 'Херсонський', 'херсонський'),
       ('ї survives', 'Їжакевичі', 'їжакевичі'),
-      ('decomposed й is recomposed', 'Херсонський', 'херсонський'),
-      ('decomposed Latin ï loses its mark', 'Kï', 'ki'),
-      ('decomposed Cyrillic ї is recomposed', 'Кїв', 'кїв'),
+      ('decomposed й is recomposed', 'Херсонськии\u0306', 'херсонський'),
+      ('decomposed Latin ï loses its mark', 'Ki\u0308', 'ki'),
+      ('decomposed Cyrillic ї is recomposed', 'Кі\u0308в', 'кїв'),
       ('є stays', 'Єнакієве', 'єнакієве'),
       ('ы stays distinct', 'Сыктывкар', 'сыктывкар'),
       ('э stays distinct', 'Элиста', 'элиста'),

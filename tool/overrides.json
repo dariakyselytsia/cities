@@ -96,6 +96,14 @@
       "_name": "İzmir",
       "uk": "Ізмір"
     },
+    "311073": {
+      "_name": "Isparta (GeoNames has the Russian spelling \"Испарта\")",
+      "uk": "Іспарта"
+    },
+    "311665": {
+      "_name": "Iğdır (GeoNames has the Russian spelling \"Игдир\")",
+      "uk": "Ігдир"
+    },
     "320857": {
       "_name": "Bornova (district of İzmir)",
       "exclude": true

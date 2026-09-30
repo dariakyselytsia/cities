@@ -44,7 +44,7 @@
 | T23 | World list: filter big-city districts | M1 Data | M | [x] |
 | T24 | World list: review tiers 2–3 (districts + duplicates) | M1 Data | M | [ ] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [x] |
-| T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [ ] |
+| T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [x] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [ ] |
 | T08 | Difficulty + CityBot | M2 Engine | M | [ ] |
 | T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [ ] |
@@ -346,6 +346,29 @@ Build it from the decoded JSON. It stays pure and takes no asset I/O.
 
 **Done when:** tests on a small fixture JSON cover alias lookup, duplicate
 names (the most populous wins), tier boundaries and the capital override.
+
+**Result (2026-10-01):**
+- `lib/engine/city_list.dart`: `CityListKind` (with `contains`),
+  `tierCount = 4`, and `TierLimits` (cumulative rank limits, `standard` =
+  game_design's guesses).
+- `lib/engine/city_catalog.dart`: `CityCatalog.fromJson` → four `CityIndex`
+  (list × language), each with `lookup`, `startingWith`, `firstLetters`,
+  `tierOf` and `cities` (in fame order).
+  - Tiers are per list, the same in both languages.
+  - Sovereign capitals are forced into T1. Territories are excluded by an
+    explicit list of country codes (`nonSovereignCountryCodes`): a population
+    threshold would also drop Vatican City (829 people).
+- **Letters use the display name only:** Mumbai is under «м», even though
+  "Бомбей" is accepted as an answer. Whether an alias answer must match the
+  letter by its own spelling is T09's call.
+- **Speed:** the first build took 4.2 s, because `normalizeName` cost
+  ~44 µs per name. It's now one pass with no regex (49 ms for 43k names).
+  Names are also normalized once per language, and the catalog builds in
+  ~0.2 s. Invisible literal combining marks in the source are now `\u`
+  escapes.
+- **Data fix found by the dataset test:** "Испарта" and "Игдир" (Russian
+  spellings) → Іспарта, Ігдир. The test now fails if any Ukrainian name
+  starts with «ь» or «и».
 
 ### T07 · Letter rule on the catalog · S
 - Plug the carried-over `LetterRule` into the catalog's playable letters and

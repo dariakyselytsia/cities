@@ -150,12 +150,24 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
 
 ### At load
 - Parse in a background isolate (`Isolate.run`) behind a short splash screen.
-- For each list × language, build:
-  - `Map<normalizedName, List<City>>`, including aliases. It is a list because
-    names can repeat; the most populous unused match wins.
-  - `Map<letter, List<City>>`, sorted by fame.
-  - the set of playable first letters, which the letter rule uses.
-  - tiers, from population rank within the list, with capitals forced into T1.
+- `CityCatalog` (`engine/city_catalog.dart`) builds one `CityIndex` per
+  list × language:
+  - `lookup(answer)`: normalized name → `List<City>`, including aliases. It is
+    a list because names can repeat (Victoria, Kingston); it's sorted most
+    populous first, and the first unused match wins.
+  - `startingWith(letter)`: the cities whose **display name** starts with the
+    letter, best known first (tier, then population).
+  - `firstLetters`: the set of playable first letters, which the letter rule
+    uses.
+  - `tierOf(city)`: tiers come from population rank within the **list**. They
+    are the same in both languages, because a city is as famous in either;
+    a city with no Ukrainian name is simply missing from the Ukrainian index.
+    Rank limits are the `TierLimits` constants. Capitals of **sovereign
+    states** are forced into T1. Territory capitals are excluded by a list of
+    territory country codes, since a population threshold would also drop
+    Vatican City.
+- Each name is normalized once per language and shared by both lists. The
+  whole catalog builds in ~0.2 s on a desktop.
 
 ## 5. Answer normalization
 
