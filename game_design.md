@@ -151,7 +151,7 @@ List sizes (GeoNames, Sept 2026 build):
 | List | English | Ukrainian |
 |---|---|---|
 | Ukraine (≥ 5,000 people) | 848 cities | 848 cities |
-| World (≥ 15,000 people) | ~31,700 cities | ~7,200 cities |
+| World (≥ 15,000 people) | ~31,400 cities | ~7,200 cities |
 
 - **Ukrainian cities' English names** follow Ukraine's official
   transliteration (Zaporizhzhia, Kryvyi Rih). Older spellings and pre-renaming

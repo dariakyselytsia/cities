@@ -21,6 +21,8 @@ class GeoCity {
     required this.featureCode,
     required this.countryCode,
     required this.population,
+    this.latitude = 0,
+    this.longitude = 0,
   });
 
   /// GeoNames id. It is globally unique, so it's stable across both lists and
@@ -32,6 +34,11 @@ class GeoCity {
   final String featureCode;
   final String countryCode;
   final int population;
+
+  /// Coordinates in degrees, used to find city districts (see
+  /// `districts.dart`).
+  final double latitude;
+  final double longitude;
 
   /// `PPLC` is a country's capital.
   bool get isCapital => featureCode == 'PPLC';
@@ -45,13 +52,19 @@ class GeoCity {
     if (c.length < 19) return null;
     final id = int.tryParse(c[0]);
     final population = int.tryParse(c[14]);
-    if (id == null || population == null) return null;
+    final latitude = double.tryParse(c[4]);
+    final longitude = double.tryParse(c[5]);
+    if (id == null || population == null || latitude == null || longitude == null) {
+      return null;
+    }
     return GeoCity(
       id: id,
       name: c[1].trim(),
       featureCode: c[7],
       countryCode: c[8],
       population: population,
+      latitude: latitude,
+      longitude: longitude,
     );
   }
 }
@@ -222,7 +235,7 @@ class CityOverride {
     this.en,
     this.akaUk = const [],
     this.akaEn = const [],
-    this.exclude = false,
+    this.exclude,
   });
 
   /// Replaces the Ukrainian display name.
@@ -237,8 +250,15 @@ class CityOverride {
   /// Extra English aliases (merged with GeoNames' aliases).
   final List<String> akaEn;
 
-  /// Drops the city from the output entirely (e.g. a duplicate or non-city).
-  final bool exclude;
+  /// `true` drops the place from the output (a city district, a duplicate).
+  ///
+  /// `false` records a review decision to **keep** it: a real city that
+  /// merely sits next to a bigger one (Kawasaki, Guarulhos). It also
+  /// overrides the automatic district rules, and takes the place off the
+  /// review sheet's list of pending district candidates.
+  ///
+  /// `null` (omitted): no decision.
+  final bool? exclude;
 
   /// Parses one override entry. It throws [FormatException] on bad input:
   /// a typo in the overrides file should stop the build, not slip through.
@@ -260,16 +280,17 @@ class CityOverride {
         );
       }
     }
-    final exclude = json['exclude'];
-    if (exclude != null && exclude is! bool) {
-      throw const FormatException('"exclude" must be true/false');
-    }
+    final exclude = switch (json['exclude']) {
+      null => null,
+      final bool value => value,
+      _ => throw const FormatException('"exclude" must be true/false'),
+    };
     return CityOverride(
       uk: uk,
       en: _optionalString(json, 'en'),
       akaUk: akaUk,
       akaEn: _stringList(json, 'akaEn'),
-      exclude: exclude == true,
+      exclude: exclude,
     );
   }
 

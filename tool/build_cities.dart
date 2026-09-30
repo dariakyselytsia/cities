@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'src/city_builder.dart';
+import 'src/districts.dart';
 
 /// World list: every city with population ≥ 15,000.
 const String _worldDump = 'cities15000';
@@ -29,6 +30,10 @@ const String _reviewPath = 'tool/review/cities_review.csv';
 /// (≈ tiers 1–2), and the Ukraine top tier.
 const int _reviewWorldTop = 1500;
 const int _reviewUkraineTop = 150;
+
+/// District candidates are listed for review down to this World rank: about
+/// the vocabulary of Hard CityBot (tiers 1–3, game_design §2.5).
+const int _reviewDistrictsTop = 5000;
 
 Future<void> main() async {
   final watch = Stopwatch()..start();
@@ -64,17 +69,25 @@ Future<void> main() async {
   final ids = byId.keys.toList()..sort();
   final records = <Map<String, Object>>[];
   final namesById = <int, CityNames>{};
+  final autoExcluded = <String, int>{};
   for (final id in ids) {
     final city = byId[id];
     if (city == null) continue;
     final override = overrides[id];
-    if (override != null && override.exclude) continue;
+    if (override?.exclude == true) continue;
     var names = pickNames(city, alts[id] ?? const []);
     if (override != null) names = applyOverride(names, override);
     // Official romanization for Ukrainian cities, unless an override set the
     // English name deliberately.
     if (city.countryCode == 'UA' && override?.en == null) {
       names = withOfficialUkrainianEnglish(names);
+    }
+    // `"exclude": false` is a reviewed decision to keep the place.
+    final districtReason =
+        override?.exclude == false ? null : autoDistrictReason(city, names.en);
+    if (districtReason != null) {
+      autoExcluded.update(districtReason, (n) => n + 1, ifAbsent: () => 1);
+      continue;
     }
     namesById[id] = names;
     records.add(cityRecord(city, names, uaOnly: !worldIds.contains(id)));
@@ -88,12 +101,22 @@ Future<void> main() async {
   final keptWorld = [for (final c in world) if (kept.contains(c.id)) c];
   final keptUkraine = [for (final c in ukraine) if (kept.contains(c.id)) c];
 
+  // Only undecided places are pending: an `exclude` override of either value
+  // is a review decision.
+  final candidates = findDistrictCandidates(keptWorld);
+  final pendingDistricts = {
+    for (final MapEntry(key: id, value: candidate) in candidates.entries)
+      if (overrides[id]?.exclude == null) id: candidate,
+  };
+
   await _writeReview(
     File('${root.path}/$_reviewPath'),
     world: keptWorld,
     ukraine: keptUkraine,
     namesById: namesById,
     overridden: overrides.keys.toSet(),
+    candidates: candidates,
+    pendingDistricts: pendingDistricts,
   );
 
   _report(
@@ -101,6 +124,8 @@ Future<void> main() async {
     ukraine: keptUkraine,
     namesById: namesById,
     overrideCount: overrides.length,
+    autoExcluded: autoExcluded,
+    pendingDistricts: pendingDistricts,
     outBytes: await out.length(),
     elapsed: watch.elapsed,
   );
@@ -117,7 +142,11 @@ Future<Map<int, CityOverride>> _readOverrides(File file) async {
 }
 
 /// Writes the review sheet: World top-N and Ukraine top-N by population, plus
-/// every capital and Ukrainian city still missing a `uk` name.
+/// every capital and Ukrainian city still missing a `uk` name, and the
+/// district candidates still waiting for a decision (T23).
+///
+/// The `note` column names the bigger city a district candidate sits next
+/// to.
 ///
 /// It is sorted and deterministic, so a diff shows exactly what a GeoNames
 /// update or an override changed.
@@ -127,6 +156,8 @@ Future<void> _writeReview(
   required List<GeoCity> ukraine,
   required Map<int, CityNames> namesById,
   required Set<int> overridden,
+  required Map<int, DistrictCandidate> candidates,
+  required Map<int, DistrictCandidate> pendingDistricts,
 }) async {
   int byPopulation(GeoCity a, GeoCity b) {
     final byPop = b.population.compareTo(a.population);
@@ -142,13 +173,20 @@ Future<void> _writeReview(
     ('ukraine_top$_reviewUkraineTop', ukraineSorted.take(_reviewUkraineTop).toList()),
     ('capital_missing_uk', [for (final c in worldSorted) if (c.isCapital && missingUk(c)) c]),
     ('ukraine_missing_uk', [for (final c in ukraineSorted) if (missingUk(c)) c]),
+    (
+      'district_candidates',
+      [
+        for (final c in worldSorted.take(_reviewDistrictsTop))
+          if (pendingDistricts.containsKey(c.id)) c,
+      ],
+    ),
   ];
 
   String cell(String value) =>
       value.contains(RegExp('[",\n]')) ? '"${value.replaceAll('"', '""')}"' : value;
 
   final buffer = StringBuffer('﻿')
-    ..writeln('section,rank,id,cc,population,capital,uk,en,akaUk,akaEn,status');
+    ..writeln('section,rank,id,cc,population,capital,uk,en,akaUk,akaEn,status,note');
   for (final (section, cities) in sections) {
     for (final (index, city) in cities.indexed) {
       final names = namesById[city.id];
@@ -156,7 +194,12 @@ Future<void> _writeReview(
       final status = [
         if (names.uk == null) 'missing_uk',
         if (overridden.contains(city.id)) 'override',
+        if (pendingDistricts.containsKey(city.id)) 'district?',
       ].join(' ');
+      final candidate = candidates[city.id];
+      final note = candidate == null
+          ? ''
+          : 'near ${candidate.parent.name} (${candidate.distanceKm.round()} km)';
       buffer.writeln([
         section,
         '${index + 1}',
@@ -169,6 +212,7 @@ Future<void> _writeReview(
         names.akaUk.join(' | '),
         names.akaEn.join(' | '),
         status,
+        note,
       ].map(cell).join(','));
     }
   }
@@ -233,6 +277,8 @@ void _report({
   required List<GeoCity> ukraine,
   required Map<int, CityNames> namesById,
   required int overrideCount,
+  required Map<String, int> autoExcluded,
+  required Map<int, DistrictCandidate> pendingDistricts,
   required int outBytes,
   required Duration elapsed,
 }) {
@@ -249,11 +295,26 @@ void _report({
   final biggestMissingUk = [...world.where((c) => !hasUk(c))]
     ..sort((a, b) => b.population.compareTo(a.population));
 
+  final byPopulation = [...world]
+    ..sort((a, b) => b.population.compareTo(a.population));
+  int pendingIn(int top) => byPopulation
+      .take(top)
+      .where((c) => pendingDistricts.containsKey(c.id))
+      .length;
+  final autoTotal = autoExcluded.values.fold(0, (a, b) => a + b);
+  final autoByReason =
+      autoExcluded.entries.map((e) => '${e.key} ${e.value}').join(', ');
+
   stdout
     ..writeln('')
     ..writeln('Wrote $_outPath: ${(outBytes / 1024 / 1024).toStringAsFixed(2)} MB '
         'in ${elapsed.inSeconds}s')
     ..writeln('Overrides applied: $overrideCount · review sheet: $_reviewPath')
+    ..writeln('Districts excluded automatically: $autoTotal ($autoByReason)')
+    ..writeln('District candidates pending review: '
+        'World top $_reviewWorldTop: ${pendingIn(_reviewWorldTop)}, '
+        'top $_reviewDistrictsTop: ${pendingIn(_reviewDistrictsTop)}, '
+        'all: ${pendingDistricts.length}')
     ..writeln('World:   ${world.length} cities, $worldUk with a Ukrainian name')
     ..writeln('Ukraine: ${ukraine.length} cities ($uaOnly below 15k), '
         '$ukraineUk with a Ukrainian name')

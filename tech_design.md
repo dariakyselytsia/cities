@@ -105,12 +105,19 @@ Keeping the bot turn a discrete step is the seam for future PvP.
   `PPLH`, `PPLQ` and `PPLW`.
 - **Manual fixes:** `tool/overrides.json`, keyed by GeoNames id. It fills in
   missing Ukrainian names (all capitals, well-known cities), fixes renamed
-  Ukrainian cities, and excludes city districts.
+  Ukrainian cities, and excludes city districts and duplicates.
+- **City districts** that GeoNames lists as towns (Pudong, Üsküdar, Paris's
+  arrondissements) are removed in two ways:
+  - automatically, by name patterns and for city-states (Hong Kong,
+    Singapore, Macau);
+  - by review: the build flags places near a much bigger city, and each
+    decision is an `exclude` override. Distance alone can't decide: Kawasaki
+    and Ōta both border Tokyo, but only Ōta is part of it.
 - **English names of Ukrainian cities:** the official transliteration
   (KMU No. 55, 2010) of the Ukrainian name. GeoNames' spellings become
   aliases.
 - Result:
-  - **World:** 31,724 cities, 7,184 of them with a Ukrainian name.
+  - **World:** 31,407 cities, 7,177 of them with a Ukrainian name.
   - **Ukraine:** 848 cities, all with a Ukrainian name.
 
 ### Build pipeline
@@ -138,7 +145,7 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
   `uaOnly`.
 - Ids are GeoNames ids: unique across both lists. **Old bug fixed:** the old
   Ukraine and World files both started their ids at 1, so their ids collided.
-- Actual size: **1.93 MB** (the old files were 7.8 MB of pretty-printed JSON
+- Actual size: **1.91 MB** (the old files were 7.8 MB of pretty-printed JSON
   with redundant fields).
 
 ### At load

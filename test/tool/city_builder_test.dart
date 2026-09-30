@@ -158,7 +158,9 @@ void main() {
         isA<GeoCity>()
             .having((c) => c.id, 'id', 703448)
             .having((c) => c.isCapital, 'isCapital', true)
-            .having((c) => c.population, 'population', 2952301),
+            .having((c) => c.population, 'population', 2952301)
+            .having((c) => c.latitude, 'latitude', 50.45466)
+            .having((c) => c.longitude, 'longitude', 30.5238),
       );
     });
 
@@ -212,12 +214,15 @@ void main() {
         'cities': {
           '1273294': {'_name': 'Delhi', 'uk': 'Делі'},
           '1': {'exclude': true},
+          '2': {'exclude': false},
         },
       });
 
-      expect(overrides.keys, [1273294, 1]);
+      expect(overrides.keys, [1273294, 1, 2]);
       expect(overrides[1273294]?.uk, 'Делі');
+      expect(overrides[1273294]?.exclude, isNull, reason: 'no decision');
       expect(overrides[1]?.exclude, isTrue);
+      expect(overrides[2]?.exclude, isFalse, reason: 'reviewed: keep');
     });
 
     test('parseOverrides rejects typos instead of ignoring them', () {
@@ -247,6 +252,13 @@ void main() {
         }),
         throwsFormatException,
         reason: 'keys must be ids',
+      );
+      expect(
+        () => parseOverrides({
+          'cities': {'1': {'exclude': 'yes'}},
+        }),
+        throwsFormatException,
+        reason: 'exclude must be a bool',
       );
     });
   });

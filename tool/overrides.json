@@ -1,5 +1,5 @@
 {
-  "_doc": "Manual fixes applied on top of GeoNames by tool/build_cities.dart (T04). Keyed by GeoNames id. Fields: uk / en replace the display name (an old en name stays as an alias; list an old uk name in akaUk if it is still a valid alias), akaUk / akaEn add aliases, exclude drops the city. \"_name\" is only a reading aid.",
+  "_doc": "Manual fixes applied on top of GeoNames by tool/build_cities.dart (T04). Keyed by GeoNames id. Fields: uk / en replace the display name (an old en name stays as an alias; list an old uk name in akaUk if it is still a valid alias), akaUk / akaEn add aliases, exclude: true drops the place (a city district, a duplicate), exclude: false records a review decision to keep it (a separate city next to a bigger one; T23). \"_name\" is only a reading aid.",
   "cities": {
     "57289": {
       "_name": "Hargeisa",
@@ -12,6 +12,10 @@
     "79415": {
       "_name": "Al Ḩudaydah",
       "uk": "Ходейда"
+    },
+    "100077": {
+      "_name": "Abu Ghraib (reviewed: a separate city)",
+      "exclude": false
     },
     "109223": {
       "_name": "Madinah",
@@ -45,9 +49,21 @@
       "_name": "Arusha",
       "uk": "Аруша"
     },
+    "181032": {
+      "_name": "Ruiru (reviewed: a separate city)",
+      "exclude": false
+    },
     "217831": {
       "_name": "Bukavu",
       "uk": "Букаву"
+    },
+    "231165": {
+      "_name": "Kira (reviewed: a separate city)",
+      "exclude": false
+    },
+    "234179": {
+      "_name": "Bunamwaya (reviewed: a separate city)",
+      "exclude": false
     },
     "250090": {
       "_name": "Zarqa",
@@ -64,6 +80,10 @@
       "_name": "Sharjah city",
       "en": "Sharjah"
     },
+    "292932": {
+      "_name": "Ajman (reviewed: a separate city)",
+      "exclude": false
+    },
     "298333": {
       "_name": "Sanliurfa",
       "uk": "Шанлиурфа"
@@ -75,6 +95,10 @@
     "311046": {
       "_name": "İzmir",
       "uk": "Ізмір"
+    },
+    "320857": {
+      "_name": "Bornova (district of İzmir)",
+      "exclude": true
     },
     "323779": {
       "_name": "Antakya",
@@ -88,6 +112,10 @@
       "_name": "Tanta",
       "uk": "Танта"
     },
+    "349076": {
+      "_name": "Shubra al-Khaimah (reviewed: a separate city)",
+      "exclude": false
+    },
     "358619": {
       "_name": "Port Said",
       "uk": "Порт-Саїд"
@@ -100,6 +128,10 @@
       "_name": "Al Mansurah",
       "uk": "Ель-Мансура"
     },
+    "360890": {
+      "_name": "Al Khusus (reviewed: a separate city)",
+      "exclude": false
+    },
     "360995": {
       "_name": "Giza",
       "uk": "Гіза"
@@ -111,6 +143,10 @@
     "426272": {
       "_name": "Gitega",
       "uk": "Гітега"
+    },
+    "449504": {
+      "_name": "Eslamshahr (reviewed: a separate city)",
+      "exclude": false
     },
     "472045": {
       "_name": "Voronezh",
@@ -316,6 +352,34 @@
         "Артемівськ"
       ]
     },
+    "738329": {
+      "_name": "Üsküdar (district of Istanbul)",
+      "exclude": true
+    },
+    "738377": {
+      "_name": "Ümraniye (district of Istanbul)",
+      "exclude": true
+    },
+    "741763": {
+      "_name": "Maltepe (district of Istanbul)",
+      "exclude": true
+    },
+    "742394": {
+      "_name": "Küçükçekmece (district of Istanbul)",
+      "exclude": true
+    },
+    "747323": {
+      "_name": "Esenyurt (district of Istanbul)",
+      "exclude": true
+    },
+    "747340": {
+      "_name": "Esenler (district of Istanbul)",
+      "exclude": true
+    },
+    "751324": {
+      "_name": "Bağcılar (district of Istanbul)",
+      "exclude": true
+    },
     "792680": {
       "_name": "Belgrade",
       "uk": "Белград"
@@ -327,6 +391,18 @@
     "935264": {
       "_name": "Saint-Denis",
       "uk": "Сен-Дені"
+    },
+    "953781": {
+      "_name": "Soweto (district of Johannesburg)",
+      "exclude": true
+    },
+    "1017780": {
+      "_name": "Boksburg (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1106542": {
+      "_name": "Chitungwiza (reviewed: a separate city)",
+      "exclude": false
     },
     "1133616": {
       "_name": "Mazār-e Sharīf",
@@ -340,6 +416,14 @@
       "_name": "Herāt",
       "uk": "Герат"
     },
+    "1166547": {
+      "_name": "Sahiwal (small town with a copy of the other Sahiwal's population)",
+      "exclude": true
+    },
+    "1175748": {
+      "_name": "Chak Jhumra (reviewed: a separate city)",
+      "exclude": false
+    },
     "1176734": {
       "_name": "Hyderābād",
       "en": "Hyderabad"
@@ -352,17 +436,49 @@
       "_name": "Dushanbe",
       "uk": "Душанбе"
     },
+    "1253894": {
+      "_name": "Ulhasnagar (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1254661": {
+      "_name": "Thane (reviewed: a separate city)",
+      "exclude": false
+    },
     "1255364": {
       "_name": "Surat",
       "uk": "Сурат"
+    },
+    "1255783": {
+      "_name": "Rajpur Sonarpur (reviewed: a separate city)",
+      "exclude": false
     },
     "1258847": {
       "_name": "Rajkot",
       "uk": "Раджкот"
     },
+    "1259652": {
+      "_name": "Pimpri (part of 7626690 Pimpri-Chinchwad)",
+      "exclude": true
+    },
+    "1260482": {
+      "_name": "Panihati (reviewed: a separate city)",
+      "exclude": false
+    },
     "1261481": {
       "_name": "New Delhi",
       "uk": "Нью-Делі"
+    },
+    "1261809": {
+      "_name": "Narela (district of Delhi)",
+      "exclude": true
+    },
+    "1262111": {
+      "_name": "Najafgarh (district of Delhi)",
+      "exclude": true
+    },
+    "1264773": {
+      "_name": "Loni (reviewed: a separate city)",
+      "exclude": false
     },
     "1269321": {
       "_name": "Jammu",
@@ -374,11 +490,16 @@
     },
     "1270396": {
       "_name": "Howrah",
-      "uk": "Хаора"
+      "uk": "Хаора",
+      "exclude": false
     },
     "1270583": {
       "_name": "Gwalior",
       "uk": "Гваліор"
+    },
+    "1271308": {
+      "_name": "Ghaziabad (reviewed: a separate city)",
+      "exclude": false
     },
     "1273294": {
       "_name": "Delhi (GeoNames uk is \"Старе Делі\" = Old Delhi)",
@@ -392,6 +513,10 @@
       "_name": "Chandigarh",
       "uk": "Чандігарх"
     },
+    "1275248": {
+      "_name": "Borivli (district of Mumbai)",
+      "exclude": true
+    },
     "1275817": {
       "_name": "Bhubaneswar",
       "uk": "Бхубанешвар"
@@ -400,12 +525,24 @@
       "_name": "Aurangabad",
       "uk": "Аурангабад"
     },
+    "1278840": {
+      "_name": "Ambattur (district of Chennai)",
+      "exclude": true
+    },
     "1278994": {
       "_name": "Prayagraj",
       "uk": "Праяградж",
       "akaUk": [
         "Аллахабад"
       ]
+    },
+    "1348843": {
+      "_name": "Maheshtala (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1462674": {
+      "_name": "Hathazari (reviewed: a separate city)",
+      "exclude": false
     },
     "1486209": {
       "_name": "Yekaterinburg (GeoNames uk is the Russian spelling)",
@@ -430,9 +567,21 @@
       "_name": "Vũng Tàu",
       "uk": "Вунгтау"
     },
+    "1565019": {
+      "_name": "Thủ Đức (district of Ho Chi Minh City)",
+      "exclude": true
+    },
+    "1565022": {
+      "_name": "Thủ Dầu Một (reviewed: a separate city)",
+      "exclude": false
+    },
     "1581298": {
       "_name": "Haiphong",
       "uk": "Хайфон"
+    },
+    "1583518": {
+      "_name": "Dĩ An (reviewed: a separate city)",
+      "exclude": false
     },
     "1586203": {
       "_name": "Cần Thơ",
@@ -442,6 +591,10 @@
       "_name": "Biên Hòa",
       "uk": "Б'єнхоа"
     },
+    "1606590": {
+      "_name": "Samut Prakan (reviewed: a separate city)",
+      "exclude": false
+    },
     "1622786": {
       "_name": "Makassar",
       "uk": "Макасар"
@@ -449,6 +602,10 @@
     "1624917": {
       "_name": "Bandar Lampung",
       "uk": "Бандар-Лампунг"
+    },
+    "1625084": {
+      "_name": "Tangerang (reviewed: a separate city)",
+      "exclude": false
     },
     "1631761": {
       "_name": "Pekanbaru",
@@ -461,6 +618,22 @@
     "1636722": {
       "_name": "Malang",
       "uk": "Маланг"
+    },
+    "1645524": {
+      "_name": "Depok (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1646448": {
+      "_name": "Cimahi (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1647003": {
+      "_name": "Cibinong (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1649378": {
+      "_name": "Bekasi (reviewed: a separate city)",
+      "exclude": false
     },
     "1650213": {
       "_name": "Banjarmasin",
@@ -482,18 +655,52 @@
       "_name": "Hsinchu",
       "uk": "Сіньчжу"
     },
+    "1680102": {
+      "_name": "Valenzuela (reviewed: a separate city)",
+      "exclude": false
+    },
     "1684308": {
       "_name": "City of Taguig",
       "en": "Taguig"
+    },
+    "1694611": {
+      "_name": "Pasay (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1694781": {
+      "_name": "Parañaque (reviewed: a separate city)",
+      "exclude": false
     },
     "1699076": {
       "_name": "City of Muntinlupa",
       "en": "Muntinlupa"
     },
+    "1700925": {
+      "_name": "Marikina (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1701966": {
+      "_name": "Mandaluyong (reviewed: a separate city)",
+      "en": "Mandaluyong",
+      "exclude": false
+    },
+    "1703320": {
+      "_name": "Malabon (reviewed: a separate city)",
+      "exclude": false
+    },
     "1703417": {
       "_name": "Makati City",
       "uk": "Макаті",
-      "en": "Makati"
+      "en": "Makati",
+      "exclude": false
+    },
+    "1707174": {
+      "_name": "Las Piñas (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1710914": {
+      "_name": "Imus (reviewed: a separate city)",
+      "exclude": false
     },
     "1711005": {
       "_name": "Iloilo City",
@@ -504,6 +711,18 @@
       "_name": "Davao City",
       "en": "Davao"
     },
+    "1716771": {
+      "_name": "Cotabato (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1730501": {
+      "_name": "Antipolo (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1732724": {
+      "_name": "Kampung Larkin Lama (district of Johor Bahru)",
+      "exclude": true
+    },
     "1733432": {
       "_name": "Kota Kinabalu",
       "uk": "Кота-Кінабалу"
@@ -512,17 +731,105 @@
       "_name": "Malacca",
       "uk": "Малакка"
     },
+    "1749822": {
+      "_name": "Puchong (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1762110": {
+      "_name": "Kampung Kangkar Teberau (district of Johor Bahru)",
+      "exclude": true
+    },
+    "1771023": {
+      "_name": "Kampung Baru Subang (district of Kuala Lumpur)",
+      "exclude": true
+    },
+    "1783988": {
+      "_name": "Zhucheng (duplicate of 7602670 Zhu Cheng City)",
+      "exclude": true
+    },
+    "1784642": {
+      "_name": "Zhenjiang (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1787375": {
+      "_name": "Yangpu (district of Shanghai)",
+      "exclude": true
+    },
+    "1787957": {
+      "_name": "Xuhui (district of Shanghai)",
+      "exclude": true
+    },
+    "1790353": {
+      "_name": "Xianyang (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1791748": {
+      "_name": "Wanxian (duplicate of 12358576 Wanzhou, its former name)",
+      "exclude": true
+    },
+    "1793424": {
+      "_name": "Tanggu (district of Tianjin)",
+      "exclude": true
+    },
+    "1794035": {
+      "_name": "Songjiang (district of Shanghai)",
+      "exclude": true
+    },
     "1796556": {
       "_name": "Sanya",
       "uk": "Санья"
+    },
+    "1797798": {
+      "_name": "Qingpu (district of Shanghai)",
+      "exclude": true
+    },
+    "1798439": {
+      "_name": "Putuo (district of Shanghai)",
+      "exclude": true
+    },
+    "1798524": {
+      "_name": "Pudong (district of Shanghai)",
+      "exclude": true
+    },
+    "1800480": {
+      "_name": "Minhang (district of Shanghai)",
+      "exclude": true
+    },
+    "1802204": {
+      "_name": "Luancheng (district of Shijiazhuang)",
+      "exclude": true
+    },
+    "1806508": {
+      "_name": "Jiading (district of Shanghai)",
+      "exclude": true
+    },
+    "1808090": {
+      "_name": "Hongkou (district of Shanghai)",
+      "exclude": true
     },
     "1809498": {
       "_name": "Guilin",
       "uk": "Гуйлінь"
     },
+    "1814544": {
+      "_name": "Dachang (district of Shanghai)",
+      "exclude": true
+    },
+    "1815611": {
+      "_name": "Changning (district of Shanghai)",
+      "exclude": true
+    },
+    "1816917": {
+      "_name": "Baoshan (district of Shanghai)",
+      "exclude": true
+    },
     "1833747": {
       "_name": "Ulsan",
       "uk": "Ульсан"
+    },
+    "1833788": {
+      "_name": "Uijeongbu (reviewed: a separate city)",
+      "exclude": false
     },
     "1835235": {
       "_name": "Daejeon",
@@ -532,14 +839,42 @@
       "_name": "Suwon",
       "uk": "Сувон"
     },
+    "1838716": {
+      "_name": "Bucheon (reviewed: a separate city)",
+      "exclude": false
+    },
     "1839071": {
       "_name": "Pohang",
       "uk": "Пхохан"
+    },
+    "1841246": {
+      "_name": "Masan (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1842485": {
+      "_name": "Goyang (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1842943": {
+      "_name": "Gimhae (reviewed: a separate city)",
+      "exclude": false
     },
     "1846266": {
       "_name": "Jeju City",
       "uk": "Чеджу",
       "en": "Jeju"
+    },
+    "1846898": {
+      "_name": "Anyang (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1846918": {
+      "_name": "Ansan (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1848313": {
+      "_name": "Yokosuka (reviewed: a separate city)",
+      "exclude": false
     },
     "1848354": {
       "_name": "Yokohama",
@@ -549,17 +884,34 @@
       "_name": "Utsunomiya",
       "uk": "Уцуномія"
     },
+    "1849814": {
+      "_name": "Toyota (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1849837": {
+      "_name": "Toyonaka (reviewed: a separate city)",
+      "exclude": false
+    },
     "1849876": {
       "_name": "Toyama",
       "uk": "Тояма"
     },
+    "1851483": {
+      "_name": "Suita (reviewed: a separate city)",
+      "exclude": false
+    },
     "1853195": {
       "_name": "Sakai",
-      "uk": "Сакаї"
+      "uk": "Сакаї",
+      "exclude": false
     },
     "1854383": {
       "_name": "Okayama",
       "uk": "Окаяма"
+    },
+    "1855207": {
+      "_name": "Nishinomiya (reviewed: a separate city)",
+      "exclude": false
     },
     "1855431": {
       "_name": "Niigata",
@@ -573,9 +925,25 @@
       "_name": "Miyazaki",
       "uk": "Міядзакі"
     },
+    "1857553": {
+      "_name": "Matsudo (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1857871": {
+      "_name": "Machida (reviewed: a separate city)",
+      "exclude": false
+    },
     "1858421": {
       "_name": "Kumamoto",
       "uk": "Кумамото"
+    },
+    "1859642": {
+      "_name": "Kawasaki (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1859730": {
+      "_name": "Kawaguchi (reviewed: a separate city)",
+      "exclude": false
     },
     "1860243": {
       "_name": "Kanazawa",
@@ -584,6 +952,42 @@
     "1860827": {
       "_name": "Kagoshima",
       "uk": "Кагосіма"
+    },
+    "1861949": {
+      "_name": "Ichinomiya (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1862540": {
+      "_name": "Hirakata (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1862752": {
+      "_name": "Higashiosaka (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1864092": {
+      "_name": "Fujisawa (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1865387": {
+      "_name": "Amagasaki (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1897000": {
+      "_name": "Seongnam (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1909733": {
+      "_name": "Banan (district of Chongqing)",
+      "exclude": true
+    },
+    "1913154": {
+      "_name": "Tanzhou (reviewed: a separate city)",
+      "exclude": false
+    },
+    "2036113": {
+      "_name": "Liaoyang (reviewed: a separate city)",
+      "exclude": false
     },
     "2036502": {
       "_name": "Jilin (GeoNames uk \"Ґірін\" is the Japanese reading)",
@@ -614,6 +1018,18 @@
       "_name": "Gold Coast",
       "uk": "Голд-Кост"
     },
+    "2236500": {
+      "_name": "Viana (reviewed: a separate city)",
+      "exclude": false
+    },
+    "2239888": {
+      "_name": "Maianga (district of Luanda)",
+      "exclude": true
+    },
+    "2242906": {
+      "_name": "Calumbo (district of Luanda)",
+      "exclude": true
+    },
     "2243271": {
       "_name": "Cabinda",
       "uk": "Кабінда"
@@ -630,9 +1046,17 @@
       "_name": "Lisbon",
       "uk": "Лісабон"
     },
+    "2285853": {
+      "_name": "Koumassi (district of Abidjan)",
+      "exclude": true
+    },
     "2290956": {
       "_name": "Bouaké",
       "uk": "Буаке"
+    },
+    "2293521": {
+      "_name": "Abobo (district of Abidjan)",
+      "exclude": true
     },
     "2337639": {
       "_name": "Ilorin",
@@ -641,6 +1065,14 @@
     "2343279": {
       "_name": "Enugu",
       "uk": "Енугу"
+    },
+    "2344082": {
+      "_name": "Ikorodu (reviewed: a separate city)",
+      "exclude": false
+    },
+    "2351943": {
+      "_name": "Agege (district of Lagos)",
+      "exclude": true
     },
     "2422465": {
       "_name": "Conakry",
@@ -693,6 +1125,30 @@
       "_name": "Fes",
       "uk": "Фес"
     },
+    "2566636": {
+      "_name": "Ajegunle (district of Lagos)",
+      "exclude": true
+    },
+    "2591949": {
+      "_name": "Cazenga (district of Luanda)",
+      "exclude": true
+    },
+    "2591953": {
+      "_name": "Golfe (district of Luanda)",
+      "exclude": true
+    },
+    "2591957": {
+      "_name": "Camama (district of Luanda)",
+      "exclude": true
+    },
+    "2591976": {
+      "_name": "Talatona (district of Luanda)",
+      "exclude": true
+    },
+    "2593460": {
+      "_name": "Masina (district of Kinshasa)",
+      "exclude": true
+    },
     "2747373": {
       "_name": "The Hague",
       "uk": "Гаага"
@@ -740,9 +1196,17 @@
       "_name": "Bridgetown",
       "uk": "Бриджтаун"
     },
+    "3393536": {
+      "_name": "Olinda (reviewed: a separate city)",
+      "exclude": false
+    },
     "3394023": {
       "_name": "Natal",
       "uk": "Натал"
+    },
+    "3402429": {
+      "_name": "Caucaia (reviewed: a separate city)",
+      "exclude": false
     },
     "3413829": {
       "_name": "Reykjavík",
@@ -752,17 +1216,59 @@
       "_name": "Saint-Pierre",
       "uk": "Сен-П'єр"
     },
+    "3448877": {
+      "_name": "São João de Meriti (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3449344": {
+      "_name": "São Bernardo do Campo (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3449701": {
+      "_name": "Santo André (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3455775": {
+      "_name": "Osasco (reviewed: a separate city)",
+      "exclude": false
+    },
     "3456283": {
       "_name": "Niterói",
-      "uk": "Нітерой"
+      "uk": "Нітерой",
+      "exclude": false
+    },
+    "3457381": {
+      "_name": "Mauá (reviewed: a separate city)",
+      "exclude": false
     },
     "3459712": {
       "_name": "Joinville",
       "uk": "Жоінвілі"
     },
+    "3460644": {
+      "_name": "Itaquaquecetuba (reviewed: a separate city)",
+      "exclude": false
+    },
     "3461786": {
       "_name": "Guarulhos",
-      "uk": "Гуарульюс"
+      "uk": "Гуарульюс",
+      "exclude": false
+    },
+    "3464374": {
+      "_name": "Duque de Caxias (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3464739": {
+      "_name": "Diadema (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3465624": {
+      "_name": "Contagem (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3466998": {
+      "_name": "Carapicuíba (reviewed: a separate city)",
+      "exclude": false
     },
     "3489854": {
       "_name": "Kingston",
@@ -772,9 +1278,29 @@
       "_name": "Kralendijk",
       "uk": "Кралендейк"
     },
+    "3514450": {
+      "_name": "Xochimilco (district of Mexico City)",
+      "exclude": true
+    },
+    "3514519": {
+      "_name": "Xico (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3514674": {
+      "_name": "Gustavo A. Madero (district of Mexico City)",
+      "exclude": true
+    },
     "3515302": {
       "_name": "Toluca",
       "uk": "Толука"
+    },
+    "3515428": {
+      "_name": "Tlalpan (district of Mexico City)",
+      "exclude": true
+    },
+    "3515431": {
+      "_name": "Tlalnepantla (reviewed: a separate city)",
+      "exclude": false
     },
     "3520339": {
       "_name": "Reynosa",
@@ -784,9 +1310,41 @@
       "_name": "Nuevo Laredo",
       "uk": "Нуево-Ларедо"
     },
+    "3522790": {
+      "_name": "Naucalpan (reviewed: a separate city)",
+      "exclude": false
+    },
     "3526617": {
       "_name": "Xalapa",
       "uk": "Халапа"
+    },
+    "3526683": {
+      "_name": "Iztapalapa (district of Mexico City)",
+      "exclude": true
+    },
+    "3526700": {
+      "_name": "Iztacalco (district of Mexico City)",
+      "exclude": true
+    },
+    "3529612": {
+      "_name": "Ecatepec de Morelos (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3530139": {
+      "_name": "Coyoacán (district of Mexico City)",
+      "exclude": true
+    },
+    "3530589": {
+      "_name": "Nezahualcóyotl (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3532497": {
+      "_name": "Azcapotzalco (district of Mexico City)",
+      "exclude": true
+    },
+    "3532624": {
+      "_name": "Atizapán (Ciudad López Mateos) (reviewed: a separate city)",
+      "exclude": false
     },
     "3576022": {
       "_name": "Saint John’s",
@@ -804,9 +1362,17 @@
       "_name": "San Pedro Sula",
       "uk": "Сан-Педро-Сула"
     },
+    "3630297": {
+      "_name": "Petare (district of Caracas)",
+      "exclude": true
+    },
     "3648559": {
       "_name": "Barcelona",
       "uk": "Барселона"
+    },
+    "3667905": {
+      "_name": "Soacha (reviewed: a separate city)",
+      "exclude": false
     },
     "3668605": {
       "_name": "Santa Marta",
@@ -816,9 +1382,33 @@
       "_name": "Pereira",
       "uk": "Перейра"
     },
+    "3688928": {
+      "_name": "Bello (reviewed: a separate city)",
+      "exclude": false
+    },
     "3703443": {
       "_name": "Panama City",
       "uk": "Панама"
+    },
+    "3719028": {
+      "_name": "Pétionville (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3726786": {
+      "_name": "Delmas (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3827408": {
+      "_name": "Miguel Hidalgo (district of Mexico City)",
+      "exclude": true
+    },
+    "3827409": {
+      "_name": "Cuauhtémoc (district of Mexico City)",
+      "exclude": true
+    },
+    "3827598": {
+      "_name": "Ojo de Agua (reviewed: a separate city)",
+      "exclude": false
     },
     "3836277": {
       "_name": "Santa Fe",
@@ -831,9 +1421,25 @@
         "Сантьяго-де-Чилі"
       ]
     },
+    "3875024": {
+      "_name": "Puente Alto (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3880980": {
+      "_name": "Maipú (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3946083": {
+      "_name": "Callao (reviewed: a separate city)",
+      "exclude": false
+    },
     "3979770": {
       "_name": "Zapopan",
       "uk": "Сапопан"
+    },
+    "3981369": {
+      "_name": "Tonalá (reviewed: a separate city)",
+      "exclude": false
     },
     "3985606": {
       "_name": "San Luis Potosí",
@@ -871,6 +1477,18 @@
       "_name": "Staten Island (New York City borough, not a city)",
       "exclude": true
     },
+    "5304391": {
+      "_name": "Mesa (reviewed: a separate city)",
+      "exclude": false
+    },
+    "5950268": {
+      "_name": "Etobicoke (district of Toronto since 1998)",
+      "exclude": true
+    },
+    "6050610": {
+      "_name": "Laval (reviewed: a separate city)",
+      "exclude": false
+    },
     "6295587": {
       "_name": "Batam",
       "uk": "Батам"
@@ -883,36 +1501,221 @@
       "_name": "Vatican City",
       "uk": "Ватикан"
     },
+    "6696918": {
+      "_name": "Taoyuan (reviewed: a separate city)",
+      "exclude": false
+    },
     "6940394": {
       "_name": "Saitama",
-      "uk": "Сайтама"
+      "uk": "Сайтама",
+      "exclude": false
+    },
+    "6947640": {
+      "_name": "Beylikdüzü (district of Istanbul)",
+      "exclude": true
+    },
+    "6955677": {
+      "_name": "Çankaya (district of Ankara)",
+      "exclude": true
+    },
+    "7290466": {
+      "_name": "Pasig (reviewed: a separate city)",
+      "exclude": false
+    },
+    "7290718": {
+      "_name": "Barra da Tijuca (district of Rio de Janeiro)",
+      "exclude": true
     },
     "7304591": {
       "_name": "West Island",
       "uk": "Вест-Айленд"
     },
+    "7535637": {
+      "_name": "Avellaneda (reviewed: a separate city)",
+      "exclude": false
+    },
+    "7602670": {
+      "en": "Zhucheng"
+    },
+    "7626690": {
+      "akaUk": [
+        "Пімпрі"
+      ],
+      "akaEn": [
+        "Pimpri"
+      ]
+    },
+    "7627067": {
+      "_name": "Bahçelievler (district of Istanbul)",
+      "exclude": true
+    },
+    "7628416": {
+      "_name": "Sultangazi (district of Istanbul)",
+      "exclude": true
+    },
+    "7628420": {
+      "_name": "Sancaktepe (district of Istanbul)",
+      "exclude": true
+    },
+    "7701384": {
+      "_name": "Karabağlar (district of İzmir)",
+      "exclude": true
+    },
+    "7732748": {
+      "_name": "Lekki (district of Lagos)",
+      "exclude": true
+    },
+    "7758790": {
+      "_name": "Kikolo (district of Luanda)",
+      "exclude": true
+    },
+    "7795834": {
+      "_name": "Selayang Baru Utara (district of Kuala Lumpur)",
+      "exclude": true
+    },
+    "7802746": {
+      "_name": "Sadr City (district of Baghdad)",
+      "exclude": true
+    },
     "7828758": {
       "_name": "Saipan",
       "uk": "Сайпан"
+    },
+    "7874116": {
+      "_name": "Santo Domingo Oeste (reviewed: a separate city)",
+      "exclude": false
     },
     "8063361": {
       "_name": "Ngerulmud",
       "uk": "Нгерулмуд"
     },
+    "8074174": {
+      "_name": "Muratpaşa (district of Antalya)",
+      "exclude": true
+    },
+    "8307074": {
+      "_name": "Mulenvos (district of Luanda)",
+      "exclude": true
+    },
+    "8307452": {
+      "_name": "Huangpu (district of Shanghai)",
+      "exclude": true
+    },
     "8504651": {
       "_name": "Sofiyivska Borschagivka",
       "uk": "Софіївська Борщагівка"
+    },
+    "8581443": {
+      "_name": "South Tangerang (reviewed: a separate city)",
+      "exclude": false
+    },
+    "8601412": {
+      "_name": "Santo Domingo Este (reviewed: a separate city)",
+      "exclude": false
+    },
+    "8616121": {
+      "_name": "Đống Đa (district of Hanoi)",
+      "exclude": true
+    },
+    "8715035": {
+      "_name": "Nakano (district of Tokyo)",
+      "exclude": true
+    },
+    "8740157": {
+      "_name": "Hlaingthaya (district of Yangon)",
+      "exclude": true
     },
     "9983718": {
       "_name": "Cheremushky (city district, not a town)",
       "exclude": true
     },
+    "10346824": {
+      "_name": "Nilüfer (district of Bursa)",
+      "exclude": true
+    },
+    "10943053": {
+      "_name": "Nansana (reviewed: a separate city)",
+      "exclude": false
+    },
+    "11592397": {
+      "_name": "Nova Vida (district of Luanda)",
+      "exclude": true
+    },
+    "12358576": {
+      "akaEn": [
+        "Wanxian"
+      ]
+    },
+    "12382296": {
+      "_name": "Thuận An (reviewed: a separate city)",
+      "exclude": false
+    },
     "12492662": {
       "_name": "Mianzhu, Deyang, Sichuan",
       "en": "Mianzhu"
     },
+    "12514556": {
+      "_name": "Kota Damansara (district of Kuala Lumpur)",
+      "exclude": true
+    },
+    "12557764": {
+      "_name": "Taman Petaling (district of Kuala Lumpur)",
+      "exclude": true
+    },
+    "12750654": {
+      "_name": "Mukim Pulai (district of Johor Bahru)",
+      "exclude": true
+    },
+    "13118225": {
+      "_name": "Bukit Rahman Putra (district of Kuala Lumpur)",
+      "exclude": true
+    },
+    "13118244": {
+      "_name": "Mandaluyong (duplicate of 1701966 Mandaluyong City)",
+      "exclude": true
+    },
+    "13308620": {
+      "_name": "Bao'an (district of Shenzhen)",
+      "exclude": true
+    },
+    "13353695": {
+      "_name": "Chūō (district of Tokyo)",
+      "exclude": true
+    },
+    "13353696": {
+      "_name": "Minato (district of Tokyo)",
+      "exclude": true
+    },
+    "13527052": {
+      "_name": "Chéngguān Qū (district of Lhasa)",
+      "exclude": true
+    },
+    "13546342": {
+      "_name": "Samba (district of Luanda)",
+      "exclude": true
+    },
     "13607655": {
       "_name": "Khanzhonkivskyi (city district, not a town)",
+      "exclude": true
+    },
+    "13608000": {
+      "_name": "Jinshan (district of Shanghai)",
+      "exclude": true
+    },
+    "13608002": {
+      "_name": "Fengxian (district of Shanghai)",
+      "exclude": true
+    },
+    "13608003": {
+      "_name": "Chongming (district of Shanghai)",
+      "exclude": true
+    },
+    "13608165": {
+      "_name": "Kima Kieza (district of Luanda)",
+      "exclude": true
+    },
+    "13631351": {
+      "_name": "Hoji ya Henda (district of Luanda)",
       "exclude": true
     }
   }

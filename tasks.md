@@ -41,7 +41,8 @@
 | T02 | Update CLAUDE.md & project skills | M0 Reset | S | [x] |
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [x] |
 | T04 | Name review & overrides | M1 Data | M | [x] |
-| T23 | World list: filter big-city districts | M1 Data | M | [ ] |
+| T23 | World list: filter big-city districts | M1 Data | M | [x] |
+| T24 | World list: review tiers 2–3 (districts + duplicates) | M1 Data | M | [ ] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [x] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [ ] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [ ] |
@@ -253,6 +254,51 @@ could play them.
 or overrides are documented in `tool/README.md`.
 
 Do this before T20 (balance tuning), because districts distort the tiers.
+
+**Result (2026-09-30):**
+- **No reliable automatic rule exists**, so the build only flags
+  candidates. Checked against the data:
+  - Distance flags real cities: Kawasaki, Guarulhos, Callao and Islamabad all
+    border bigger ones.
+  - GeoNames admin codes are right in some countries (Warsaw's and Madrid's
+    districts share the city's code), but wrong elsewhere. US counties would
+    drop Glendale and Pasadena, and it would drop **Venice** (filed under
+    Mestre).
+- **Automatic** (`tool/src/districts.dart`), list-wide: name patterns
+  (arrondissements, `-ku`, `Quận`/`Huyện`, `Estate`, `(Kreis N)`,
+  `District`) plus Hong Kong, Singapore and Macau neighborhoods. It removes
+  225 places with no false positives.
+- **Reviewed:**
+  - Candidates are places within 25 km of a same-country city ≥ 3× bigger.
+  - `exclude` became three-valued: `true` = drop; `false` = reviewed, keep
+    (it also beats the automatic rules); omitted = pending.
+  - Decisions for the top 1,500: 87 districts excluded, 5 duplicates merged
+    (the old name is kept as an alias), 109 places kept.
+  - Beyond the 25 km net, it also excludes the outer Shanghai districts,
+    Tanggu, Beylikdüzü, Najafgarh, Narela, and Tokyo's wards.
+- The build prints the pending counts: **top 1,500: 0**, top 5,000: 786.
+  The review sheet gains a `district_candidates` section and a `note` column
+  ("near Shanghai (5 km)").
+- World is now 31,407 cities (7,177 with a `uk` name), 1.91 MB.
+- The rest moves to T24.
+
+### T24 · World list: review tiers 2–3 (districts + duplicates) · M
+Added after T23. Hard CityBot knows tiers 1–3 (≈ the World top 5,000), so
+those need the same cleanup as the top 1,500.
+- Decide the 786 pending `district_candidates` in the review sheet. Most are
+  real suburbs (Paris's communes, Milan's comuni); the districts cluster in a
+  few cities (Hanoi, Bangkok, Kuala Lumpur, Warsaw, London, Delhi, Luanda).
+- Duplicates: the same place listed twice, usually within a few km under a
+  similar name ("Tempe" / "Tempe Junction", "Makakilo" / "Makakilo City",
+  Hawaiian census areas like "Makiki / Lower Punchbowl / Tantalus"). A
+  name-plus-distance check found ~150 pairs list-wide.
+- Worth a look: a population copied from another place (the small Sahiwal
+  had the big one's 538,344).
+
+**Done when:** the build reports 0 pending candidates in the World top 5,000,
+and no known duplicate pairs remain there.
+
+Do this before T20: the balance simulator should run on clean tiers.
 
 ---
 
