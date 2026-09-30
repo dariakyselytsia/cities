@@ -44,3 +44,25 @@ class TierLimits {
     CityListKind.world => world,
   };
 }
+
+/// How many cities must start with a letter for the letter rule to require
+/// it (game_design §2.3). Rarer letters are skipped like `ь`.
+///
+/// Why: in World-in-Ukrainian 145 names end in «й» (Шанхай, Дубай) but only
+/// 16 start with it, so requiring «й» would jam most games. A fixed number
+/// can't serve both lists: at 20, the 848-city Ukraine list would lose «а».
+/// These starting values skip «й ї щ» in World and «ї ц е ф є щ» in Ukraine.
+/// Tuning values (T20).
+class LetterMinimums {
+  const LetterMinimums({required this.ukraine, required this.world});
+
+  static const LetterMinimums standard = LetterMinimums(ukraine: 5, world: 20);
+
+  final int ukraine;
+  final int world;
+
+  int of(CityListKind list) => switch (list) {
+    CityListKind.ukraine => ukraine,
+    CityListKind.world => world,
+  };
+}

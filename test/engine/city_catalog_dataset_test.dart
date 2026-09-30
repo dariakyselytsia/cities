@@ -64,6 +64,63 @@ void main() {
     expect(world.tierOf(vatican), 1);
   });
 
+  group('the letter rule on the real lists', () {
+    String? after(CityListKind list, NameLanguage language, String name) {
+      final index = catalog.index(list, language);
+      return index.requiredLetterAfter(index.lookup(name).first);
+    }
+
+    const world = CityListKind.world;
+    const ukraine = CityListKind.ukraine;
+    const uk = NameLanguage.uk;
+    const en = NameLanguage.en;
+
+    test("Кам'янець: «ц» in World, but the Ukraine list skips its rare «ц»",
+        () {
+      // The city is "Кам'янець-Подільський" (→ «к»), so the -ець ending is
+      // tested on a real city that ends with it.
+      expect(after(world, uk, "Кам'янець-Подільський"), 'к');
+      expect(after(world, uk, 'Кременець'), 'ц');
+      expect(after(ukraine, uk, 'Кременець'), 'н');
+    });
+
+    test('-ький and -ий endings go back to «к»/the consonant', () {
+      expect(after(ukraine, uk, 'Хмельницький'), 'к');
+      expect(after(world, uk, 'Хмельницький'), 'к');
+      expect(after(ukraine, uk, 'Кривий Ріг'), 'г');
+    });
+
+    test('«й» and «ї» are skipped in World', () {
+      expect(after(world, uk, 'Шанхай'), 'а');
+      expect(after(world, uk, 'Мумбаї'), 'а');
+    });
+
+    test('«ь» is always skipped', () {
+      expect(after(ukraine, uk, 'Ірпінь'), 'н');
+      expect(after(world, uk, 'Мелітополь'), 'л');
+    });
+
+    test('English', () {
+      expect(after(world, en, 'Kyiv'), 'v');
+      expect(after(world, en, 'Kraków'), 'w');
+      expect(after(ukraine, en, 'Kamianets-Podilskyi'), 'i');
+    });
+
+    test('every required letter has cities to answer with', () {
+      for (final list in CityListKind.values) {
+        for (final language in NameLanguage.values) {
+          final index = catalog.index(list, language);
+          for (final city in index.cities) {
+            final letter = index.requiredLetterAfter(city);
+            if (letter == null) continue;
+            expect(index.startingWith(letter), isNotEmpty,
+                reason: '${list.name}/${language.name} ${city.nameEn}');
+          }
+        }
+      }
+    });
+  });
+
   test('no Ukrainian name starts with «ь» or «и»', () {
     // «ь» can't start a word. «и» almost never does in Ukrainian: a name
     // like "Испарта" is a Russian spelling (Ukrainian: Іспарта). «й» is fine

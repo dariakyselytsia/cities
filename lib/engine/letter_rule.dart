@@ -1,42 +1,35 @@
-/// Pure implementation of the "next city" letter rule from `game_design.md`.
-///
-/// The next city must start with the **last valid letter** of the previous city.
-/// A letter is "valid" only if at least one city in the current dataset starts
-/// with it — so trailing letters that nothing starts with (the Ukrainian soft
-/// sign `ь`, `и`, `й`, apostrophes, whitespace, …) are skipped by walking
-/// backwards until a playable letter is found. This dataset-driven approach
-/// needs no hard-coded exception list: whatever letters are unplayable in the
-/// current mode are simply absent from [availableFirstLetters] and get skipped.
-class LetterRule {
-  const LetterRule._();
+import 'normalize.dart';
 
-  /// Returns the letter the next city must start with, given the [previousCity]
-  /// name and the set of lower-cased first letters that exist in the current
-  /// mode's dataset. Returns `null` when the previous city has no playable
-  /// trailing letter at all (a dead end).
+/// The "next city" letter rule (game_design §2.3).
+///
+/// The next city must start with the **last playable letter** of the
+/// previous one. Letters are read from the previous city's display name
+/// after [normalizeName], so apostrophes and hyphens don't count and `ґ`
+/// reads as `г`. Walking back from the end, every letter outside
+/// `playableLetters` is skipped: the soft sign `ь`, which no city starts
+/// with, and letters too few cities start with (see `LetterMinimums`).
+/// "Кам'янець" → `ц` (in World), "Хмельницький" → `к`.
+///
+/// The rule is dataset-driven: `CityIndex.playableLetters` decides, so there
+/// is no hard-coded letter list here.
+abstract final class LetterRule {
+  /// The letter the city after [previousName] must start with, or `null`
+  /// when no letter of it is playable. `null` means any letter will do, as
+  /// for the opening move.
   static String? requiredNextLetter(
-    String previousCity,
-    Set<String> availableFirstLetters,
+    String previousName,
+    Set<String> playableLetters,
   ) {
-    final normalized = previousCity.trim().toLowerCase();
-    for (var i = normalized.length - 1; i >= 0; i--) {
-      final ch = normalized[i];
-      if (availableFirstLetters.contains(ch)) return ch;
+    final letters = normalizeName(previousName).runes.toList();
+    for (var i = letters.length - 1; i >= 0; i--) {
+      final letter = String.fromCharCode(letters[i]);
+      if (playableLetters.contains(letter)) return letter;
     }
     return null;
   }
 
-  /// Whether [candidateFirstLetter] (the answer's first letter) satisfies the
-  /// rule for [previousCity]. The opening move ([previousCity] empty) is always
-  /// allowed.
-  static bool isValidNext({
-    required String previousCity,
-    required String candidateFirstLetter,
-    required Set<String> availableFirstLetters,
-  }) {
-    if (previousCity.trim().isEmpty) return true;
-    final required = requiredNextLetter(previousCity, availableFirstLetters);
-    if (required == null) return false;
-    return candidateFirstLetter.toLowerCase() == required;
-  }
+  /// Whether [answer] starts with [requiredLetter]. A `null` requirement
+  /// (the opening move, or a dead end) accepts any answer.
+  static bool startsWithRequired(String answer, String? requiredLetter) =>
+      requiredLetter == null || firstLetter(answer) == requiredLetter;
 }

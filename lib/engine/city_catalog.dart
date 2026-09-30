@@ -1,5 +1,6 @@
 import 'city.dart';
 import 'city_list.dart';
+import 'letter_rule.dart';
 import 'normalize.dart';
 
 /// Country codes of **dependent territories**: GeoNames marks their capitals
@@ -28,11 +29,12 @@ bool isSovereignCapital(City city) =>
 /// asset I/O: the loader decodes the JSON and hands it to
 /// [CityCatalog.fromJson].
 class CityCatalog {
-  /// Builds the indexes. [tierLimits] exists for tests; the game uses
-  /// [TierLimits.standard].
+  /// Builds the indexes. [tierLimits] and [letterMinimums] exist for tests;
+  /// the game uses the standard tuning values.
   factory CityCatalog(
     Iterable<City> cities, {
     TierLimits tierLimits = TierLimits.standard,
+    LetterMinimums letterMinimums = LetterMinimums.standard,
   }) {
     final all = List<City>.unmodifiable(cities);
     final ids = <int>{};
@@ -55,6 +57,7 @@ class CityCatalog {
             NameLanguage.uk => ukNames,
             NameLanguage.en => enNames,
           },
+          letterMinimums.of(list),
         );
 
     final ukraineTiers =
@@ -167,6 +170,7 @@ class CityIndex {
     Iterable<City> listCities,
     Map<int, int> tiers,
     Map<int, _NormalizedNames> names,
+    int letterMinimum,
   ) : _tiers = tiers {
     final playable = [
       for (final city in listCities)
@@ -198,6 +202,10 @@ class CityIndex {
         key: List.unmodifiable(value),
     };
     firstLetters = Set.unmodifiable(_byLetter.keys);
+    playableLetters = Set.unmodifiable({
+      for (final MapEntry(key: letter, value: starters) in _byLetter.entries)
+        if (starters.length >= letterMinimum) letter,
+    });
   }
 
   final CityListKind list;
@@ -210,8 +218,20 @@ class CityIndex {
   late final List<City> cities;
 
   /// The (normalized) letters at least one city's display name starts with.
-  /// The letter rule skips letters outside this set (game_design §2.3).
   late final Set<String> firstLetters;
+
+  /// The letters the letter rule can require: those at least
+  /// [LetterMinimums] cities start with. Every other letter is skipped
+  /// (game_design §2.3), so a city starting with one (Йокогама in World) can
+  /// only be played as an opening move.
+  late final Set<String> playableLetters;
+
+  /// The letter the city after [previous] must start with (see
+  /// [LetterRule]), or `null` when any letter will do.
+  String? requiredLetterAfter(City previous) => LetterRule.requiredNextLetter(
+    previous.name(language) ?? '',
+    playableLetters,
+  );
 
   /// The cities [answer] names, by display name or alias, most populous
   /// first. Empty when it names none.

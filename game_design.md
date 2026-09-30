@@ -32,9 +32,20 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
 
 ### 2.3 The Letter Rule
 - The next city must start with the **last letter** of the previous city.
-- If no city in the active list starts with that letter (e.g. Ukrainian `ь`,
-  `и`, `й`), skip back to the previous letter, and keep going until you reach a
-  playable letter. This is **dataset-driven**, with no hard-coded letter list.
+- If too few cities in the active list start with that letter, skip back to
+  the previous letter, and keep going until you reach a playable letter.
+  Apostrophes, hyphens and spaces are not letters.
+  - A letter is playable when at least **5** (Ukraine list) or **20** (World)
+    cities start with it. These are tuning values.
+  - So `ь` and `и` are always skipped. World also skips `й`, `ї` and `щ`:
+    145 names end in `й` (Шанхай, Дубай) but only 16 start with it, and
+    requiring it would jam most games. Ukraine skips `ї`, `ц`, `е`, `ф`, `є`
+    and `щ`.
+  - Examples: Хмельницький → «к», Шанхай → «а», Кременець → «ц» in World,
+    but «н» in Ukraine.
+  - This is **dataset-driven**, with no hard-coded letter list.
+  - A city that starts with a skipped letter (Йокогама) can only be played as
+    the opening move.
 - The game always shows the required letter on the player's turn
   ("Your turn — start with «Х»").
 
@@ -181,3 +192,8 @@ List sizes (GeoNames, Sept 2026 build):
   already a discrete step in the game loop, so a network turn can replace it.
 - **Polish.** Sound effects and haptics, typo tolerance, more UI languages,
   daily challenge.
+- **Rare-letter choice.** When the letter rule skips a rare last letter
+  (§2.3), also let the player answer with that letter if an unused city
+  starts with it: Енергодар after an «-ське» city, Йокогама after Шанхай.
+  Players who know a rare city can use it, and games don't jam on the rare
+  letter. Reviewed in T25.

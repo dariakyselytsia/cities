@@ -213,6 +213,42 @@ void main() {
       expect(ids(worldUk.startingWith('ґ')), [17], reason: 'ґ → г');
     });
 
+    test('playableLetters keeps letters with enough starters, per list', () {
+      final strict = CityCatalog(
+        catalog.cities,
+        tierLimits: limits,
+        letterMinimums: const LetterMinimums(ukraine: 1, world: 2),
+      );
+      // World/uk: only «к» (Київ, Кам'янець) and «в» (two Вікторії) have 2.
+      expect(
+        strict.index(CityListKind.world, NameLanguage.uk).playableLetters,
+        {'к', 'в'},
+      );
+      // Ukraine/uk: a minimum of 1 keeps every first letter.
+      final ukraine = strict.index(CityListKind.ukraine, NameLanguage.uk);
+      expect(ukraine.playableLetters, ukraine.firstLetters);
+    });
+
+    test('requiredLetterAfter applies the letter rule to the display name', () {
+      final strict = CityCatalog(
+        catalog.cities,
+        tierLimits: limits,
+        letterMinimums: const LetterMinimums(ukraine: 1, world: 2),
+      );
+      final worldUk = strict.index(CityListKind.world, NameLanguage.uk);
+      // "Гданськ": «к» is playable.
+      expect(worldUk.requiredLetterAfter(byId(17)), 'к');
+      // "Вікторія": «я», «і», «р», «о», «т» aren't; back to «к».
+      expect(worldUk.requiredLetterAfter(byId(13)), 'к');
+      // "Париж": no playable letter at all, so any letter will do.
+      expect(worldUk.requiredLetterAfter(byId(11)), isNull);
+      // The English index reads the English name. "Victoria": of its
+      // letters only «v» is playable (k, p and v each start 2+ cities).
+      final worldEn = strict.index(CityListKind.world, NameLanguage.en);
+      expect(worldEn.playableLetters, {'k', 'p', 'v'});
+      expect(worldEn.requiredLetterAfter(byId(13)), 'v');
+    });
+
     test('firstLetters is the set of letters some city starts with', () {
       expect(worldUk.firstLetters, {'к', 'х', 'о', 'л', 'м', 'п', 'в', 'ф', 'г'});
       // "6th of October City" starts with a digit: it can be named, but no

@@ -45,7 +45,7 @@
 | T24 | World list: review tiers 2–3 (districts + duplicates) | M1 Data | M | [ ] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [x] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [x] |
-| T07 | Letter rule on the catalog | M2 Engine | S | [ ] |
+| T07 | Letter rule on the catalog | M2 Engine | S | [x] |
 | T08 | Difficulty + CityBot | M2 Engine | M | [ ] |
 | T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [ ] |
 | T10 | City loader + splash + composition root | M3 Playable | M | [ ] |
@@ -58,6 +58,7 @@
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [ ] |
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [ ] |
 | T19 | Statistics screen | M5 Progress | M | [ ] |
+| T25 | Review rare-letter skipping | M6 Release | S | [ ] |
 | T20 | Balance simulator + tuning pass | M6 Release | M | [ ] |
 | T21 | Polish pass | M6 Release | M | [ ] |
 | T22 | Release prep | M6 Release | M | [ ] |
@@ -377,6 +378,25 @@ names (the most populous wins), tier boundaries and the capital override.
 **Done when:** tests cover `ь`/`и`/`й` backtracking and apostrophes
 (Кам'янець → «ц»), plus an English case.
 
+**Result (2026-10-01):**
+- **Rule change (decided with Daria):** a letter is playable only if enough
+  cities in the list start with it: `LetterMinimums`, Ukraine 5 and World 20
+  (tuning values for T20).
+  - The purely data-driven rule made «й» playable in World (Йокогама, Йорк).
+    145 names end in «й» but only 16 start with it, so games would jam.
+  - A single minimum doesn't fit both lists: at 20, Ukraine would lose «а».
+  - Now skipped: «й ї щ» in World, «ї ц е ф є щ» in Ukraine. «ь» and «и»
+    are skipped everywhere. game_design §2.3 is updated.
+- `LetterRule` reads the **normalized display name**, so apostrophes and
+  hyphens don't count and «ґ» reads as «г». It returns `null` (any letter
+  will do) for a dead end, like the opening move. `startsWithRequired` checks
+  an answer.
+- `CityIndex.playableLetters` and `requiredLetterAfter(city)`.
+- Tests: a table covering «ь», «и», «й», «ї» backtracking, apostrophe
+  variants, «ґ», English (Kraków → «w», "St. John's" → «s»), dead ends, and
+  real-data checks. The actual city is "Кам'янець-Подільський" (→ «к»), so
+  «ц» is tested on Кременець: «ц» in World, «н» in Ukraine.
+
 ### T08 · Difficulty + CityBot · M
 - `Difficulty { easy, medium, hard }` has its vocabulary tiers, turn timer and
   win multiplier as named tuning constants.
@@ -522,6 +542,51 @@ a new player.
 
 ## M6 — Release readiness
 
+### T25 · Review rare-letter skipping · S
+Added after T07, at Daria's request. The T07 rule skips a letter when fewer
+than `LetterMinimums` cities start with it (Ukraine 5, World 20). Today that
+skips «й ї щ» in World and «ї ц е ф є щ» in Ukraine, plus «ь» and «и»
+everywhere.
+
+Review whether that's the right set:
+- **Measure demand, not just supply.** A letter is a trap when many names
+  *require* it (after skipping) but few cities start with it. The raw
+  starter count also skips harmless letters. Numbers for uk names, at T07:
+
+  | List | Letter | Names ending in it | Cities starting with it |
+  |---|---|---|---|
+  | World | «й» | 145 | 16 (Йоганнесбург, Йокогама, Йорк, …) |
+  | World | «щ» | 1 | 4 (Щецин, …) |
+  | World | «ї» | 21 | 2 (Їньчуань, …) |
+  | Ukraine | «е» | 138 (the "-ське" names) | 2 (Енергодар, Есхар) |
+  | Ukraine | «ф» | 1 | 3 (Феодосія, Фастів, Фонтанка) |
+  | Ukraine | «є» | 2 | 4 (Євпаторія, Єнакієве, …) |
+  | Ukraine | «щ» | 0 | 4 (Щастя, …) |
+  | Ukraine | «ц» | the "-ець" names (via «ь») | 2 (Царичанка, Циркуни) |
+
+  So «щ» and «ф» could stay playable, while «й» and Ukraine's «е» are real
+  traps. "Names ending in it" counts only the last character; the review
+  should count the letter actually *required* after skipping (e.g. «ц» after
+  "-ець").
+- **Popular cities behind a skipped letter:** Енергодар («е») is well known,
+  and so are Щецин, Йоганнесбург and Йокогама. Today they can only be played
+  as an opening move. Making «е» playable would bring back the trap
+  (138 names → 2 cities), so keeping Енергодар reachable probably needs the
+  option below.
+- **Option, likely post-MVP:** let the player answer with **either** letter.
+  If an unused city starting with the rare letter exists, the player (and
+  maybe the bot) may use it, or fall back to the previous letter as today.
+  Then no letter is lost and nothing jams. It's listed in game_design §5 as
+  "Rare-letter choice"; the review decides whether it's worth pulling into
+  MVP.
+- Use the T20 simulator to check how often games end on each letter.
+
+**Done when:** the skip rule (the metric and its values, per list) is decided
+and documented in game_design §2.3, including what happens to Енергодар, and
+the "either letter" option is either scheduled or left in Future.
+
+Do this before T20 finalizes the tuning values.
+
 ### T20 · Balance simulator + tuning pass · M
 - `tool/simulate.dart` runs many seeded games of the bot against a "player"
   that knows the top N cities.
@@ -529,6 +594,9 @@ a new player.
   list × difficulty.
 - Tune the tier sizes and timers so that Easy is winnable, Medium is a
   challenge and Hard is rare.
+- Also tune `LetterMinimums` (T07, reviewed in T25): report how often games
+  end on a rare letter (e.g. «а» in the Ukraine list: 232 names end in it, 16
+  start with it).
 - Then do a real playtest with 2–3 people.
 
 **Done when:** the tuning constants are updated and the reasoning is noted in
@@ -557,4 +625,4 @@ testing.
 ## Later (from game_design.md §5 — not scheduled)
 Endurance mode · leaderboards (local → global) · rewarded ads (hints/revive) +
 banners · richer stats · interactive map · country/capitals modes · merged pool ·
-PvP · sound · typo tolerance · daily challenge.
+PvP · sound · typo tolerance · daily challenge · rare-letter choice (see T25).

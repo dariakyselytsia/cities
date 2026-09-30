@@ -157,8 +157,10 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
     populous first, and the first unused match wins.
   - `startingWith(letter)`: the cities whose **display name** starts with the
     letter, best known first (tier, then population).
-  - `firstLetters`: the set of playable first letters, which the letter rule
-    uses.
+  - `playableLetters`: the letters at least `LetterMinimums` cities start
+    with (Ukraine 5, World 20). The letter rule skips all others.
+    `requiredLetterAfter(city)` applies `LetterRule` to the city's display
+    name.
   - `tierOf(city)`: tiers come from population rank within the **list**. They
     are the same in both languages, because a city is as famous in either;
     a city with no Ukrainian name is simply missing from the Ukrainian index.
