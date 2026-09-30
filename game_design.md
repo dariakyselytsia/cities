@@ -89,8 +89,9 @@ Starting guesses:
 - Ukraine: T1 ≈ 50, T2 ≈ 150, T3 ≈ 300, T4 = the rest.
 
 - The bot picks a **random** unused city from its vocabulary that satisfies the
-  letter rule, weighted toward better-known cities. That keeps games varied and
-  keeps its cities recognizable.
+  letter rule, weighted toward better-known cities: a tier-1 city is 4× as
+  likely as a tier-3 one, and tier 2 is 2× (tuning values). That keeps games
+  varied and keeps its cities recognizable.
 - The bot "thinks" for a short moment before answering (≈ 0.6–1.2 s) for feel.
 - **When the bot has no valid city left, it gives up, and the player wins.**
 

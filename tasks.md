@@ -46,7 +46,7 @@
 | T05 | `City` model + answer normalization | M2 Engine | M | [x] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [x] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [x] |
-| T08 | Difficulty + CityBot | M2 Engine | M | [ ] |
+| T08 | Difficulty + CityBot | M2 Engine | M | [x] |
 | T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [ ] |
 | T10 | City loader + splash + composition root | M3 Playable | M | [ ] |
 | T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [ ] |
@@ -408,6 +408,31 @@ names (the most populous wins), tier boundaries and the capital override.
 - it never repeats a city;
 - it gives up exactly when its vocabulary is exhausted for the letter.
 
+**Result (2026-10-01):**
+- `lib/engine/difficulty.dart`: `Difficulty { easy, medium, hard }` with
+  `maxTier` (1/2/3), `turnTime` (45/30/20 s) and `winMultiplier` (1/2/3).
+- `lib/engine/bot.dart`:
+  - `CityBot(index, difficulty, random).move(requiredLetter, usedIds)`
+    returns `BotPlays(city)` or `BotGivesUp()`.
+  - A `null` letter (the opening move, or after a dead end) allows any known
+    city.
+  - `botTierWeights = [4, 2, 1, 1]`: weighted by tier, uniform within one.
+  - `knows(city)` exposes the vocabulary, for T09 and the simulator.
+- Tests: seeded play-outs per difficulty. They check no repeats, only the
+  bot's own tiers, and that it gives up exactly when the letter's vocabulary
+  runs out. Also covered: the tier-1 share (≈ 80% against one tier-3
+  rival), the opening move, determinism, and the Difficulty values.
+- **Real vocabulary sizes** (Easy / Medium / Hard):
+
+  | List / language | Easy | Medium | Hard |
+  |---|---|---|---|
+  | Ukraine | 50 | 150 | 300 |
+  | World, English | 429 | 1,559 | 5,038 |
+  | World, Ukrainian | 388 | 993 | 2,138 |
+
+  Ukrainian World games get a much smaller Hard bot, because many tier 2–3
+  cities have no Ukrainian name (tiers are per list, T06). Noted for T20.
+
 ### T09 · `Match` · L
 One game's rules, as in tech_design §3:
 - `botMove()`, `submit()` → `Accepted` / `Rejected(reason)`, `hint()`,
@@ -594,6 +619,10 @@ Do this before T20 finalizes the tuning values.
   list × difficulty.
 - Tune the tier sizes and timers so that Easy is winnable, Medium is a
   challenge and Hard is rare.
+- Compare World games in each language. The Hard bot knows 5,038 cities in
+  English but 2,138 in Ukrainian, because tiers are per list and many cities
+  lack a Ukrainian name (T08). Decide whether the uk index should get its own
+  tier limits.
 - Also tune `LetterMinimums` (T07, reviewed in T25): report how often games
   end on a rare letter (e.g. «а» in the Ukraine list: 232 names end in it, 16
   start with it).
