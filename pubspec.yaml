@@ -31,6 +31,9 @@ flutter:
 
   assets:
     - assets/translations/
+    # Built by tool/build_cities.dart (tool/README.md); loaded by
+    # lib/data/city_loader.dart.
+    - assets/data/cities.json
 
   # Bundled (offline) fonts, both with full Cyrillic coverage. Baloo 2 /
   # Poppins from the original design were dropped: neither supports Cyrillic.

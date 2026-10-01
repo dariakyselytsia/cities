@@ -48,7 +48,7 @@
 | T07 | Letter rule on the catalog | M2 Engine | S | [x] |
 | T08 | Difficulty + CityBot | M2 Engine | M | [x] |
 | T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [x] |
-| T10 | City loader + splash + composition root | M3 Playable | M | [ ] |
+| T10 | City loader + splash + composition root | M3 Playable | M | [x] |
 | T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [ ] |
 | T12 | Game screen (chat UI) | M3 Playable | L | [ ] |
 | T13 | Game-over view | M3 Playable | S | [ ] |
@@ -485,6 +485,31 @@ It takes the player's `discoveredIds` as input.
 - a cold start on a real mid-range Android device loads in about 1 s or less
   (measure it and write the number in the PR/commit).
 
+**Result (2026-10-01):**
+- `lib/data/city_loader.dart`: `CityLoader.load()` reads the asset (not
+  cached), then decodes and indexes it in `Isolate.run`. It returns
+  `CitiesLoaded(catalog, loadTime)` or `CitiesLoadFailed(missingAsset |
+  invalidData)` and never throws. Details go to `FlutterError.reportError`,
+  and one `city_loader: N cities in X ms` line goes to logcat on every
+  launch.
+- `lib/features/startup/`: `StartupCubit` (Loading / Ready / Failed, with
+  retry), `SplashScreen`, `LoadErrorScreen` ("Try again"), and
+  `StartupGate`. The gate sits in `MaterialApp.builder` and provides
+  `CityCatalog` above the navigator, so T14's router fits in unchanged.
+- `main.dart` builds the loader and the cubit. `cities.json` is declared in
+  `pubspec.yaml`. The startup strings are in both `uk.json` and `en.json`.
+- Tests: the loader on a fixture asset, a missing asset, 4 kinds of bad data
+  and the real file; the cubit (including retry); the gate's three states
+  (the catalog is provided to routes).
+- **Measured:** a release APK on the x86_64 emulator (Pixel 8, API 36, WHPX)
+  loads the cities in **651 / 803 / 865 ms** over 3 cold starts (the
+  activity's first frame comes at 1.3–1.9 s, with the splash shown
+  meanwhile). There's no real device here, so the real mid-range phone
+  check is still open and moves to T22 (the release build).
+- Seen on the emulator: Android's native launch screen is still the white
+  default with the Flutter logo before the cream splash. That's T21
+  (native splash).
+
 ### T11 · `GameCubit` · L
 - A `sealed` state: `GameLoading` / `GamePlaying` / `GameOver`, as in
   tech_design §3.
@@ -674,6 +699,9 @@ app works in both languages.
 - A privacy policy: the app collects no data.
 - Store listing text in UA/EN and screenshots.
 - A TestFlight + Play internal testing build.
+- Measure the cold-start load on a real mid-range Android phone. It should
+  be about 1 s or less (T10 measured 0.65–0.87 s on the emulator); read the
+  `city_loader:` line in logcat.
 
 **Done when:** testers can install it from TestFlight and Play internal
 testing.

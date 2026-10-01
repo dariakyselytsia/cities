@@ -1,5 +1,11 @@
 {
   "app_title": "Cities",
+  "startup": {
+    "loading": "Loading cities…",
+    "error_title": "Couldn't load the cities",
+    "error_body": "The city data is damaged or missing. Try again, or reinstall the game.",
+    "retry": "Try again"
+  },
   "home": {
     "play": "Play",
     "leaderboard": "Leaderboard",

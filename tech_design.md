@@ -160,6 +160,10 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
 
 ### At load
 - Parse in a background isolate (`Isolate.run`) behind a short splash screen.
+  `CityLoader` returns a typed result. `StartupGate` (in
+  `MaterialApp.builder`) shows the splash, a friendly error screen with
+  "Try again", or the app with `CityCatalog` provided to every route. It
+  takes ~0.65–0.87 s in a release build on the emulator.
 - `CityCatalog` (`engine/city_catalog.dart`) builds one `CityIndex` per
   list × language:
   - `lookup(answer)`: normalized name → `List<City>`, including aliases. It is

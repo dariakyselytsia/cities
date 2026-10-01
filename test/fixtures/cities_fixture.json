@@ -1,0 +1,7 @@
+{"v":1,"cities":[
+ {"id":703448,"uk":"Київ","en":"Kyiv","cc":"UA","cap":true,"pop":2952301,"akaEn":["Kiev"]},
+ {"id":702550,"uk":"Львів","en":"Lviv","cc":"UA","pop":717273,"akaEn":["Lvov"]},
+ {"id":706483,"uk":"Харків","en":"Kharkiv","cc":"UA","pop":1421125},
+ {"id":2988507,"uk":"Париж","en":"Paris","cc":"FR","cap":true,"pop":2138551},
+ {"id":1275339,"uk":"Мумбаї","en":"Mumbai","cc":"IN","pop":12691836,"akaEn":["Bombay"]}
+]}
