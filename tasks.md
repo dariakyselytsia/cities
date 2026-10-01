@@ -47,7 +47,7 @@
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [x] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [x] |
 | T08 | Difficulty + CityBot | M2 Engine | M | [x] |
-| T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [ ] |
+| T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [x] |
 | T10 | City loader + splash + composition root | M3 Playable | M | [ ] |
 | T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [ ] |
 | T12 | Game screen (chat UI) | M3 Playable | L | [ ] |
@@ -449,6 +449,27 @@ It takes the player's `discoveredIds` as input.
   every end condition;
 - a seeded "full game" simulation test runs a game to a win and to a loss.
 
+**Result (2026-10-01):**
+- `lib/engine/scoring.dart`: the point values and `winPoints(difficulty)`.
+- `lib/engine/match.dart`: `Match`, `Turn`, `SubmitResult` (`Accepted` /
+  `Rejected(RejectionReason)`), `MatchOutcome` and `MatchResult`, as in
+  tech_design §3.
+- **Rule decided here, provisionally:** an answer may fit the required
+  letter by the typed text **or** by the city's display name ("Bombay"
+  works for «b» and «m»). The next letter always comes from the display
+  name. game_design §2.4 is updated, and the rule is flagged in §6 "Open
+  questions" for the T20 playtest.
+- **Who starts:** `Match(firstTurn: Side.player)` lets the player open (any
+  letter). The default is the bot. The setting is wired up in T11/T16/T17.
+- Among same-named cities, the most populous one that fits and is unused is
+  played. Hints pick at random within the best tier still available.
+- `Match(bot: …)` lets tests script the bot's moves.
+- Tests: 29 unit tests (all 4 rejection reasons, scoring and the new-city
+  bonus, hints, every end, turn errors). The full-game simulation runs on the
+  real data in both languages: a player who knows every city beats Easy, and
+  one who knows only tier 1 loses to Hard, for 5 seeds each. It checks the
+  rules on every move.
+
 ---
 
 ## M3 — Playable
@@ -470,7 +491,9 @@ It takes the player's `discoveredIds` as input.
 - It wraps `Match` and adds:
   - the player countdown (per difficulty; it does not reset on a wrong answer);
   - the bot "thinking" delay (0.6–1.2 s);
-  - hint, give up and timeout.
+  - hint, give up and timeout;
+  - who starts: pass the "Who starts" setting (T16) as `Match(firstTurn:)`.
+    When the player opens, the countdown starts right away.
 
 **Done when:** `bloc_test` + `fake_async` cover:
 - bot opens → player answers → bot replies;
@@ -520,6 +543,9 @@ timer and the bot's vocabulary.
 ### T16 · Settings screen · S
 - Language: Ukrainian / English, applied live and persisted by
   `easy_localization`.
+- **Who starts:** CityBot (default) / Me (game_design §2.2). It's kept in
+  memory until T17, then saved in `PlayerData`. The engine side is done
+  (`Match(firstTurn:)`, T09).
 - An About section with the version and the GeoNames CC BY 4.0 attribution.
 - Prune `assets/translations` down to the strings actually used.
 
@@ -531,7 +557,8 @@ follow the app language.
 ## M5 — Progress
 
 ### T17 · `PlayerStore` · M
-- The `PlayerData` model from tech_design §6, with a versioned schema.
+- The `PlayerData` model from tech_design §6, with a versioned schema,
+  including the settings (who starts, T16).
 - JSON file in the app documents directory, with an atomic write (temp file,
   then rename).
 - A corrupt or unknown file is backed up and reset. It never crashes.
@@ -626,7 +653,9 @@ Do this before T20 finalizes the tuning values.
 - Also tune `LetterMinimums` (T07, reviewed in T25): report how often games
   end on a rare letter (e.g. «а» in the Ukraine list: 232 names end in it, 16
   start with it).
-- Then do a real playtest with 2–3 people.
+- Then do a real playtest with 2–3 people, and settle game_design §6
+  "Open questions" (the alias-letter rule, the skipped letters, who starts
+  by default).
 
 **Done when:** the tuning constants are updated and the reasoning is noted in
 a comment.

@@ -68,13 +68,23 @@ lib/
 `Match` (pure Dart) owns the rules. `GameCubit` owns time and the UI flow.
 
 ```
-Match(catalog, list, difficulty, random, discoveredIds)
-  botMove()          -> BotMove.city(City) | BotMove.giveUp()
-  submit(String)     -> Accepted(City, points, isNew) | Rejected(reason)
-  hint()             -> City? (plays it for the player, 0 points)
-  surrender() / timeout()
-  state: requiredLetter, usedIds, history, score, chain, hintsLeft, result?
+Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.index(list, language)
+  botMove()          -> BotPlays(City) | BotGivesUp()
+  submit(String)     -> Accepted(Turn) | Rejected(reason)   // empty, notInList, wrongLetter, alreadyUsed
+  hint()             -> Turn? (plays a best-known unused city for the player, 0 points;
+                              null = no hints left or no city fits, nothing spent)
+  timeout()          -> MatchResult (player's turn only)
+  surrender()        -> MatchResult (either turn)
+  state: turn, requiredLetter, usedIds, history (Turns), score, chain, hintsLeft, result?
 ```
+
+- `Turn` = city, side, points, isNew, isHint. `MatchResult` = outcome
+  (`botGaveUp` | `timeout` | `surrendered`), score (with the win bonus),
+  chain, newCityIds and namedCityIds (for `PlayerData`, T18).
+- Moving out of turn or after the end throws a `StateError`: that's a
+  programming error, not a game event.
+- Hints pick randomly within the best tier that still has an unused city for
+  the letter.
 
 `GameCubit` state is a `sealed` hierarchy:
 - `GameLoading`
@@ -204,6 +214,7 @@ discoveredIds: Set<int>                 // every city the player ever named (not
 records: {list×difficulty: {wins, losses, bestScore}}
 gamesPlayed, gamesWon, longestChain
 lastSetup: {list, difficulty}
+settings: {firstTurn: bot | player}     // "Who starts" (game_design §2.2)
 ```
 
 The locale is persisted by `easy_localization` itself.

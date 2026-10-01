@@ -25,7 +25,9 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
 - **Start** button.
 
 ### 2.2 Turns
-- CityBot opens the game by naming a city.
+- CityBot opens the game by naming a city. A **"Who starts"** setting lets
+  the player open instead (CityBot by default). The opening city can start
+  with any letter.
 - Turns alternate: player → bot → player → …
 - The city list is the same for both sides. The **player** may name any city in
   the active list. **CityBot** only names cities from its *vocabulary* (§2.5).
@@ -60,7 +62,11 @@ An answer is accepted if all of these are true:
      historic ones (Kiev → Kyiv, Кіровоград → Кропивницький, Bombay →
      Mumbai). Russian names are not accepted.
    - There is **no typo guessing** in MVP.
-2. **It starts with the required letter** (§2.3).
+2. **It starts with the required letter** (§2.3), by what the player typed
+   **or** by the city's display name. So "Bombay" is accepted for «b» and for
+   «m» (it's Mumbai), which is forgiving on purpose. The next letter always
+   comes from the display name, which is what the chat shows. *Open question:
+   revisit after playtesting (§6).*
 3. **It hasn't been used** in this game by either side. There is one shared
    used-set.
 
@@ -137,6 +143,7 @@ can't render Ukrainian.
 4. **Game over.** A win/loss view, as in §2.7.
 5. **Settings.**
    - Language: Ukrainian / English, applied live.
+   - Who starts: CityBot (default) / me (§2.2).
    - About / credits, including the GeoNames data attribution required by its
      license.
 6. **Statistics.**
@@ -198,3 +205,20 @@ List sizes (GeoNames, Sept 2026 build):
   starts with it: Енергодар after an «-ське» city, Йокогама after Шанхай.
   Players who know a rare city can use it, and games don't jam on the rare
   letter. Reviewed in T25.
+
+## 6. Open questions (revisit after playtesting)
+
+Rules that were decided provisionally. Each one is easy to change in
+`engine/`; decide after the playtest in T20.
+
+- **Alias answers and the letter (T09, §2.4).** Today an answer fits the
+  required letter by what was typed **or** by the city's display name, so
+  "Bombay" is accepted for «b» and «m». Alternatives:
+  - strict: the display name only;
+  - typed only: the next letter then follows what was typed, but the chat
+    shows the display name.
+  Watch whether players find the lenient rule confusing or exploit it.
+- **Which letters the letter rule skips (T07, §2.3).** This is task T25: the
+  per-list minimums, Енергодар, and the "rare-letter choice" option (§5).
+- **Who starts by default (§2.2).** CityBot, with a setting to open
+  yourself. Check which default new players prefer.
