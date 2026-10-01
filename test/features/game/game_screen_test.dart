@@ -11,6 +11,7 @@ import 'package:cities/features/game/game_cubit.dart';
 import 'package:cities/features/game/game_screen.dart';
 import 'package:cities/features/game/widgets/chat_bubble.dart';
 import 'package:cities/features/game/widgets/game_over_view.dart';
+import 'package:cities/features/game/widgets/pause_overlay.dart';
 import 'package:cities/features/game/widgets/turn_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -276,6 +277,39 @@ void main() {
         'е': 'next',
         'ц': 'next',
       }, reason: '«реме» and «ь» are plain');
+    },
+  );
+
+  testWidgets(
+    'going to the background pauses: blur + pause icon, tap resumes',
+    (tester) async {
+      // The app runs in the foreground, as on a phone.
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await _openGame(tester, [kyiv]);
+      await _botThinks(tester);
+      await tester.pump(const Duration(seconds: 3));
+      expect(find.text('27'), findsOneWidget);
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      // The state reaches the view a frame later than in-app taps do.
+      await tester.pump();
+      await tester.pump();
+      expect(find.byType(PauseOverlay), findsOneWidget);
+      expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
+
+      // Back in the app: still paused, and no time has passed.
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump(const Duration(minutes: 1));
+      expect(find.byType(PauseOverlay), findsOneWidget);
+      expect(find.text('27'), findsOneWidget);
+
+      await tester.tap(find.byType(PauseOverlay));
+      await tester.pump();
+      expect(find.byType(PauseOverlay), findsNothing);
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('26'), findsOneWidget);
+
+      await _close(tester);
     },
   );
 

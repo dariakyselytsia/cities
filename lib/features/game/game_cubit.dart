@@ -45,6 +45,7 @@ class GameCubit extends Cubit<GameState> {
   Timer? _botTimer;
   Timer? _countdown;
   int _secondsLeft = 0;
+  bool _paused = false;
   RejectionReason? _lastRejection;
 
   /// Starts a new game, dropping any game in progress. When the bot opens,
@@ -52,6 +53,7 @@ class GameCubit extends Cubit<GameState> {
   /// away.
   void start() {
     _cancelTimers();
+    _paused = false;
     final match = _createMatch(Set.unmodifiable(_discoveredIds));
     _match = match;
     _lastRejection = null;
@@ -82,12 +84,35 @@ class GameCubit extends Cubit<GameState> {
     _beginTurn(match);
   }
 
-  /// The player gives up and loses. Allowed while the bot thinks, too.
+  /// The player gives up and loses. Allowed while the bot thinks, and
+  /// while paused.
   void giveUp() {
     final match = _match;
     if (match == null || match.isOver) return;
+    _paused = false;
     match.surrender();
     _endGame(match);
+  }
+
+  /// Freezes the game while the app is in the background (a phone call, the
+  /// app switcher): the countdown and the bot's thinking stop, and the
+  /// player can't move until [resume].
+  void pause() {
+    final match = _match;
+    if (match == null || match.isOver || _paused) return;
+    _paused = true;
+    _cancelTimers();
+    _emitPlaying(match);
+  }
+
+  /// Picks up where [pause] left off, with the same seconds left. If the bot
+  /// was thinking, it thinks again from the start.
+  void resume() {
+    final match = _match;
+    if (match == null || match.isOver || !_paused) return;
+    _paused = false;
+    _startTimers(match);
+    _emitPlaying(match);
   }
 
   @override
@@ -99,15 +124,21 @@ class GameCubit extends Cubit<GameState> {
   /// The match, when the player may move in it.
   Match? get _playerMatch {
     final match = _match;
-    if (match == null || match.isOver || match.turn != Side.player) {
+    if (match == null || match.isOver || _paused || match.turn != Side.player) {
       return null;
     }
     return match;
   }
 
   void _beginTurn(Match match) {
-    _cancelTimers();
     _secondsLeft = match.difficulty.turnTime.inSeconds;
+    _startTimers(match);
+    _emitPlaying(match);
+  }
+
+  /// The bot's thinking or the player's countdown, from [_secondsLeft].
+  void _startTimers(Match match) {
+    _cancelTimers();
     switch (match.turn) {
       case Side.bot:
         _botTimer = Timer(botThinkingTime(_random), () => _botMove(match));
@@ -117,7 +148,6 @@ class GameCubit extends Cubit<GameState> {
           (_) => _tick(match),
         );
     }
-    _emitPlaying(match);
   }
 
   void _botMove(Match match) {
@@ -159,6 +189,7 @@ class GameCubit extends Cubit<GameState> {
       chain: match.chain,
       hintsLeft: match.hintsLeft,
       lastRejection: _lastRejection,
+      isPaused: _paused,
     ),
   );
 

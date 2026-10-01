@@ -52,7 +52,7 @@
 | T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [x] |
 | T12 | Game screen (chat UI) | M3 Playable | L | [x] |
 | T13 | Game-over view | M3 Playable | S | [x] |
-| T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [ ] |
+| T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [x] |
 | T14 | Home screen + router | M4 App shell | M | [ ] |
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [ ] |
 | T16 | Settings screen (language + About) | M4 App shell | S | [ ] |
@@ -648,6 +648,23 @@ background, so a phone call or a notification can lose the game on timeout.
 - a `fake_async` test shows no time passes while paused;
 - on the emulator, home button → back to the app shows the blurred chat with
   the pause icon, and a tap resumes with the same seconds left.
+
+**Result (2026-10-02):**
+- `GameCubit.pause()` / `resume()`: pause stops the countdown and the bot's
+  thinking and sets `GamePlaying.isPaused`; answers and hints are ignored
+  while paused, Give up still works. Resume restarts the countdown from the
+  same seconds left; a bot that was thinking thinks again from the start.
+- `GameView` pauses on `AppLifecycleListener.onInactive` (a call, a
+  notification, the app switcher — it also hides the chat from the
+  switcher's preview). Resuming is the player's tap on `PauseOverlay`: the
+  board under the header is blurred (σ 12) under a big teal ‖ with
+  "Пауза — торкніться, щоб продовжити". The keyboard closes while paused
+  and comes back on resume.
+- Tests: `fake_async` cubit tests (no time passes while paused, the bot
+  waits, moves are ignored, give up while paused, no pause after the end)
+  and a widget test driving the app lifecycle.
+- Checked on the emulator: 26 s left → Home for 8 s → back: blurred, ‖,
+  still 26 → tap → counting again.
 
 ---
 

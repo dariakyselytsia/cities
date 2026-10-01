@@ -97,6 +97,7 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
 GameCubit(createMatch: (discoveredIds) => Match(...), random, discoveredIds)
   start()            // a new game; again = "Play again"
   submit(String) · hint() · giveUp()
+  pause() · resume()  // app in the background: no time passes; the player taps to resume
 ```
 
 Flow:

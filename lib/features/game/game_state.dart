@@ -31,6 +31,7 @@ final class GamePlaying extends GameState {
     required this.chain,
     required this.hintsLeft,
     this.lastRejection,
+    this.isPaused = false,
   });
 
   /// Every city played so far, by both sides, in order.
@@ -64,6 +65,10 @@ final class GamePlaying extends GameState {
   /// Why the player's last answer was rejected, until they play a city.
   final RejectionReason? lastRejection;
 
+  /// The app went to the background: no time passes, and the chat is
+  /// hidden until the player resumes.
+  final bool isPaused;
+
   @override
   List<Object?> get props => [
     history,
@@ -76,6 +81,7 @@ final class GamePlaying extends GameState {
     chain,
     hintsLeft,
     lastRejection,
+    isPaused,
   ];
 }
 

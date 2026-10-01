@@ -67,7 +67,9 @@
       "named_again_title": "Already known",
       "none_named": "No cities of your own this time — next time!",
       "new_count": "New"
-    }
+    },
+    "paused": "Paused",
+    "tap_to_resume": "Tap to continue"
   },
   "leaderboard": {
     "title": "Leaderboard",

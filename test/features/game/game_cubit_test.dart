@@ -40,6 +40,7 @@ GamePlaying _playing(
   int chain = 0,
   int hintsLeft = hintsPerGame,
   RejectionReason? rejection,
+  bool isPaused = false,
 }) => GamePlaying(
   history: history,
   letterMarks: _marks(history),
@@ -50,6 +51,7 @@ GamePlaying _playing(
   chain: chain,
   hintsLeft: hintsLeft,
   lastRejection: rejection,
+  isPaused: isPaused,
 );
 
 /// Where the newest city's name gives the next letter (`LetterRule` tests
@@ -371,6 +373,74 @@ void main() {
         async.elapse(botThinkingMax);
         cubit.submit('Vilnius');
         expect((cubit.state as GamePlaying).score, pointsForCity);
+      });
+    });
+
+    test('pausing stops the countdown; resuming keeps the seconds left', () {
+      final cubit = _cubit([kyiv, seoul]);
+      _inFakeTime(cubit, (async) {
+        async.elapse(botThinkingMax);
+        async.elapse(const Duration(seconds: 5));
+        cubit.pause();
+        final paused = _playing(
+          [_bot(kyiv)],
+          turn: Side.player,
+          letter: 'v',
+          secondsLeft: _turnSeconds - 5,
+          isPaused: true,
+        );
+        expect(cubit.state, paused);
+
+        // No time passes, and no moves are taken while paused.
+        async.elapse(const Duration(minutes: 5));
+        cubit.submit('Vilnius');
+        cubit.hint();
+        expect(cubit.state, paused);
+
+        cubit.resume();
+        expect(
+          cubit.state,
+          _playing(
+            [_bot(kyiv)],
+            turn: Side.player,
+            letter: 'v',
+            secondsLeft: _turnSeconds - 5,
+          ),
+        );
+        async.elapse(const Duration(seconds: 1));
+        expect((cubit.state as GamePlaying).secondsLeft, _turnSeconds - 6);
+      });
+    });
+
+    test('pausing while the bot thinks: it moves only after resuming', () {
+      final cubit = _cubit([kyiv]);
+      _inFakeTime(cubit, (async) {
+        cubit.pause();
+        async.elapse(const Duration(minutes: 1));
+        expect(cubit.state, _playing(const [], turn: Side.bot, isPaused: true));
+
+        cubit.resume();
+        async.elapse(botThinkingMax);
+        expect(
+          cubit.state,
+          _playing([_bot(kyiv)], turn: Side.player, letter: 'v'),
+        );
+      });
+    });
+
+    test('giving up while paused ends the game; pause after the end does '
+        'nothing', () {
+      final cubit = _cubit([kyiv]);
+      _inFakeTime(cubit, (async) {
+        async.elapse(botThinkingMax);
+        cubit.pause();
+        cubit.giveUp();
+        final over = cubit.state;
+        expect(over, isA<GameOver>());
+        cubit.pause();
+        cubit.resume();
+        async.elapse(const Duration(minutes: 1));
+        expect(cubit.state, over);
       });
     });
 

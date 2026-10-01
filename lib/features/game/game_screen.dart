@@ -16,6 +16,7 @@ import 'widgets/chat_bubble.dart';
 import 'widgets/game_over_view.dart';
 import 'widgets/game_header.dart';
 import 'widgets/input_bar.dart';
+import 'widgets/pause_overlay.dart';
 import 'widgets/turn_banner.dart';
 
 /// The game route: builds a [GameCubit] for the chosen setup, with city
@@ -81,8 +82,21 @@ class _GameViewState extends State<GameView> {
   final _input = TextEditingController();
   final _focus = FocusNode();
 
+  /// Pauses the game when the app leaves the foreground: a phone call, a
+  /// notification, the app switcher. "Inactive" comes first on every
+  /// platform, and it also hides the chat from the app switcher's preview.
+  /// Resuming is the player's tap, not automatic.
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onInactive: () => _cubit.pause());
+  }
+
   @override
   void dispose() {
+    _lifecycle.dispose();
     _input.dispose();
     _focus.dispose();
     super.dispose();
@@ -125,6 +139,7 @@ class _GameViewState extends State<GameView> {
   /// re-emitted on every timer tick).
   int _historyLength = 0;
   Side? _turn;
+  bool _paused = false;
 
   void _onState(BuildContext context, GameState state) {
     if (state is! GamePlaying) {
@@ -136,13 +151,16 @@ class _GameViewState extends State<GameView> {
     if (history.length > _historyLength && history.last.side == Side.player) {
       _input.clear();
     }
-    // Focus once per player turn, so a keyboard the player closed stays
-    // closed until their next turn.
-    if (state.turn == Side.player && _turn != Side.player) {
+    // Focus once per player turn (and again after a pause), so a keyboard
+    // the player closed stays closed until their next turn.
+    if (state.isPaused) {
+      _focus.unfocus();
+    } else if (state.turn == Side.player && (_turn != Side.player || _paused)) {
       _focus.requestFocus();
     }
     _historyLength = history.length;
     _turn = state.turn;
+    _paused = state.isPaused;
   }
 
   @override
@@ -168,7 +186,7 @@ class _GameViewState extends State<GameView> {
   }
 
   Widget _board(GamePlaying state) {
-    final isPlayerTurn = state.turn == Side.player;
+    final isPlayerTurn = state.turn == Side.player && !state.isPaused;
     final letters = [?state.requiredLetter, ...state.extraLetters];
     return Column(
       children: [
@@ -180,18 +198,30 @@ class _GameViewState extends State<GameView> {
           onBack: () => Navigator.maybePop(context),
           onGiveUp: _confirmGiveUp,
         ),
-        StatPills(chain: state.chain, score: state.score),
-        Expanded(child: _chat(state.history, state.letterMarks)),
-        if (state.lastRejection case final reason?)
-          RejectionBanner(reason: reason, letters: letters),
-        TurnBanner(turn: state.turn, letters: letters),
-        InputBar(
-          controller: _input,
-          focusNode: _focus,
-          canSend: isPlayerTurn,
-          hintsLeft: state.hintsLeft,
-          onSubmit: _submit,
-          onHint: _cubit.hint,
+        Expanded(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  StatPills(chain: state.chain, score: state.score),
+                  Expanded(child: _chat(state.history, state.letterMarks)),
+                  if (state.lastRejection case final reason?)
+                    RejectionBanner(reason: reason, letters: letters),
+                  TurnBanner(turn: state.turn, letters: letters),
+                  InputBar(
+                    controller: _input,
+                    focusNode: _focus,
+                    canSend: isPlayerTurn,
+                    hintsLeft: state.hintsLeft,
+                    onSubmit: _submit,
+                    onHint: _cubit.hint,
+                  ),
+                ],
+              ),
+              if (state.isPaused)
+                Positioned.fill(child: PauseOverlay(onResume: _cubit.resume)),
+            ],
+          ),
         ),
       ],
     );
