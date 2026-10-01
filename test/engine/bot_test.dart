@@ -159,6 +159,21 @@ void main() {
       expect([for (final d in Difficulty.values) d.winMultiplier], [1, 2, 3]);
     });
   });
+
+  test('the bot thinks for 0.6–1.2 s, and not always the same time', () {
+    final random = Random(3);
+    final times = [for (var i = 0; i < 200; i++) botThinkingTime(random)];
+    for (final time in times) {
+      expect(
+        time.inMicroseconds,
+        inInclusiveRange(
+          botThinkingMin.inMicroseconds,
+          botThinkingMax.inMicroseconds,
+        ),
+      );
+    }
+    expect(times.toSet().length, greaterThan(100));
+  });
 }
 
 const _mia =

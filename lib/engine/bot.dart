@@ -35,6 +35,17 @@ final class BotGivesUp extends BotMove {
 /// Tuning values (T20).
 const List<int> botTierWeights = [4, 2, 1, 1];
 
+/// How long CityBot "thinks" before it answers (game_design §2.5). An
+/// instant reply feels mechanical; much longer just slows the game down.
+/// Tuning values (T20).
+const Duration botThinkingMin = Duration(milliseconds: 600);
+const Duration botThinkingMax = Duration(milliseconds: 1200);
+
+/// A random thinking time from [botThinkingMin] up to [botThinkingMax], so
+/// the bot's rhythm isn't robotic.
+Duration botThinkingTime(Random random) =>
+    botThinkingMin + (botThinkingMax - botThinkingMin) * random.nextDouble();
+
 /// CityBot: the opponent. It knows only the cities of its [difficulty]'s
 /// tiers, and it's beatable because that vocabulary runs out
 /// (game_design §2.5).

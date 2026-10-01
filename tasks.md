@@ -49,9 +49,10 @@
 | T08 | Difficulty + CityBot | M2 Engine | M | [x] |
 | T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [x] |
 | T10 | City loader + splash + composition root | M3 Playable | M | [x] |
-| T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [ ] |
+| T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [x] |
 | T12 | Game screen (chat UI) | M3 Playable | L | [ ] |
 | T13 | Game-over view | M3 Playable | S | [ ] |
+| T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [ ] |
 | T14 | Home screen + router | M4 App shell | M | [ ] |
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [ ] |
 | T16 | Settings screen (language + About) | M4 App shell | S | [ ] |
@@ -525,6 +526,35 @@ It takes the player's `discoveredIds` as input.
 - a rejection keeps the timer running;
 - timeout → loss, bot give-up → win, hint → 0 points.
 
+**Result (2026-10-01):**
+- `lib/features/game/`: `GameState` (`GameLoading` / `GamePlaying` /
+  `GameOver`) and `GameCubit`.
+  - `GamePlaying` carries the history, whose turn, the required letter,
+    seconds left, score, hints left and the last rejection. `GameOver`
+    carries the `MatchResult` and the history (for T13's list of cities).
+  - The cubit takes a `createMatch` factory, so the setup (list,
+    difficulty, who starts, discovered cities) stays with whoever builds it,
+    and `start()` again is "Play again" (T13).
+  - The countdown is a 1-s `Timer.periodic` that runs only on the player's
+    turn. It restarts from the full turn time on every new player turn, but
+    not on a rejection. On the bot's turn the state shows the full time.
+  - Answers, hints and give-ups at the wrong moment (while the bot thinks,
+    after the end) are ignored rather than thrown: they're UI races. A hint
+    that finds no city does nothing.
+  - Timers are cancelled on `close()`, on give-up, and on `start()`.
+- `engine/bot.dart`: the thinking time is a tuning value, `botThinkingMin` /
+  `botThinkingMax` (0.6–1.2 s), drawn by `botThinkingTime(random)`.
+- `ScriptedBot` moved to `test/helpers/` and is shared by the match and
+  cubit tests.
+- Tests: in `fake_async`, a full game (the bot opens → the player answers →
+  the bot replies → the bot gives up → win, with the exact score), the
+  thinking window, ticks and timeout → loss, rejections keeping the timer,
+  a hint for 0 points, a hint with no city, give-up while the bot thinks,
+  the player opening (countdown right away), and close stopping timers.
+  `bloc_test` covers the initial state, ignored actions and Play again.
+- Found: nothing pauses the countdown when the app goes to the background
+  (a phone call loses the game). Added as T26.
+
 ### T12 · Game screen (chat UI) · L
 Port the visuals from `archive/v0` (`game_session_screen.dart`):
 - bot bubbles on the left, player bubbles on the right, with an accented first
@@ -545,6 +575,23 @@ smoke test.
 
 **Done when:** it is reached from all three end paths (bot gives up, timeout,
 give up).
+
+### T26 · Pause the turn timer in the background · S
+Found in T11: the countdown keeps running when the app goes to the
+background, so a phone call or a notification can lose the game on timeout.
+- `GameCubit.pause()` / `resume()`: stop and restart the countdown (and the
+  bot's thinking), keeping the seconds left.
+- The game screen calls them on `AppLifecycleState` changes.
+- **Decided (2026-10-01):** while paused, the chat is **blurred** under a big
+  pause icon (‖), so nobody can study the chat or look a city up with the
+  clock stopped. Back in the app, the game stays paused until the player taps
+  the overlay, then the countdown resumes. `GamePlaying` gets an `isPaused`
+  flag; the overlay is a widget over the chat (no rules in it).
+
+**Done when:**
+- a `fake_async` test shows no time passes while paused;
+- on the emulator, home button → back to the app shows the blurred chat with
+  the pause icon, and a tap resumes with the same seconds left.
 
 ---
 

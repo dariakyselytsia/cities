@@ -9,6 +9,8 @@ import 'package:cities/engine/match.dart';
 import 'package:cities/engine/scoring.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/scripted_bot.dart';
+
 City _city(int id, String name, int population,
         {List<String> aka = const [], String cc = 'XX'}) =>
     City(
@@ -50,19 +52,6 @@ final _index = _indexOf([
   amsterdam, paris, azov, lviv, victoriaCa, victoriaAu, bilbao,
 ]);
 
-/// A bot that plays a fixed list of cities, then gives up.
-class _ScriptedBot extends CityBot {
-  _ScriptedBot(CityIndex index, List<City> script)
-      : _script = [...script],
-        super(index: index, difficulty: Difficulty.hard, random: Random(0));
-
-  final List<City> _script;
-
-  @override
-  BotMove move({required String? requiredLetter, required Set<int> usedIds}) =>
-      _script.isEmpty ? const BotGivesUp() : BotPlays(_script.removeAt(0));
-}
-
 Match _match(
   List<City> botScript, {
   Difficulty difficulty = Difficulty.medium,
@@ -76,7 +65,7 @@ Match _match(
     difficulty: difficulty,
     random: Random(seed),
     discoveredIds: discovered,
-    bot: _ScriptedBot(i, botScript),
+    bot: ScriptedBot(i, botScript),
   );
 }
 
@@ -105,7 +94,7 @@ void main() {
         difficulty: Difficulty.medium,
         random: Random(1),
         firstTurn: Side.player,
-        bot: _ScriptedBot(_index, [vilnius]),
+        bot: ScriptedBot(_index, [vilnius]),
       );
       expect(match.turn, Side.player);
       expect(match.requiredLetter, isNull);
@@ -122,7 +111,7 @@ void main() {
         difficulty: Difficulty.medium,
         random: Random(1),
         firstTurn: Side.player,
-        bot: _ScriptedBot(_index, const []),
+        bot: ScriptedBot(_index, const []),
       );
       // No letter yet: any tier-1 city (Kursk or Kyiv).
       expect(match.hint()?.city, anyOf(kursk, kyiv));

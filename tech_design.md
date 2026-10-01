@@ -87,15 +87,26 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
   the letter.
 
 `GameCubit` state is a `sealed` hierarchy:
-- `GameLoading`
+- `GameLoading` (before `start()`)
 - `GamePlaying`, which carries: history, whose turn, required letter, seconds
   left, score, hints left, and the last rejection
-- `GameOver`, which carries the result summary
+- `GameOver`, which carries the result summary and the history
+
+```
+GameCubit(createMatch: () => Match(...), random)
+  start()            // a new game; again = "Play again"
+  submit(String) · hint() · giveUp()
+```
 
 Flow:
-1. On start, the cubit calls `botMove()` after a short "thinking" delay.
+1. On start, the cubit calls `botMove()` after a "thinking" delay
+   (`botThinkingTime`, 0.6–1.2 s). When the player opens, their countdown
+   starts right away.
 2. On the player's turn, it runs the countdown (a 1-second `Timer.periodic`).
-3. When an answer is accepted, control passes to the bot.
+   It restarts on each new player turn, not on a rejection.
+3. When an answer is accepted (or a hint played), control passes to the bot.
+   Actions at the wrong moment (while the bot thinks, after the end) are
+   ignored.
 4. When the bot gives up, the player wins. On timeout or surrender, the player
    loses.
 5. On `GameOver`, the result is folded into `PlayerData` and saved.

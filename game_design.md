@@ -140,6 +140,9 @@ can't render Ukrainian.
    - A turn banner shows "your turn — «Х»" or "CityBot is thinking…".
    - A timer badge, a score pill, and a hint button with the remaining count.
    - A **Give up** action and an input bar that auto-focuses.
+   - When the app goes to the background, the game pauses: the countdown
+     stops, and the chat is blurred under a big pause icon (‖) so the clock
+     can't be used to look cities up. A tap resumes it.
 4. **Game over.** A win/loss view, as in §2.7.
 5. **Settings.**
    - Language: Ukrainian / English, applied live.
