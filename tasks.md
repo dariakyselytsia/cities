@@ -51,7 +51,7 @@
 | T10 | City loader + splash + composition root | M3 Playable | M | [x] |
 | T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [x] |
 | T12 | Game screen (chat UI) | M3 Playable | L | [x] |
-| T13 | Game-over view | M3 Playable | S | [ ] |
+| T13 | Game-over view | M3 Playable | S | [x] |
 | T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [ ] |
 | T14 | Home screen + router | M4 App shell | M | [ ] |
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [ ] |
@@ -613,6 +613,24 @@ smoke test.
 
 **Done when:** it is reached from all three end paths (bot gives up, timeout,
 give up).
+
+**Result (2026-10-02):**
+- `widgets/game_over_view.dart` replaces T12's temporary end panel: a
+  win/loss badge and title with the reason, three totals (score, chain, new
+  cities), the cities the player named, split into "New discoveries" (teal
+  chips) and "Already known", a friendly line when they named none, and
+  Home / Play again. Hinted cities aren't listed: they aren't the player's.
+- `GameOver` gives `namedCities`, `newCities` and `knownCities` (from the
+  `MatchResult` ids), so the view only displays them.
+- **In-memory discoveries:** `GameCubit` keeps the discovered city ids and
+  passes them to each new `Match` (`createMatch(discoveredIds)`), so after
+  Play again a city named in the last game is known (+10, not +25). It
+  starts from `discoveredIds` (empty for now); T18 seeds it from
+  `PlayerData` and saves it. Leaving to Home forgets it until then.
+- Tests: the cubit (named / new / known lists, Play again remembers
+  discoveries, seeded discoveries); the screen reaches the game-over view
+  from all three end paths (bot gives up, give up, timeout). Checked on the
+  emulator (give-up path).
 
 ### T26 · Pause the turn timer in the background · S
 Found in T11: the countdown keeps running when the app goes to the

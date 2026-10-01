@@ -20,8 +20,9 @@ final _turnSeconds = _difficulty.turnTime.inSeconds;
 
 GameCubit _cubit(List<City> botScript, {Side firstTurn = Side.bot}) =>
     GameCubit(
-      createMatch: () => Match(
+      createMatch: (discoveredIds) => Match(
         index: chainIndex,
+        discoveredIds: discoveredIds,
         difficulty: _difficulty,
         random: Random(1),
         firstTurn: firstTurn,
@@ -131,7 +132,6 @@ void main() {
               namedCityIds: [vilnius.id, lima.id],
             ),
             history: [...afterSeoul, _named(lima)],
-            letterMarks: _marks([...afterSeoul, _named(lima)]),
           ),
         );
       });
@@ -162,7 +162,6 @@ void main() {
               namedCityIds: [],
             ),
             history: [_bot(kyiv)],
-            letterMarks: _marks([_bot(kyiv)]),
           ),
         );
         sub.cancel();
@@ -288,7 +287,6 @@ void main() {
               namedCityIds: [],
             ),
             history: [],
-            letterMarks: null,
           );
           expect(cubit.state, surrendered);
 
@@ -321,6 +319,58 @@ void main() {
             chain: 1,
           ),
         );
+      });
+    });
+
+    test(
+      'the game over lists named and new cities; Play again remembers them',
+      () {
+        final cubit = _cubit([kyiv, seoul]);
+        _inFakeTime(cubit, (async) {
+          async.elapse(botThinkingMax);
+          cubit.submit('Vilnius');
+          async.elapse(botThinkingMax);
+          cubit.hint(); // Lima: a hint, not named
+          async.elapse(botThinkingMax); // the bot gives up
+
+          final over = cubit.state as GameOver;
+          expect(over.namedCities, [vilnius]);
+          expect(over.newCities, [vilnius]);
+          expect(over.knownCities, isEmpty);
+
+          // The same city in the next game is known: +10, not +25.
+          cubit.start();
+          async.elapse(botThinkingMax);
+          cubit.submit('Vilnius');
+          final playing = cubit.state as GamePlaying;
+          expect(
+            playing.history.last,
+            Turn(city: vilnius, side: Side.player, points: pointsForCity),
+          );
+          cubit.giveUp();
+          final again = cubit.state as GameOver;
+          expect(again.newCities, isEmpty);
+          expect(again.knownCities, [vilnius]);
+        });
+      },
+    );
+
+    test('cities discovered before are known from the first game', () {
+      final cubit = GameCubit(
+        createMatch: (discoveredIds) => Match(
+          index: chainIndex,
+          difficulty: _difficulty,
+          random: Random(1),
+          discoveredIds: discoveredIds,
+          bot: ScriptedBot(chainIndex, [kyiv]),
+        ),
+        random: Random(1),
+        discoveredIds: {vilnius.id},
+      );
+      _inFakeTime(cubit, (async) {
+        async.elapse(botThinkingMax);
+        cubit.submit('Vilnius');
+        expect((cubit.state as GamePlaying).score, pointsForCity);
       });
     });
 

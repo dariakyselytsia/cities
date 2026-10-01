@@ -10,6 +10,7 @@ import 'package:cities/engine/match.dart';
 import 'package:cities/features/game/game_cubit.dart';
 import 'package:cities/features/game/game_screen.dart';
 import 'package:cities/features/game/widgets/chat_bubble.dart';
+import 'package:cities/features/game/widgets/game_over_view.dart';
 import 'package:cities/features/game/widgets/turn_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,8 +33,9 @@ Widget _app(List<City> botScript) => MaterialApp(
           MaterialPageRoute<void>(
             builder: (_) => BlocProvider(
               create: (_) => GameCubit(
-                createMatch: () => Match(
+                createMatch: (discoveredIds) => Match(
                   index: chainIndex,
+                  discoveredIds: discoveredIds,
                   difficulty: Difficulty.medium,
                   random: Random(1),
                   bot: ScriptedBot(chainIndex, botScript),
@@ -145,6 +147,13 @@ void main() {
     expect(find.text('game.win'), findsOneWidget);
     expect(find.text('game.outcome.botGaveUp'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
+    // The game-over view: Vilnius is a new discovery; hinted Lima isn't
+    // the player's.
+    expect(find.byType(GameOverView), findsOneWidget);
+    expect(find.text('game.over.new_title'), findsOneWidget);
+    expect(find.text('Vilnius'), findsOneWidget);
+    expect(find.text('Lima'), findsNothing);
+    expect(find.text('game.over.named_again_title'), findsNothing);
 
     await tester.tap(find.text('game.play_again'));
     await tester.pump();
@@ -176,6 +185,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('game.loss'), findsOneWidget);
     expect(find.text('game.outcome.surrendered'), findsOneWidget);
+    expect(find.byType(GameOverView), findsOneWidget);
+    expect(find.text('game.over.none_named'), findsOneWidget);
 
     await _close(tester);
   });
@@ -189,6 +200,7 @@ void main() {
     await tester.pump(const Duration(seconds: 5));
     expect(find.text('game.loss'), findsOneWidget);
     expect(find.text('game.outcome.timeout'), findsOneWidget);
+    expect(find.byType(GameOverView), findsOneWidget);
 
     await _close(tester);
   });

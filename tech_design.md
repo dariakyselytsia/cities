@@ -90,10 +90,11 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
 - `GameLoading` (before `start()`)
 - `GamePlaying`, which carries: history, whose turn, required letter, seconds
   left, score, hints left, and the last rejection
-- `GameOver`, which carries the result summary and the history
+- `GameOver`, which carries the result summary and the history (named, new
+  and already-known cities for the game-over view)
 
 ```
-GameCubit(createMatch: () => Match(...), random)
+GameCubit(createMatch: (discoveredIds) => Match(...), random, discoveredIds)
   start()            // a new game; again = "Play again"
   submit(String) · hint() · giveUp()
 ```

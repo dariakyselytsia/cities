@@ -13,7 +13,7 @@ import '../../engine/match.dart';
 import 'game_cubit.dart';
 import 'game_state.dart';
 import 'widgets/chat_bubble.dart';
-import 'widgets/game_end_panel.dart';
+import 'widgets/game_over_view.dart';
 import 'widgets/game_header.dart';
 import 'widgets/input_bar.dart';
 import 'widgets/turn_banner.dart';
@@ -42,10 +42,11 @@ class GameScreen extends StatelessWidget {
       create: (_) {
         final random = Random();
         return GameCubit(
-          createMatch: () => Match(
+          createMatch: (discoveredIds) => Match(
             index: index,
             difficulty: difficulty,
             random: random,
+            discoveredIds: discoveredIds,
             firstTurn: firstTurn,
           ),
           random: random,
@@ -204,12 +205,13 @@ class _GameViewState extends State<GameView> {
           difficulty: widget.difficulty,
           onBack: () => Navigator.maybePop(context),
         ),
-        StatPills(chain: state.result.chain, score: state.result.score),
-        Expanded(child: _chat(state.history, state.letterMarks)),
-        GameEndPanel(
-          result: state.result,
-          onPlayAgain: _cubit.start,
-          onHome: () => Navigator.maybePop(context),
+        Expanded(
+          child: GameOverView(
+            state: state,
+            language: widget.language,
+            onPlayAgain: _cubit.start,
+            onHome: () => Navigator.maybePop(context),
+          ),
         ),
       ],
     );

@@ -21,15 +21,25 @@ import 'game_state.dart';
 /// errors.
 class GameCubit extends Cubit<GameState> {
   /// [createMatch] builds a fresh game for [start], with the setup the
-  /// player chose (list, difficulty, who starts). [random] drives the bot's
-  /// thinking time.
-  GameCubit({required Match Function() createMatch, required Random random})
-    : _createMatch = createMatch,
-      _random = random,
-      super(const GameLoading());
+  /// player chose (list, difficulty, who starts) and the cities discovered
+  /// so far. [discoveredIds] are the cities the player had named before;
+  /// [random] drives the bot's thinking time.
+  GameCubit({
+    required Match Function(Set<int> discoveredIds) createMatch,
+    required Random random,
+    Set<int> discoveredIds = const {},
+  }) : _createMatch = createMatch,
+       _random = random,
+       _discoveredIds = {...discoveredIds},
+       super(const GameLoading());
 
-  final Match Function() _createMatch;
+  final Match Function(Set<int> discoveredIds) _createMatch;
   final Random _random;
+
+  /// Every city the player has named, this game included. It's in memory
+  /// until T18 saves it, so "Play again" already scores a city named in the
+  /// last game as known (+10), not new (+25).
+  final Set<int> _discoveredIds;
 
   Match? _match;
   Timer? _botTimer;
@@ -42,7 +52,7 @@ class GameCubit extends Cubit<GameState> {
   /// away.
   void start() {
     _cancelTimers();
-    final match = _createMatch();
+    final match = _createMatch(Set.unmodifiable(_discoveredIds));
     _match = match;
     _lastRejection = null;
     _beginTurn(match);
@@ -133,13 +143,8 @@ class GameCubit extends Cubit<GameState> {
     _cancelTimers();
     final result = match.result;
     if (result == null) return;
-    emit(
-      GameOver(
-        result: result,
-        history: match.history,
-        letterMarks: _letterMarks(match),
-      ),
-    );
+    _discoveredIds.addAll(result.newCityIds);
+    emit(GameOver(result: result, history: match.history));
   }
 
   void _emitPlaying(Match match) => emit(

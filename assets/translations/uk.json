@@ -58,10 +58,16 @@
       "timeout": "Час вийшов",
       "surrendered": "Ви здалися"
     },
-    "final_score": "Рахунок: {score}",
     "play_again": "Ще раз",
     "home": "Головна",
-    "or": "або"
+    "or": "або",
+    "over": {
+      "new_title": "Нові відкриття",
+      "named_title": "Ваші міста",
+      "named_again_title": "Уже знайомі",
+      "none_named": "Цього разу без власних міст — наступного разу вийде!",
+      "new_count": "Нових"
+    }
   },
   "leaderboard": {
     "title": "Таблиця лідерів",

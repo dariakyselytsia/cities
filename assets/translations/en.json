@@ -58,10 +58,16 @@
       "timeout": "Time's up",
       "surrendered": "You gave up"
     },
-    "final_score": "Score: {score}",
     "play_again": "Play again",
     "home": "Home",
-    "or": "or"
+    "or": "or",
+    "over": {
+      "new_title": "New discoveries",
+      "named_title": "Your cities",
+      "named_again_title": "Already known",
+      "none_named": "No cities of your own this time — next time!",
+      "new_count": "New"
+    }
   },
   "leaderboard": {
     "title": "Leaderboard",

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../engine/city.dart';
 import '../../engine/letter_rule.dart';
 import '../../engine/match.dart';
 
@@ -79,20 +80,33 @@ final class GamePlaying extends GameState {
 }
 
 /// The game ended: [result] is the summary, and [history] is every city
-/// played, for the game-over view (T13).
+/// played, for the game-over view.
 final class GameOver extends GameState {
-  const GameOver({
-    required this.result,
-    required this.history,
-    required this.letterMarks,
-  });
+  const GameOver({required this.result, required this.history});
 
   final MatchResult result;
   final List<Turn> history;
 
-  /// As in [GamePlaying.letterMarks]: the letter left unanswered.
-  final LetterMarks? letterMarks;
+  /// The cities the player named themselves, in order (hints don't count).
+  List<City> get namedCities => _cities(result.namedCityIds);
+
+  /// The ones the player named for the first time ever.
+  List<City> get newCities => _cities(result.newCityIds);
+
+  /// The ones the player had named in earlier games.
+  List<City> get knownCities {
+    final newIds = result.newCityIds.toSet();
+    return [
+      for (final city in namedCities)
+        if (!newIds.contains(city.id)) city,
+    ];
+  }
+
+  List<City> _cities(List<int> ids) {
+    final byId = {for (final turn in history) turn.city.id: turn.city};
+    return [for (final id in ids) ?byId[id]];
+  }
 
   @override
-  List<Object?> get props => [result, history, letterMarks];
+  List<Object?> get props => [result, history];
 }
