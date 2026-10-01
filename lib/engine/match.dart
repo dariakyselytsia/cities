@@ -52,7 +52,7 @@ enum RejectionReason {
   notInList,
 
   /// It names a city, but neither the answer nor the city's name starts with
-  /// the required letter.
+  /// the required letter (or one of the extra letters).
   wrongLetter,
 
   /// Every city with this name (and the right letter) was already played.
@@ -193,9 +193,22 @@ class Match {
   int get chain => _history.where(_namedByPlayer).length;
 
   /// The letter the next city must start with, or `null` when any letter
-  /// will do (the opening move, or after a dead end).
+  /// will do (the opening move, or after a dead end). CityBot and hints
+  /// always use this letter.
   String? get requiredLetter =>
       _history.isEmpty ? null : index.requiredLetterAfter(_history.last.city);
+
+  /// Rarer letters the player may answer with instead of [requiredLetter]:
+  /// the ones the letter rule skipped at the end of the last city because
+  /// too few cities start with them ("Кам'янське" → «к», or «е»). A player
+  /// who knows such a city (Енергодар) can use it. Letters no city starts
+  /// with («ь») never count. Empty when any letter will do.
+  List<String> get extraLetters {
+    if (_history.isEmpty) return const [];
+    final marks = index.letterMarks(_history.last.city);
+    if (marks.next == null) return const [];
+    return List.unmodifiable({for (final s in marks.skipped) s.letter});
+  }
 
   /// The result, once the game is over.
   MatchResult? get result => _result;
@@ -220,10 +233,11 @@ class Match {
   /// [answer] may be a display name or an alias, typed in any case, with or
   /// without apostrophes and diacritics (`normalizeName`). It is accepted
   /// when it names a city of the active list and language that:
-  /// 1. starts with the required letter: by the typed answer **or** by the
-  ///    city's display name, so "Bombay" works for «b» and for «m». This is
-  ///    forgiving on purpose. The next letter always comes from the display
-  ///    name, which is what the chat shows;
+  /// 1. starts with the required letter or one of the [extraLetters]: by
+  ///    the typed answer **or** by the city's display name, so "Bombay"
+  ///    works for «b» and for «m». This is forgiving on purpose. The next
+  ///    letter always comes from the display name, which is what the chat
+  ///    shows;
   /// 2. hasn't been played in this game.
   ///
   /// Among same-named cities, the most populous one that qualifies is
@@ -237,12 +251,14 @@ class Match {
     if (named.isEmpty) return const Rejected(RejectionReason.notInList);
 
     final letter = requiredLetter;
-    final answerFits = LetterRule.startsWithRequired(answer, letter);
+    final letters = [?letter, ...extraLetters];
+    bool fits(String text) =>
+        letter == null ||
+        letters.any((l) => LetterRule.startsWithRequired(text, l));
+    final answerFits = fits(answer);
     final rightLetter = [
       for (final city in named)
-        if (answerFits ||
-            LetterRule.startsWithRequired(city.name(index.language) ?? '', letter))
-          city,
+        if (answerFits || fits(city.name(index.language) ?? '')) city,
     ];
     if (rightLetter.isEmpty) return const Rejected(RejectionReason.wrongLetter);
 

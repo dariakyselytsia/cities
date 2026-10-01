@@ -106,6 +106,27 @@ void main() {
       expect(after(ukraine, en, 'Kamianets-Podilskyi'), 'i');
     });
 
+    test('the marked letters agree with the rule, for every city', () {
+      for (final list in CityListKind.values) {
+        for (final language in NameLanguage.values) {
+          final index = catalog.index(list, language);
+          for (final city in index.cities) {
+            final marks = index.letterMarks(city);
+            final reason =
+                '${list.name}/${language.name} ${city.name(language)}';
+            expect(marks.next?.letter, index.requiredLetterAfter(city),
+                reason: reason);
+            for (final skipped in marks.skipped) {
+              expect(index.firstLetters, contains(skipped.letter),
+                  reason: reason);
+              expect(index.playableLetters, isNot(contains(skipped.letter)),
+                  reason: reason);
+            }
+          }
+        }
+      }
+    });
+
     test('every required letter has cities to answer with', () {
       for (final list in CityListKind.values) {
         for (final language in NameLanguage.values) {

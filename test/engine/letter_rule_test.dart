@@ -59,9 +59,82 @@ void main() {
     for (final (previous, letters, expected) in cases) {
       test('"$previous" → ${expected ?? 'any letter'}', () {
         expect(LetterRule.requiredNextLetter(previous, letters), expected);
+        expect(
+          LetterRule.nextLetterSpan(previous, letters)?.letter,
+          expected,
+          reason: 'nextLetterSpan agrees',
+        );
       });
     }
   });
+
+  group('LetterRule.nextLetterSpan points at the character shown', () {
+    const uk = {'а', 'в', 'к', 'л', 'н', 'с', 'ц'};
+    const en = {'a', 'o', 'v', 'w'};
+
+    // (name, playable letters, the highlighted text, its start)
+    final cases = <(String, Set<String>, String, int)>[
+      ('Львів', uk, 'в', 4),
+      ('Рівне', uk, 'н', 3),
+      ("Кам'янець", uk, 'ц', 7),
+      ("Кам'янець", uk.difference({'ц'}), 'н', 5),
+      ('  ОДЕСА  ', uk, 'А', 6),
+      ('Kraków', en, 'w', 5),
+      // A diacritic letter is highlighted as it's written.
+      ('Ponta Delgadó', en, 'ó', 12),
+      // A letter with a combining mark is one character: «й» = и + ̆.
+      ('Хмельницькй', {...uk, 'й'}, 'й', 10),
+      // Characters outside the BMP are skipped whole.
+      ('Odesa\u{1F642}', en, 'a', 4),
+    ];
+
+    for (final (name, letters, text, start) in cases) {
+      test('"$name" → «$text» at $start', () {
+        final span = LetterRule.nextLetterSpan(name, letters);
+        expect(span, isNotNull);
+        if (span == null) return;
+        expect(span.start, start);
+        expect(name.substring(span.start, span.end), text);
+      });
+    }
+  });
+
+  group(
+    'LetterRule.letterMarks marks the letters skipped after the next one',
+    () {
+      // As in the Ukraine list: «е», «ц», «й» start a few cities (too few to
+      // be asked for); «ь» and «и» start none.
+      const playable = {'к', 'л', 'н', 'р', 'с', 'т', 'х'};
+      const starting = {...playable, 'е', 'ц', 'й'};
+
+      String marked(String name) {
+        final marks = LetterRule.letterMarks(
+          name,
+          playable,
+          startingLetters: starting,
+        );
+        String text(LetterSpan span) => name.substring(span.start, span.end);
+        final next = marks.next;
+        return '${next == null ? '-' : text(next)} '
+            '[${marks.skipped.map(text).join(',')}]';
+      }
+
+      test('«ь» is not marked, «е» and «ц» are', () {
+        expect(marked('Кременець'), 'н [е,ц]');
+      });
+      test('«и» is not marked, «й» is', () {
+        expect(marked('Хмельницький'), 'к [й]');
+      });
+      test('nothing skipped', () {
+        expect(marked('Херсон'), 'н []');
+        // «в» and «і» start no city in this set: passed over, not marked.
+        expect(marked('Харків'), 'к []');
+      });
+      test('without starting letters, nothing is skipped', () {
+        expect(LetterRule.letterMarks('Кременець', playable).skipped, isEmpty);
+      });
+    },
+  );
 
   group('LetterRule.startsWithRequired', () {
     test('accepts an answer starting with the required letter', () {
@@ -78,8 +151,11 @@ void main() {
 
     test('rejects an answer starting with another letter', () {
       expect(LetterRule.startsWithRequired('Київ', 'в'), isFalse);
-      expect(LetterRule.startsWithRequired('Ірпінь', 'и'), isFalse,
-          reason: 'і and и are different letters');
+      expect(
+        LetterRule.startsWithRequired('Ірпінь', 'и'),
+        isFalse,
+        reason: 'і and и are different letters',
+      );
     });
 
     test('with no required letter, any answer goes', () {

@@ -50,7 +50,7 @@
 | T09 | `Match` — rules, scoring, hints, result | M2 Engine | L | [x] |
 | T10 | City loader + splash + composition root | M3 Playable | M | [x] |
 | T11 | `GameCubit` (turns, timer, bot delay) | M3 Playable | L | [x] |
-| T12 | Game screen (chat UI) | M3 Playable | L | [ ] |
+| T12 | Game screen (chat UI) | M3 Playable | L | [x] |
 | T13 | Game-over view | M3 Playable | S | [ ] |
 | T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [ ] |
 | T14 | Home screen + router | M4 App shell | M | [ ] |
@@ -568,6 +568,44 @@ For now a temporary route starts a fixed Ukraine / Medium game.
 **Done when:** **🎯 a full game is playable on a phone.** There is a widget
 smoke test.
 
+**Result (2026-10-02):**
+- `lib/features/game/game_screen.dart`: `GameScreen` builds the `GameCubit`
+  from the catalog (names in the app language) and starts it; `GameView`
+  renders the state. `widgets/`: `GameHeader` (back, CityBot with list ·
+  difficulty, Give up, timer badge that turns coral at ≤5 s and greys out
+  while the bot thinks), `StatPills` (chain, score), `ChatBubble` (accented
+  first letter, `+25`/`+10` on named cities, hinted cities purple with a
+  bulb), `TurnBanner`, `RejectionBanner`, `InputBar` (hint with a count
+  badge, send).
+- Asked for during review: the newest city shows the letter the next city
+  must start with in teal (the banner's colour; light teal on coral and
+  purple bubbles), and the rarer letters skipped after it in faded teal
+  (Кременець → «н», «е», «ц»; «ь» starts no city, so it's unmarked). The
+  rare ones are playable too: the rare-letter choice moved from Future
+  into the rules (`Match.extraLetters`; game_design §2.3, T25), and the
+  banner lists every allowed letter ("на «К» або «Е»"). This shows skipped
+  endings (Бахмут → «т»,
+  Рівне → «н»). The engine finds them (`LetterRule.letterMarks` /
+  `CityIndex.letterMarks`, checked against `requiredLetterAfter` for every
+  city in all four lists), and the state carries them as `letterMarks`. The turn banner is teal instead of coral.
+- The chat is a reversed list, so it stays on the newest city. The field
+  stays editable while the bot thinks, so the keyboard doesn't bounce; only
+  send and hint wait. Autocorrect is off. A rejected answer stays in the
+  field to fix; an accepted one (or a hint) clears it.
+- Give up asks first, and so does Back: leaving mid-game counts as giving
+  up (game_design §2.7).
+- A temporary `GameEndPanel` under the chat (win/loss, why, score, Play
+  again / Home) keeps the game playable end to end; T13 makes it the full
+  game-over view.
+- Temporary route: a Play button on the placeholder Home opens Ukraine /
+  Medium (removed in T14). `GamePlaying` gained `chain` for the pill.
+- Tests: a widget smoke test (`GameView` with a scripted bot): answer,
+  rejection, keyboard send, hint, win, Play again; Give up with its dialog;
+  timeout; Back = give up, then leave. The test cities moved to
+  `test/helpers/chain_cities.dart`.
+- Checked on the emulator (release build): bot opening, the letter skip
+  (Рівне → «Н»), a hint, a timeout and Play again.
+
 ### T13 · Game-over view · S
 - Show Win/Loss, score, cities you named, and new cities discovered
   (in-memory until T18).
@@ -697,17 +735,16 @@ Review whether that's the right set:
   as an opening move. Making «е» playable would bring back the trap
   (138 names → 2 cities), so keeping Енергодар reachable probably needs the
   option below.
-- **Option, likely post-MVP:** let the player answer with **either** letter.
-  If an unused city starting with the rare letter exists, the player (and
-  maybe the bot) may use it, or fall back to the previous letter as today.
-  Then no letter is lost and nothing jams. It's listed in game_design §5 as
-  "Rare-letter choice"; the review decides whether it's worth pulling into
-  MVP.
+- **Done in T12 (Daria's call during review):** the player may answer with
+  **either** letter: the required one or any rare letter skipped after it
+  (`Match.extraLetters`, game_design §2.3), so Енергодар is playable after
+  «-ське». CityBot and hints still use the required letter only; decide
+  whether the bot should use rare letters too.
 - Use the T20 simulator to check how often games end on each letter.
 
 **Done when:** the skip rule (the metric and its values, per list) is decided
-and documented in game_design §2.3, including what happens to Енергодар, and
-the "either letter" option is either scheduled or left in Future.
+and documented in game_design §2.3, and whether CityBot uses rare letters
+is decided.
 
 Do this before T20 finalizes the tuning values.
 
@@ -758,4 +795,4 @@ testing.
 ## Later (from game_design.md §5 — not scheduled)
 Endurance mode · leaderboards (local → global) · rewarded ads (hints/revive) +
 banners · richer stats · interactive map · country/capitals modes · merged pool ·
-PvP · sound · typo tolerance · daily challenge · rare-letter choice (see T25).
+PvP · sound · typo tolerance · daily challenge.

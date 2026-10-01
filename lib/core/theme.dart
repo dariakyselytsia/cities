@@ -10,6 +10,7 @@ abstract final class AppColors {
   static const Color purple = Color(0xFF5B3AA8); // accent
   static const Color green = Color(0xFF2FB16B); // success / player accent
   static const Color tealDark = Color(0xFF0D6D66);
+  static const Color tealLight = Color(0xFFA8F0E8); // teal text on coral/purple
 
   static const Color background = Color(0xFFFBF7F0); // app surface (cream)
   static const Color surfaceAlt = Color(0xFFEDEAE3); // slightly deeper cream

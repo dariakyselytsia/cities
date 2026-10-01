@@ -206,6 +206,55 @@ void main() {
     });
   });
 
+  group('rare letters skipped at the end can be played too', () {
+    // Letters 2+ cities start with are playable: «c», «a». «n» and «e»
+    // start one city each: rare, so "Nice" asks for «c» (skipping «e»).
+    final nice = _city(101, 'Nice', 340000);
+    final cairo = _city(102, 'Cairo', 9000000);
+    final cork = _city(103, 'Cork', 220000);
+    final essen = _city(104, 'Essen', 580000);
+    final accra = _city(105, 'Accra', 2300000);
+    final ankara = _city(106, 'Ankara', 5000000);
+    final index = CityCatalog(
+      [nice, cairo, cork, essen, accra, ankara],
+      letterMinimums: const LetterMinimums(ukraine: 2, world: 2),
+    ).index(CityListKind.world, NameLanguage.en);
+
+    Match afterNice() {
+      final match = _match([nice], index: index)..botMove();
+      return match;
+    }
+
+    test('the extra letters are the skipped rare ones', () {
+      final match = afterNice();
+      expect(match.requiredLetter, 'c');
+      expect(match.extraLetters, ['e']);
+    });
+
+    test('the required letter works', () {
+      expect(_accepted(afterNice().submit('Cork')), cork);
+    });
+
+    test('so does a skipped rare letter', () {
+      expect(_accepted(afterNice().submit('Essen')), essen);
+    });
+
+    test('other letters are still wrong', () {
+      expect(
+        afterNice().submit('Accra'),
+        const Rejected(RejectionReason.wrongLetter),
+      );
+    });
+
+    test('a hint uses the required letter', () {
+      expect(afterNice().hint()?.city, anyOf(cairo, cork));
+    });
+
+    test('no extra letters before the first city', () {
+      expect(_match([nice], index: index).extraLetters, isEmpty);
+    });
+  });
+
   group('scoring', () {
     test('a city never named before is worth $pointsForNewCity', () {
       final match = _match([kursk])..botMove();

@@ -46,10 +46,15 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
   - Examples: Хмельницький → «к», Шанхай → «а», Кременець → «ц» in World,
     but «н» in Ukraine.
   - This is **dataset-driven**, with no hard-coded letter list.
-  - A city that starts with a skipped letter (Йокогама) can only be played as
-    the opening move.
-- The game always shows the required letter on the player's turn
-  ("Your turn — start with «Х»").
+  - **Rare-letter choice.** The player may also answer with any letter that
+    was skipped *for being rare* after the required one: after «Кам'янське»
+    you can play on «К» or on «Е» (Енергодар); after «Кременець» on «Н»,
+    «Е» or «Ц». Letters no city starts with («ь», «и») never count. So a
+    player who knows a rare city can use it, and nothing jams. CityBot and
+    hints always use the required letter.
+- The game always shows the allowed letters on the player's turn
+  ("Your turn — «К» or «Е»"), and the chat marks them in teal in the newest
+  city.
 
 ### 2.4 Answer checking
 An answer is accepted if all of these are true:
@@ -110,6 +115,7 @@ Starting guesses:
 ### 2.7 End of game
 - **Win:** CityBot can't answer.
 - **Loss:** the player's timer hits zero, or the player taps **Give up**.
+  Leaving the game mid-way (Back) counts as giving up; both ask first.
 - The game-over view shows: Win/Loss, score, cities you named, **new cities
   discovered** this game, and the **Play again** / **Home** actions.
 
@@ -136,7 +142,11 @@ can't render Ukrainian.
 2. **Setup sheet.** City list + difficulty + Start (§2.1).
 3. **Game (chat).**
    - Bot bubbles on the left, player bubbles on the right. The first letter of
-     each city is accented.
+     each city is accented. In the newest city, the letter the next city must
+     start with is teal, matching the teal turn banner, and so are the rarer
+     letters skipped after it, which may be played too (§2.3): Кременець →
+     «н», «е», «ц». Letters no city starts with («ь») aren't marked.
+   - The turn banner is teal: coral is kept for errors and low time.
    - A turn banner shows "your turn — «Х»" or "CityBot is thinking…".
    - A timer badge, a score pill, and a hint button with the remaining count.
    - A **Give up** action and an input bar that auto-focuses.
@@ -203,11 +213,6 @@ List sizes (GeoNames, Sept 2026 build):
   already a discrete step in the game loop, so a network turn can replace it.
 - **Polish.** Sound effects and haptics, typo tolerance, more UI languages,
   daily challenge.
-- **Rare-letter choice.** When the letter rule skips a rare last letter
-  (§2.3), also let the player answer with that letter if an unused city
-  starts with it: Енергодар after an «-ське» city, Йокогама after Шанхай.
-  Players who know a rare city can use it, and games don't jam on the rare
-  letter. Reviewed in T25.
 
 ## 6. Open questions (revisit after playtesting)
 
@@ -222,6 +227,7 @@ Rules that were decided provisionally. Each one is easy to change in
     shows the display name.
   Watch whether players find the lenient rule confusing or exploit it.
 - **Which letters the letter rule skips (T07, §2.3).** This is task T25: the
-  per-list minimums, Енергодар, and the "rare-letter choice" option (§5).
+  per-list minimums. The rare-letter choice (§2.3) is in since T12; check
+  whether CityBot should use the rare letters too.
 - **Who starts by default (§2.2).** CityBot, with a setting to open
   yourself. Check which default new players prefer.

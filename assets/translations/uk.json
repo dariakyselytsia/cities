@@ -34,23 +34,34 @@
   "game": {
     "citybot": "CityBot",
     "score": "Рахунок",
-    "streak": "Серія",
-    "highscore": "Рекорд",
+    "chain": "Ланцюжок",
     "hint": "Підказка",
-    "surrender": "Здатися",
+    "give_up": "Здатися",
     "enter_city": "Введіть місто…",
-    "submit": "Надіслати",
-    "your_turn": "Ваш хід",
-    "start_with": "почніть з",
-    "opening": "Назвіть будь-яке місто, щоб почати",
-    "bot_turn": "Хід CityBot…",
-    "not_found": "Такого міста немає — спробуйте ще",
-    "wrong_letter": "Неправильна початкова літера",
-    "already_used": "Вже використано — інше місто",
-    "game_over": "Гру закінчено",
-    "final_score": "Фінальний рахунок",
+    "send": "Надіслати",
+    "your_turn_letter": "Ваш хід — на {letters}",
+    "your_turn_any": "Ваш хід — назвіть будь-яке місто",
+    "bot_thinking": "CityBot думає…",
+    "rejection": {
+      "empty": "Введіть назву міста",
+      "not_in_list": "Такого міста немає в списку",
+      "wrong_letter": "Місто має починатися на {letters}",
+      "already_used": "Це місто вже називали"
+    },
+    "give_up_title": "Здатися?",
+    "give_up_body": "Гра закінчиться поразкою.",
+    "keep_playing": "Грати далі",
+    "win": "Перемога!",
+    "loss": "Поразка",
+    "outcome": {
+      "botGaveUp": "CityBot більше не знає міст",
+      "timeout": "Час вийшов",
+      "surrendered": "Ви здалися"
+    },
+    "final_score": "Рахунок: {score}",
     "play_again": "Ще раз",
-    "home": "Головна"
+    "home": "Головна",
+    "or": "або"
   },
   "leaderboard": {
     "title": "Таблиця лідерів",
@@ -71,5 +82,14 @@
     "recent_sessions": "Останні ігри",
     "no_sessions": "Ще немає ігор — зіграйте раунд, щоб побачити статистику.",
     "cities_count": "{} міст"
+  },
+  "list": {
+    "ukraine": "Україна",
+    "world": "Світ"
+  },
+  "difficulty": {
+    "easy": "Легко",
+    "medium": "Середньо",
+    "hard": "Складно"
   }
 }

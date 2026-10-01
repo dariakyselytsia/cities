@@ -34,23 +34,34 @@
   "game": {
     "citybot": "CityBot",
     "score": "Score",
-    "streak": "Streak",
-    "highscore": "Best",
+    "chain": "Chain",
     "hint": "Hint",
-    "surrender": "Give Up",
+    "give_up": "Give up",
     "enter_city": "Enter a city…",
-    "submit": "Submit",
-    "your_turn": "Your turn",
-    "start_with": "start with",
-    "opening": "Name any city to begin",
-    "bot_turn": "CityBot's turn…",
-    "not_found": "No such city — try again",
-    "wrong_letter": "Wrong starting letter",
-    "already_used": "Already used — try another city",
-    "game_over": "Game over",
-    "final_score": "Final score",
-    "play_again": "Play Again",
-    "home": "Home"
+    "send": "Send",
+    "your_turn_letter": "Your turn — {letters}",
+    "your_turn_any": "Your turn — name any city",
+    "bot_thinking": "CityBot is thinking…",
+    "rejection": {
+      "empty": "Type a city name",
+      "not_in_list": "That city isn't in the list",
+      "wrong_letter": "The city must start with {letters}",
+      "already_used": "That city was already named"
+    },
+    "give_up_title": "Give up?",
+    "give_up_body": "The game will end as a loss.",
+    "keep_playing": "Keep playing",
+    "win": "You won!",
+    "loss": "You lost",
+    "outcome": {
+      "botGaveUp": "CityBot ran out of cities",
+      "timeout": "Time's up",
+      "surrendered": "You gave up"
+    },
+    "final_score": "Score: {score}",
+    "play_again": "Play again",
+    "home": "Home",
+    "or": "or"
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -71,5 +82,14 @@
     "recent_sessions": "Recent games",
     "no_sessions": "No games yet — play a round to see your stats here.",
     "cities_count": "{} cities"
+  },
+  "list": {
+    "ukraine": "Ukraine",
+    "world": "World"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
   }
 }

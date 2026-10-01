@@ -233,6 +233,14 @@ class CityIndex {
     playableLetters,
   );
 
+  /// Which letters of [city]'s display name the chat marks: the next letter
+  /// and the rarer ones skipped after it (see [LetterRule.letterMarks]).
+  LetterMarks letterMarks(City city) => LetterRule.letterMarks(
+    city.name(language) ?? '',
+    playableLetters,
+    startingLetters: firstLetters,
+  );
+
   /// The cities [answer] names, by display name or alias, most populous
   /// first. Empty when it names none.
   ///

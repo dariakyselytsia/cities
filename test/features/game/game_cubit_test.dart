@@ -3,9 +3,8 @@ import 'dart:math';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cities/engine/bot.dart';
 import 'package:cities/engine/city.dart';
-import 'package:cities/engine/city_catalog.dart';
-import 'package:cities/engine/city_list.dart';
 import 'package:cities/engine/difficulty.dart';
+import 'package:cities/engine/letter_rule.dart';
 import 'package:cities/engine/match.dart';
 import 'package:cities/engine/scoring.dart';
 import 'package:cities/features/game/game_cubit.dart';
@@ -13,23 +12,8 @@ import 'package:cities/features/game/game_state.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/chain_cities.dart';
 import '../../helpers/scripted_bot.dart';
-
-City _city(int id, String name, int population) =>
-    City(id: id, nameEn: name, countryCode: 'XX', population: population);
-
-/// One city per first letter, so every move and hint is predictable:
-/// Kyiv → «v» Vilnius → «s» Seoul → «l» Lima → «a» Ankara.
-final kyiv = _city(1, 'Kyiv', 900000);
-final vilnius = _city(2, 'Vilnius', 800000);
-final seoul = _city(3, 'Seoul', 700000);
-final lima = _city(4, 'Lima', 600000);
-final ankara = _city(5, 'Ankara', 500000);
-
-final _index = CityCatalog(
-  [kyiv, vilnius, seoul, lima, ankara],
-  letterMinimums: const LetterMinimums(ukraine: 1, world: 1),
-).index(CityListKind.world, NameLanguage.en);
 
 const _difficulty = Difficulty.medium;
 final _turnSeconds = _difficulty.turnTime.inSeconds;
@@ -37,11 +21,11 @@ final _turnSeconds = _difficulty.turnTime.inSeconds;
 GameCubit _cubit(List<City> botScript, {Side firstTurn = Side.bot}) =>
     GameCubit(
       createMatch: () => Match(
-        index: _index,
+        index: chainIndex,
         difficulty: _difficulty,
         random: Random(1),
         firstTurn: firstTurn,
-        bot: ScriptedBot(_index, botScript),
+        bot: ScriptedBot(chainIndex, botScript),
       ),
       random: Random(1),
     );
@@ -52,27 +36,30 @@ GamePlaying _playing(
   String? letter,
   int? secondsLeft,
   int score = 0,
+  int chain = 0,
   int hintsLeft = hintsPerGame,
   RejectionReason? rejection,
-}) =>
-    GamePlaying(
-      history: history,
-      turn: turn,
-      requiredLetter: letter,
-      secondsLeft: secondsLeft ?? _turnSeconds,
-      score: score,
-      hintsLeft: hintsLeft,
-      lastRejection: rejection,
-    );
+}) => GamePlaying(
+  history: history,
+  letterMarks: _marks(history),
+  turn: turn,
+  requiredLetter: letter,
+  secondsLeft: secondsLeft ?? _turnSeconds,
+  score: score,
+  chain: chain,
+  hintsLeft: hintsLeft,
+  lastRejection: rejection,
+);
+
+/// Where the newest city's name gives the next letter (`LetterRule` tests
+/// pin the positions down; the first test here checks one).
+LetterMarks? _marks(List<Turn> history) =>
+    history.isEmpty ? null : chainIndex.letterMarks(history.last.city);
 
 Turn _bot(City city) => Turn(city: city, side: Side.bot);
 
-Turn _named(City city) => Turn(
-      city: city,
-      side: Side.player,
-      points: pointsForNewCity,
-      isNew: true,
-    );
+Turn _named(City city) =>
+    Turn(city: city, side: Side.player, points: pointsForNewCity, isNew: true);
 
 /// Runs [body] in fake time, with a started game from [cubit].
 void _inFakeTime(GameCubit cubit, void Function(FakeAsync async) body) {
@@ -99,19 +86,36 @@ void main() {
           cubit.state,
           _playing([_bot(kyiv)], turn: Side.player, letter: 'v'),
         );
+        expect(
+          (cubit.state as GamePlaying).letterMarks,
+          const LetterMarks(next: (start: 3, end: 4, letter: 'v')),
+          reason: 'Kyiv: the «v» is highlighted',
+        );
 
         cubit.submit('vilnius');
         final afterVilnius = [_bot(kyiv), _named(vilnius)];
         expect(
           cubit.state,
-          _playing(afterVilnius, turn: Side.bot, letter: 's', score: 25),
+          _playing(
+            afterVilnius,
+            turn: Side.bot,
+            letter: 's',
+            score: 25,
+            chain: 1,
+          ),
         );
 
         async.elapse(botThinkingMax);
         final afterSeoul = [...afterVilnius, _bot(seoul)];
         expect(
           cubit.state,
-          _playing(afterSeoul, turn: Side.player, letter: 'l', score: 25),
+          _playing(
+            afterSeoul,
+            turn: Side.player,
+            letter: 'l',
+            score: 25,
+            chain: 1,
+          ),
         );
 
         cubit.submit('Lima');
@@ -127,6 +131,7 @@ void main() {
               namedCityIds: [vilnius.id, lima.id],
             ),
             history: [...afterSeoul, _named(lima)],
+            letterMarks: _marks([...afterSeoul, _named(lima)]),
           ),
         );
       });
@@ -157,6 +162,7 @@ void main() {
               namedCityIds: [],
             ),
             history: [_bot(kyiv)],
+            letterMarks: _marks([_bot(kyiv)]),
           ),
         );
         sub.cancel();
@@ -204,6 +210,7 @@ void main() {
             turn: Side.player,
             letter: 'l',
             score: 25,
+            chain: 1,
           ),
         );
       });
@@ -266,27 +273,30 @@ void main() {
       });
     });
 
-    test('giving up while the bot thinks ends the game; the bot never moves',
-        () {
-      final cubit = _cubit([kyiv]);
-      _inFakeTime(cubit, (async) {
-        cubit.giveUp();
-        const surrendered = GameOver(
-          result: MatchResult(
-            outcome: MatchOutcome.surrendered,
-            score: 0,
-            chain: 0,
-            newCityIds: [],
-            namedCityIds: [],
-          ),
-          history: [],
-        );
-        expect(cubit.state, surrendered);
+    test(
+      'giving up while the bot thinks ends the game; the bot never moves',
+      () {
+        final cubit = _cubit([kyiv]);
+        _inFakeTime(cubit, (async) {
+          cubit.giveUp();
+          const surrendered = GameOver(
+            result: MatchResult(
+              outcome: MatchOutcome.surrendered,
+              score: 0,
+              chain: 0,
+              newCityIds: [],
+              namedCityIds: [],
+            ),
+            history: [],
+            letterMarks: null,
+          );
+          expect(cubit.state, surrendered);
 
-        async.elapse(const Duration(minutes: 1));
-        expect(cubit.state, surrendered);
-      });
-    });
+          async.elapse(const Duration(minutes: 1));
+          expect(cubit.state, surrendered);
+        });
+      },
+    );
 
     test('when the player opens, the countdown starts right away', () {
       final cubit = _cubit([vilnius], firstTurn: Side.player);
@@ -308,6 +318,7 @@ void main() {
             turn: Side.player,
             letter: 's',
             score: 25,
+            chain: 1,
           ),
         );
       });
@@ -344,10 +355,7 @@ void main() {
         cubit.submit('Vilnius'); // the game is over
         cubit.giveUp();
       },
-      expect: () => [
-        _playing(const [], turn: Side.bot),
-        isA<GameOver>(),
-      ],
+      expect: () => [_playing(const [], turn: Side.bot), isA<GameOver>()],
     );
 
     blocTest<GameCubit, GameState>(

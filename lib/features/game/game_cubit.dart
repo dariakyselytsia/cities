@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../engine/bot.dart';
+import '../../engine/letter_rule.dart';
 import '../../engine/match.dart';
 import 'game_state.dart';
 
@@ -23,9 +24,9 @@ class GameCubit extends Cubit<GameState> {
   /// player chose (list, difficulty, who starts). [random] drives the bot's
   /// thinking time.
   GameCubit({required Match Function() createMatch, required Random random})
-      : _createMatch = createMatch,
-        _random = random,
-        super(const GameLoading());
+    : _createMatch = createMatch,
+      _random = random,
+      super(const GameLoading());
 
   final Match Function() _createMatch;
   final Random _random;
@@ -101,8 +102,10 @@ class GameCubit extends Cubit<GameState> {
       case Side.bot:
         _botTimer = Timer(botThinkingTime(_random), () => _botMove(match));
       case Side.player:
-        _countdown =
-            Timer.periodic(const Duration(seconds: 1), (_) => _tick(match));
+        _countdown = Timer.periodic(
+          const Duration(seconds: 1),
+          (_) => _tick(match),
+        );
     }
     _emitPlaying(match);
   }
@@ -130,18 +133,33 @@ class GameCubit extends Cubit<GameState> {
     _cancelTimers();
     final result = match.result;
     if (result == null) return;
-    emit(GameOver(result: result, history: match.history));
+    emit(
+      GameOver(
+        result: result,
+        history: match.history,
+        letterMarks: _letterMarks(match),
+      ),
+    );
   }
 
-  void _emitPlaying(Match match) => emit(GamePlaying(
-        history: match.history,
-        turn: match.turn,
-        requiredLetter: match.requiredLetter,
-        secondsLeft: _secondsLeft,
-        score: match.score,
-        hintsLeft: match.hintsLeft,
-        lastRejection: _lastRejection,
-      ));
+  void _emitPlaying(Match match) => emit(
+    GamePlaying(
+      history: match.history,
+      letterMarks: _letterMarks(match),
+      turn: match.turn,
+      requiredLetter: match.requiredLetter,
+      extraLetters: match.extraLetters,
+      secondsLeft: _secondsLeft,
+      score: match.score,
+      chain: match.chain,
+      hintsLeft: match.hintsLeft,
+      lastRejection: _lastRejection,
+    ),
+  );
+
+  static LetterMarks? _letterMarks(Match match) => match.history.isEmpty
+      ? null
+      : match.index.letterMarks(match.history.last.city);
 
   void _cancelTimers() {
     _botTimer?.cancel();
