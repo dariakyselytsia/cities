@@ -1,4 +1,3 @@
-import 'package:cities/core/placeholder_screen.dart';
 import 'package:cities/core/router.dart';
 import 'package:cities/data/player_data.dart';
 import 'package:cities/engine/city_list.dart';
@@ -7,6 +6,7 @@ import 'package:cities/engine/match.dart';
 import 'package:cities/features/game/game_screen.dart';
 import 'package:cities/features/home/home_screen.dart';
 import 'package:cities/features/settings/settings_screen.dart';
+import 'package:cities/features/stats/stats_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -73,7 +73,7 @@ void main() {
   });
 
   for (final (title, screen) in [
-    ('statistics.title', PlaceholderScreen),
+    ('statistics.title', StatsScreen),
     ('settings.title', SettingsScreen),
   ]) {
     testWidgets('Home → $title → back', (tester) async {
@@ -94,7 +94,7 @@ void main() {
     await tester.ensureVisible(find.text('home.best_chain'));
     await tester.tap(find.text('home.best_chain'));
     await tester.pumpAndSettle();
-    expect(find.byType(PlaceholderScreen), findsOneWidget);
+    expect(find.byType(StatsScreen), findsOneWidget);
   });
 
   testWidgets('the stats card shows saved progress, and a finished game '

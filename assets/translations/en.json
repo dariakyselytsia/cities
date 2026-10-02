@@ -1,8 +1,5 @@
 {
   "app_title": "Cities",
-  "common": {
-    "coming_soon": "Coming soon"
-  },
   "startup": {
     "loading": "Loading cities…",
     "error_title": "Couldn't load the cities",
@@ -74,7 +71,20 @@
     "tap_to_resume": "Tap to continue"
   },
   "statistics": {
-    "title": "Statistics"
+    "title": "Statistics",
+    "games_played": "games played",
+    "games_won": "games won",
+    "win_rate": "win rate",
+    "longest_chain": "longest chain",
+    "cities_discovered": "cities discovered",
+    "records": "Records by mode",
+    "wins": "wins",
+    "losses": "losses",
+    "best_score": "best score",
+    "discovery": "Cities discovered",
+    "discovery_count": "{found} of {total} cities",
+    "empty_title": "No games yet",
+    "empty_text": "Play CityBot, and your wins, records and discovered cities will show up here."
   },
   "list": {
     "ukraine": "Ukraine",

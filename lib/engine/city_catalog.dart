@@ -177,6 +177,7 @@ class CityIndex {
         if (names.containsKey(city.id)) city,
     ]..sort((a, b) => _byFame(a, b, tiers));
     cities = List.unmodifiable(playable);
+    _ids = {for (final city in playable) city.id};
 
     final byName = <String, List<City>>{};
     final byLetter = <String, List<City>>{};
@@ -216,6 +217,11 @@ class CityIndex {
 
   /// Every city in [list] that has a name in [language], best known first.
   late final List<City> cities;
+  late final Set<int> _ids;
+
+  /// Whether the city with GeoNames id [cityId] is in this index: in
+  /// [list], with a name in [language].
+  bool contains(int cityId) => _ids.contains(cityId);
 
   /// The (normalized) letters at least one city's display name starts with.
   late final Set<String> firstLetters;

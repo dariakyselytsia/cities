@@ -58,7 +58,7 @@
 | T16 | Settings screen (language + About) | M4 App shell | S | [x] |
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [x] |
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [x] |
-| T19 | Statistics screen | M5 Progress | M | [ ] |
+| T19 | Statistics screen | M5 Progress | M | [x] |
 | T25 | Review rare-letter skipping | M6 Release | S | [ ] |
 | T20 | Balance simulator + tuning pass | M6 Release | M | [ ] |
 | T21 | Polish pass | M6 Release | M | [ ] |
@@ -855,6 +855,35 @@ the version field.
 
 **Done when:** it matches `game_design.md` §3.6, and there's an empty state for
 a new player.
+
+**Result (2026-10-03):**
+- `features/stats/statistics.dart`: `Statistics.of(data, ukraine:, world:)`,
+  a pure derivation of what the screen shows: games played / won, win
+  rate, longest chain, cities discovered, all six list × difficulty records
+  (an unplayed mode is an empty record), and a `Discovery` (found / total)
+  per list. Totals count the cities **playable in the app's language**
+  (World in Ukrainian: 7,177, not 31,407), via the new
+  `CityIndex.contains(id)`.
+- `StatsScreen` replaces the placeholder, ported from `archive/v0`'s
+  visuals:
+  - five summary tiles (tinted icon, value, label), equal height per row;
+  - "Records by mode": rows Easy / Medium / Hard, columns Україна / Світ;
+    each cell is wins : losses (green / coral) over a yellow best-score
+    chip, "—" when unplayed, with a legend;
+  - "Cities discovered": a purple (Ukraine) and a teal (World) progress bar
+    with the share (one decimal, "< 0.1%" rather than 0.0% once a city is
+    found) and "found of total".
+  - It follows `StatsCubit`, so it's current after every game. Numbers use
+    the locale's formats (7 177, 0,1% in Ukrainian).
+  - **Empty state** for a new player: an icon, «Ще жодної гри» and a teal
+    Play button that opens the setup sheet.
+- `PlaceholderScreen` and `common.coming_soon` are gone (no longer used).
+- Tests: `Statistics` (new player, totals and win rate, per-list discovery
+  ignoring unknown ids, an empty list); the screen (empty state → setup
+  sheet, the summary / six modes / bars, updating when a game is
+  recorded); share formatting in English and Ukrainian.
+- Checked on the emulator with the T18 test games: 3 played, 0 : 1 and
+  0 : 2 in two modes, Україна 1 з 848, Світ 2 з 7 177.
 
 ---
 

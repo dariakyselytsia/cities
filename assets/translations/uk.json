@@ -1,8 +1,5 @@
 {
   "app_title": "Міста",
-  "common": {
-    "coming_soon": "Скоро буде"
-  },
   "startup": {
     "loading": "Завантажуємо міста…",
     "error_title": "Не вдалося завантажити міста",
@@ -74,7 +71,20 @@
     "tap_to_resume": "Торкніться, щоб продовжити"
   },
   "statistics": {
-    "title": "Статистика"
+    "title": "Статистика",
+    "games_played": "зіграно ігор",
+    "games_won": "перемог",
+    "win_rate": "відсоток перемог",
+    "longest_chain": "найдовший ланцюжок",
+    "cities_discovered": "відкрито міст",
+    "records": "Рекорди за режимами",
+    "wins": "перемоги",
+    "losses": "поразки",
+    "best_score": "найкращий рахунок",
+    "discovery": "Відкриття міст",
+    "discovery_count": "{found} з {total} міст",
+    "empty_title": "Ще жодної гри",
+    "empty_text": "Зіграйте з CityBot, і тут з'являться ваші перемоги, рекорди та відкриті міста."
   },
   "list": {
     "ukraine": "Україна",

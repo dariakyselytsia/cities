@@ -165,7 +165,9 @@ can't render Ukrainian.
    - **Per-list × difficulty record:** wins/losses and best score for each of
      the 6 combinations.
    - **Discovery progress:** % of Ukraine cities and % of World cities you have
-     ever named, shown as progress bars with counts.
+     ever named, shown as progress bars with counts. The totals are the
+     cities playable in the app's language (World in Ukrainian ≈ 7k).
+   - A new player sees a welcome with a Play button instead of zeros.
 
 All data stays on the device and persists across launches.
 
