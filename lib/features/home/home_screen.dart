@@ -4,12 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/router.dart';
 import '../../core/theme.dart';
-import '../../engine/city_list.dart';
-import '../../engine/difficulty.dart';
+import '../setup/setup_sheet.dart';
 
 /// Home (game_design §3.1): the hero, the Міста wordmark and tagline, a
-/// lifetime-stats card that opens Statistics, a big Play button, and
-/// Statistics / Settings icons.
+/// lifetime-stats card that opens Statistics, a big Play button (it opens
+/// the setup sheet), and Statistics / Settings icons.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -70,15 +69,7 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: 24),
                           _StatCard(onTap: () => context.push(Routes.stats)),
                           const SizedBox(height: 28),
-                          _PlayButton(
-                            // Until the setup sheet (T15): a Ukraine / Medium game.
-                            onTap: () => context.push(
-                              Routes.gameFor(
-                                CityListKind.ukraine,
-                                Difficulty.medium,
-                              ),
-                            ),
-                          ),
+                          _PlayButton(onTap: () => showSetupSheet(context)),
                         ],
                       ),
                     ),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app.dart';
 import 'data/city_loader.dart';
+import 'features/setup/setup_cubit.dart';
 import 'features/startup/startup_cubit.dart';
 
 /// Composition root. There is no DI container: dependencies are built here
@@ -20,8 +21,12 @@ Future<void> main() async {
       supportedLocales: const [Locale('uk'), Locale('en')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: BlocProvider(
-        create: (_) => StartupCubit(CityLoader())..load(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => StartupCubit(CityLoader())..load()),
+          // Above the router, so the setup sheet remembers the last choice.
+          BlocProvider(create: (_) => SetupCubit()),
+        ],
         child: const CitiesApp(),
       ),
     ),

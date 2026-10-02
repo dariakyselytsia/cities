@@ -96,5 +96,21 @@
     "easy": "Easy",
     "medium": "Medium",
     "hard": "Hard"
+  },
+  "setup": {
+    "title": "New game",
+    "list": "City list",
+    "list_desc": {
+      "ukraine": "Cities of Ukraine",
+      "world": "Cities from all over the world"
+    },
+    "difficulty": "Difficulty",
+    "difficulty_desc": {
+      "easy": "CityBot knows only the best-known cities",
+      "medium": "CityBot knows more well-known cities",
+      "hard": "CityBot knows even little-known cities"
+    },
+    "turn_time": "{seconds} s",
+    "start": "Start"
   }
 }

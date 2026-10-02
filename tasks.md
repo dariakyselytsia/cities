@@ -54,7 +54,7 @@
 | T13 | Game-over view | M3 Playable | S | [x] |
 | T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [x] |
 | T14 | Home screen + router | M4 App shell | M | [x] |
-| T15 | Setup sheet (list + difficulty) | M4 App shell | S | [ ] |
+| T15 | Setup sheet (list + difficulty) | M4 App shell | S | [x] |
 | T16 | Settings screen (language + About) | M4 App shell | S | [ ] |
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [ ] |
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [ ] |
@@ -707,6 +707,23 @@ from T12 is removed.
 
 **Done when:** the chosen list and difficulty drive the game, including the
 timer and the bot's vocabulary.
+
+**Result (2026-10-02):**
+- `features/setup/`: `GameSetup` (list + difficulty, Ukraine / Medium by
+  default) and `SetupCubit`, provided in `main.dart` above the router so
+  the sheet opens with the last choice (in memory; T17 saves it).
+- `showSetupSheet`: «Нова гра» with Україна / Світ side by side and the
+  three difficulties, each with what CityBot knows and its seconds per
+  turn, then «Почати», which opens `Routes.gameFor(list, difficulty)`.
+  Home's Play opens it; the fixed Ukraine / Medium game is gone.
+- The difficulty reaches `Match` through the game route, so it sets the
+  turn timer and CityBot's vocabulary (its tiers).
+- Tests: the cubit; the sheet (defaults, choosing World / Hard reaches the
+  game with Hard's 20 s, the choice is remembered, dismissing starts
+  nothing). The router tests now start games through the sheet; the shared
+  test app moved to `test/helpers/test_app.dart`.
+- Checked on the emulator: Світ + Складно → "Світ · Складно", 20 s, and
+  CityBot opened with Мішкольц.
 
 ### T16 · Settings screen · S
 - Language: Ukrainian / English, applied live and persisted by

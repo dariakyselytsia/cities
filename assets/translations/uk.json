@@ -96,5 +96,21 @@
     "easy": "Легко",
     "medium": "Середньо",
     "hard": "Складно"
+  },
+  "setup": {
+    "title": "Нова гра",
+    "list": "Список міст",
+    "list_desc": {
+      "ukraine": "Міста України",
+      "world": "Міста всього світу"
+    },
+    "difficulty": "Складність",
+    "difficulty_desc": {
+      "easy": "CityBot знає лише найвідоміші міста",
+      "medium": "CityBot знає більше відомих міст",
+      "hard": "CityBot знає навіть маловідомі міста"
+    },
+    "turn_time": "{seconds} с",
+    "start": "Почати"
   }
 }
