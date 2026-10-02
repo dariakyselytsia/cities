@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/player_data.dart';
+import '../../data/player_store.dart';
 import '../../engine/bot.dart';
 import '../../engine/letter_rule.dart';
 import '../../engine/match.dart';
@@ -14,7 +16,8 @@ import 'game_state.dart';
 /// - the player's countdown runs on their turn, starting from the
 ///   difficulty's turn time. A wrong answer doesn't reset it, and when it
 ///   hits zero the player loses;
-/// - hints, giving up, and the end of the game.
+/// - hints, giving up, and the end of the game, whose result is saved to
+///   the [PlayerStore] however it ended.
 ///
 /// Player actions that come at the wrong moment (a double tap while the bot
 /// thinks, a tap after the game ended) are ignored: they are UI races, not
@@ -22,24 +25,21 @@ import 'game_state.dart';
 class GameCubit extends Cubit<GameState> {
   /// [createMatch] builds a fresh game for [start], with the setup the
   /// player chose (list, difficulty, who starts) and the cities discovered
-  /// so far. [discoveredIds] are the cities the player had named before;
-  /// [random] drives the bot's thinking time.
+  /// so far, read from [store] at each start, so "Play again" scores a city
+  /// named in the last game as known (+10), not new (+25). [random] drives
+  /// the bot's thinking time.
   GameCubit({
     required Match Function(Set<int> discoveredIds) createMatch,
+    required PlayerStore store,
     required Random random,
-    Set<int> discoveredIds = const {},
   }) : _createMatch = createMatch,
+       _store = store,
        _random = random,
-       _discoveredIds = {...discoveredIds},
        super(const GameLoading());
 
   final Match Function(Set<int> discoveredIds) _createMatch;
+  final PlayerStore _store;
   final Random _random;
-
-  /// Every city the player has named, this game included. It's in memory
-  /// until T18 saves it, so "Play again" already scores a city named in the
-  /// last game as known (+10), not new (+25).
-  final Set<int> _discoveredIds;
 
   Match? _match;
   Timer? _botTimer;
@@ -54,7 +54,7 @@ class GameCubit extends Cubit<GameState> {
   void start() {
     _cancelTimers();
     _paused = false;
-    final match = _createMatch(Set.unmodifiable(_discoveredIds));
+    final match = _createMatch(_store.data.discoveredIds);
     _match = match;
     _lastRejection = null;
     _beginTurn(match);
@@ -169,11 +169,17 @@ class GameCubit extends Cubit<GameState> {
     _endGame(match);
   }
 
+  /// Every way a game ends (win, timeout, giving up) comes here, so every
+  /// result is saved.
   void _endGame(Match match) {
     _cancelTimers();
     final result = match.result;
     if (result == null) return;
-    _discoveredIds.addAll(result.newCityIds);
+    final mode = GameSetup(
+      list: match.index.list,
+      difficulty: match.difficulty,
+    );
+    unawaited(_store.update((data) => data.withResult(mode, result)));
     emit(GameOver(result: result, history: match.history));
   }
 

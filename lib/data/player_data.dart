@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 
 import '../engine/city_list.dart';
@@ -152,6 +154,28 @@ final class PlayerData extends Equatable {
     lastSetup: lastSetup ?? this.lastSetup,
     settings: settings ?? this.settings,
   );
+
+  /// This data with one finished game in [mode] folded in: the cities the
+  /// player named join [discoveredIds] (hints don't count), the mode's win
+  /// or loss and best score, and the lifetime totals.
+  PlayerData withResult(GameSetup mode, MatchResult result) {
+    final record = records[mode] ?? const ModeRecord();
+    final win = result.isWin ? 1 : 0;
+    return copyWith(
+      discoveredIds: {...discoveredIds, ...result.namedCityIds},
+      records: {
+        ...records,
+        mode: ModeRecord(
+          wins: record.wins + win,
+          losses: record.losses + 1 - win,
+          bestScore: max(record.bestScore, result.score),
+        ),
+      },
+      gamesPlayed: gamesPlayed + 1,
+      gamesWon: gamesWon + win,
+      longestChain: max(longestChain, result.chain),
+    );
+  }
 
   /// Reads what [toJson] wrote. Throws a [FormatException] for anything else,
   /// including another [playerDataVersion]; `PlayerStore` then backs the file

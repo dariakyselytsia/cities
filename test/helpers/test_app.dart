@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cities/core/theme.dart';
+import 'package:cities/data/player_store.dart';
 import 'package:cities/engine/city_catalog.dart';
 import 'package:cities/features/settings/settings_cubit.dart';
 import 'package:cities/features/setup/setup_cubit.dart';
+import 'package:cities/features/stats/stats_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,21 +24,41 @@ final fixtureCatalog = CityCatalog.fromJson(
   jsonDecode(File('test/fixtures/cities_fixture.json').readAsStringSync()),
 );
 
-/// The app around [router], with what `main.dart` provides: the catalog,
-/// the setup choice and the settings.
-Widget testApp(GoRouter router, {SetupCubit? setup, SettingsCubit? settings}) =>
-    MultiBlocProvider(
+/// What `main.dart` provides above the app: the catalog, the player store
+/// (a fresh fake unless given), and the setup, settings and stats Cubits on
+/// that store.
+Widget _appProviders({
+  required Widget child,
+  PlayerStore? store,
+  SetupCubit? setup,
+  SettingsCubit? settings,
+}) {
+  final playerStore = store ?? FakePlayerStore();
+  return RepositoryProvider<PlayerStore>.value(
+    value: playerStore,
+    child: MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => setup ?? SetupCubit(FakePlayerStore())),
-        BlocProvider(
-          create: (_) => settings ?? SettingsCubit(FakePlayerStore()),
-        ),
+        BlocProvider(create: (_) => setup ?? SetupCubit(playerStore)),
+        BlocProvider(create: (_) => settings ?? SettingsCubit(playerStore)),
+        BlocProvider(create: (_) => StatsCubit(playerStore)),
       ],
-      child: RepositoryProvider.value(
-        value: fixtureCatalog,
-        child: MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
-      ),
-    );
+      child: RepositoryProvider.value(value: fixtureCatalog, child: child),
+    ),
+  );
+}
+
+/// The app around [router], with what `main.dart` provides.
+Widget testApp(
+  GoRouter router, {
+  PlayerStore? store,
+  SetupCubit? setup,
+  SettingsCubit? settings,
+}) => _appProviders(
+  store: store,
+  setup: setup,
+  settings: settings,
+  child: MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
+);
 
 /// Lets a page or sheet transition finish (a focused text field's cursor
 /// blinks forever, so `pumpAndSettle` can't be used on the game).
@@ -90,21 +112,15 @@ Widget localizedTestApp(
   fallbackLocale: const Locale('en'),
   startLocale: startLocale,
   saveLocale: false,
-  child: MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (_) => SetupCubit(FakePlayerStore())),
-      BlocProvider(create: (_) => settings ?? SettingsCubit(FakePlayerStore())),
-    ],
-    child: RepositoryProvider.value(
-      value: fixtureCatalog,
-      child: Builder(
-        builder: (context) => MaterialApp.router(
-          theme: buildAppTheme(),
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          routerConfig: router,
-        ),
+  child: _appProviders(
+    settings: settings,
+    child: Builder(
+      builder: (context) => MaterialApp.router(
+        theme: buildAppTheme(),
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        routerConfig: router,
       ),
     ),
   ),

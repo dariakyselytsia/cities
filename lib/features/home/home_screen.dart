@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router.dart';
 import '../../core/theme.dart';
 import '../setup/setup_sheet.dart';
+import '../stats/stats_cubit.dart';
 
 /// Home (game_design §3.1): the hero, the Міста wordmark and tagline, a
 /// lifetime-stats card that opens Statistics, a big Play button (it opens
@@ -130,8 +132,8 @@ class _HeroArt extends StatelessWidget {
   );
 }
 
-/// Lifetime stats: the longest chain and cities discovered. Zeros until T18
-/// records results. Tapping it opens Statistics.
+/// Lifetime stats: the longest chain and cities discovered, both lists
+/// together. It updates when a game ends. Tapping it opens Statistics.
 class _StatCard extends StatelessWidget {
   const _StatCard({required this.onTap});
 
@@ -139,6 +141,7 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stats = context.watch<StatsCubit>().state;
     return Material(
       color: AppColors.card,
       borderRadius: BorderRadius.circular(AppRadii.card),
@@ -156,10 +159,20 @@ class _StatCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: _stat(context, 0, 'home.best_chain'.tr())),
+                    Expanded(
+                      child: _stat(
+                        context,
+                        stats.longestChain,
+                        'home.best_chain'.tr(),
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _stat(context, 0, 'home.cities_discovered'.tr()),
+                      child: _stat(
+                        context,
+                        stats.discoveredIds.length,
+                        'home.cities_discovered'.tr(),
+                      ),
                     ),
                   ],
                 ),
@@ -187,7 +200,7 @@ class _StatCard extends StatelessWidget {
   );
 }
 
-/// The big coral Play call-to-action.
+/// The big teal Play call-to-action.
 class _PlayButton extends StatelessWidget {
   const _PlayButton({required this.onTap});
 
@@ -198,10 +211,10 @@ class _PlayButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadii.button),
-        boxShadow: AppColors.coralGlow,
+        boxShadow: AppColors.tealGlow,
       ),
       child: Material(
-        color: AppColors.coral,
+        color: AppColors.teal,
         borderRadius: BorderRadius.circular(AppRadii.button),
         child: InkWell(
           onTap: onTap,

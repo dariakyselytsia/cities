@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -15,6 +16,10 @@ import 'player_data.dart';
 abstract interface class PlayerStore {
   /// The player's data: a new player's until [load] finishes.
   PlayerData get data;
+
+  /// [data] after each [update], so screens showing it (Home's stats card)
+  /// stay current.
+  Stream<PlayerData> get changes;
 
   /// Reads the saved data. It never fails: a missing file is a new player,
   /// and an unreadable one is backed up and reset.
@@ -53,6 +58,12 @@ class FilePlayerStore implements PlayerStore {
   PlayerData get data => _data;
   PlayerData _data = const PlayerData();
 
+  // Lives as long as the app, like the store, so it's never closed.
+  final _changes = StreamController<PlayerData>.broadcast();
+
+  @override
+  Stream<PlayerData> get changes => _changes.stream;
+
   @override
   Future<PlayerData> load() async {
     final file = await _resolveFile();
@@ -73,6 +84,7 @@ class FilePlayerStore implements PlayerStore {
   @override
   Future<bool> update(PlayerData Function(PlayerData data) change) {
     final data = _data = change(_data);
+    _changes.add(data);
     return _lastWrite = _lastWrite.then((_) => _write(data));
   }
 

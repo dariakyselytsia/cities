@@ -8,6 +8,7 @@ import 'data/player_store.dart';
 import 'features/settings/settings_cubit.dart';
 import 'features/setup/setup_cubit.dart';
 import 'features/startup/startup_cubit.dart';
+import 'features/stats/stats_cubit.dart';
 
 /// Composition root. There is no DI container: dependencies are built here
 /// and handed down explicitly (tech_design §2).
@@ -35,6 +36,7 @@ Future<void> main() async {
             // Above the router, so every screen and new game sees them.
             BlocProvider(create: (_) => SetupCubit(playerStore)),
             BlocProvider(create: (_) => SettingsCubit(playerStore)),
+            BlocProvider(create: (_) => StatsCubit(playerStore)),
           ],
           child: const CitiesApp(),
         ),

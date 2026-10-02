@@ -18,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/chain_cities.dart';
+import '../../helpers/fake_player_store.dart';
 import '../../helpers/scripted_bot.dart';
 
 // Without EasyLocalization set up, `.tr()` returns the key, so the tests
@@ -41,6 +42,7 @@ Widget _app(List<City> botScript) => MaterialApp(
                   random: Random(1),
                   bot: ScriptedBot(chainIndex, botScript),
                 ),
+                store: FakePlayerStore(),
                 random: Random(1),
               )..start(),
               child: const GameView(

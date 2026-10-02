@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router.dart';
+import '../../data/player_store.dart';
 import '../../engine/city.dart';
 import '../../engine/city_catalog.dart';
 import '../../engine/city_list.dart';
@@ -39,7 +40,7 @@ class GameScreen extends StatelessWidget {
     final index = context.read<CityCatalog>().index(list, language);
     final firstTurn = context.read<SettingsCubit>().state.firstTurn;
     return BlocProvider(
-      create: (_) {
+      create: (context) {
         final random = Random();
         return GameCubit(
           createMatch: (discoveredIds) => Match(
@@ -49,6 +50,7 @@ class GameScreen extends StatelessWidget {
             discoveredIds: discoveredIds,
             firstTurn: firstTurn,
           ),
+          store: context.read<PlayerStore>(),
           random: random,
         )..start();
       },

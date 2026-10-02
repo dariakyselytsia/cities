@@ -57,7 +57,7 @@
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [x] |
 | T16 | Settings screen (language + About) | M4 App shell | S | [x] |
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [x] |
-| T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [ ] |
+| T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [x] |
 | T19 | Statistics screen | M5 Progress | M | [ ] |
 | T25 | Review rare-letter skipping | M6 Release | S | [ ] |
 | T20 | Balance simulator + tuning pass | M6 Release | M | [ ] |
@@ -821,6 +821,30 @@ the version field.
 - cubit tests show the save happens on every end path;
 - stats survive an app restart;
 - a city is "new" only the first time you name it.
+
+**Result (2026-10-02):**
+- `PlayerData.withResult(mode, result)` folds a finished game in: the cities
+  the player named join the discovered set (hints don't count), the mode's
+  win or loss and best score, games played / won, and the longest chain
+  (only ever goes up).
+- `GameCubit` takes the `PlayerStore` instead of a discovered-ids set. It
+  reads the discovered cities from the store at each start (so "Play again"
+  and later games score a known city +10), and saves the result where every
+  end path (win, timeout, giving up) meets. The mode comes from the match
+  (its index's list and its difficulty).
+- `PlayerStore.changes` announces each change. `StatsCubit`
+  (`features/stats/`, above the router, state = `PlayerData`) follows it,
+  and Home's stats card shows the longest chain and the cities discovered
+  (both lists together), updated as soon as you're back from a game.
+- Tests: `withResult` (a first win, a loss on top of a veteran's data, new
+  bests); the cubit saves once per game on a win, a timeout and giving up
+  (also while the bot thinks), a hinted city isn't discovered, and a city
+  is new only the first time, in a later game too; `StatsCubit`; the store
+  announces changes; Home's card shows saved numbers and updates after a
+  game. The test apps now share one fake store, like `main.dart`.
+- Checked on the emulator: a game naming Kyiv and Amsterdam (+25 each),
+  then Play again with Kyiv (+10); Home shows chain 2, 2 discovered, still
+  there after a restart.
 
 ### T19 · Statistics screen · M
 - Port the visuals from `archive/v0`.

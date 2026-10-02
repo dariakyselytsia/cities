@@ -1,8 +1,11 @@
 import 'dart:math';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cities/data/player_data.dart';
+import 'package:cities/data/player_store.dart';
 import 'package:cities/engine/bot.dart';
 import 'package:cities/engine/city.dart';
+import 'package:cities/engine/city_list.dart';
 import 'package:cities/engine/difficulty.dart';
 import 'package:cities/engine/letter_rule.dart';
 import 'package:cities/engine/match.dart';
@@ -13,23 +16,31 @@ import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/chain_cities.dart';
+import '../../helpers/fake_player_store.dart';
 import '../../helpers/scripted_bot.dart';
 
 const _difficulty = Difficulty.medium;
 final _turnSeconds = _difficulty.turnTime.inSeconds;
 
-GameCubit _cubit(List<City> botScript, {Side firstTurn = Side.bot}) =>
-    GameCubit(
-      createMatch: (discoveredIds) => Match(
-        index: chainIndex,
-        discoveredIds: discoveredIds,
-        difficulty: _difficulty,
-        random: Random(1),
-        firstTurn: firstTurn,
-        bot: ScriptedBot(chainIndex, botScript),
-      ),
-      random: Random(1),
-    );
+/// The mode results are recorded under: the chain cities are a World index.
+const _mode = GameSetup(list: CityListKind.world, difficulty: _difficulty);
+
+GameCubit _cubit(
+  List<City> botScript, {
+  Side firstTurn = Side.bot,
+  PlayerStore? store,
+}) => GameCubit(
+  createMatch: (discoveredIds) => Match(
+    index: chainIndex,
+    discoveredIds: discoveredIds,
+    difficulty: _difficulty,
+    random: Random(1),
+    firstTurn: firstTurn,
+    bot: ScriptedBot(chainIndex, botScript),
+  ),
+  store: store ?? FakePlayerStore(),
+  random: Random(1),
+);
 
 GamePlaying _playing(
   List<Turn> history, {
@@ -358,21 +369,34 @@ void main() {
     );
 
     test('cities discovered before are known from the first game', () {
-      final cubit = GameCubit(
-        createMatch: (discoveredIds) => Match(
-          index: chainIndex,
-          difficulty: _difficulty,
-          random: Random(1),
-          discoveredIds: discoveredIds,
-          bot: ScriptedBot(chainIndex, [kyiv]),
-        ),
-        random: Random(1),
-        discoveredIds: {vilnius.id},
-      );
+      final store = FakePlayerStore(PlayerData(discoveredIds: {vilnius.id}));
+      final cubit = _cubit([kyiv], store: store);
       _inFakeTime(cubit, (async) {
         async.elapse(botThinkingMax);
         cubit.submit('Vilnius');
         expect((cubit.state as GamePlaying).score, pointsForCity);
+      });
+    });
+
+    test('a city is new only the first time, in a later game too', () {
+      final store = FakePlayerStore();
+      final first = _cubit([kyiv], store: store);
+      _inFakeTime(first, (async) {
+        async.elapse(botThinkingMax);
+        first.submit('Vilnius');
+        first.giveUp();
+        expect((first.state as GameOver).newCities, [vilnius]);
+      });
+      expect(store.data.discoveredIds, {vilnius.id});
+
+      // A new game screen (a new cubit) on the same store.
+      final second = _cubit([kyiv], store: store);
+      _inFakeTime(second, (async) {
+        async.elapse(botThinkingMax);
+        second.submit('Vilnius');
+        expect((second.state as GamePlaying).score, pointsForCity);
+        second.giveUp();
+        expect((second.state as GameOver).knownCities, [vilnius]);
       });
     });
 
@@ -452,6 +476,86 @@ void main() {
         // An emit after close would throw.
         async.elapse(const Duration(minutes: 1));
         expect(cubit.isClosed, isTrue);
+      });
+    });
+  });
+
+  group('the result is saved however the game ends:', () {
+    test('a win', () {
+      final store = FakePlayerStore();
+      final cubit = _cubit([kyiv, seoul], store: store);
+      _inFakeTime(cubit, (async) {
+        async.elapse(botThinkingMax);
+        cubit.submit('Vilnius');
+        async.elapse(botThinkingMax);
+        cubit.submit('Lima');
+        async.elapse(botThinkingMax); // the bot gives up
+        final result = (cubit.state as GameOver).result;
+        expect(store.saves, 1);
+        expect(
+          store.data,
+          PlayerData(
+            discoveredIds: {vilnius.id, lima.id},
+            records: {_mode: ModeRecord(wins: 1, bestScore: result.score)},
+            gamesPlayed: 1,
+            gamesWon: 1,
+            longestChain: 2,
+          ),
+        );
+      });
+    });
+
+    test('a timeout', () {
+      final store = FakePlayerStore();
+      final cubit = _cubit([kyiv, seoul], store: store);
+      _inFakeTime(cubit, (async) {
+        async.elapse(botThinkingMax);
+        cubit.submit('Vilnius');
+        async.elapse(botThinkingMax);
+        async.elapse(_difficulty.turnTime);
+        expect(cubit.state, isA<GameOver>());
+        expect(
+          store.data,
+          PlayerData(
+            discoveredIds: {vilnius.id},
+            records: {_mode: const ModeRecord(losses: 1, bestScore: 25)},
+            gamesPlayed: 1,
+            longestChain: 1,
+          ),
+        );
+      });
+    });
+
+    test('giving up, even while the bot thinks; a hinted city is not '
+        'discovered', () {
+      final store = FakePlayerStore();
+      final cubit = _cubit([kyiv, seoul], store: store);
+      _inFakeTime(cubit, (async) {
+        async.elapse(botThinkingMax);
+        cubit.hint(); // Vilnius, played for the player
+        cubit.giveUp(); // the bot is thinking
+        expect(cubit.state, isA<GameOver>());
+        expect(
+          store.data,
+          PlayerData(
+            records: {_mode: const ModeRecord(losses: 1)},
+            gamesPlayed: 1,
+          ),
+        );
+      });
+    });
+
+    test('once per game: Play again adds a second game', () {
+      final store = FakePlayerStore();
+      final cubit = _cubit(const [], firstTurn: Side.player, store: store);
+      _inFakeTime(cubit, (async) {
+        cubit.giveUp();
+        cubit.giveUp(); // already over: not counted again
+        cubit.start();
+        cubit.giveUp();
+        expect(store.saves, 2);
+        expect(store.data.gamesPlayed, 2);
+        expect(store.data.records[_mode], const ModeRecord(losses: 2));
       });
     });
   });

@@ -94,7 +94,7 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
   and already-known cities for the game-over view)
 
 ```
-GameCubit(createMatch: (discoveredIds) => Match(...), random, discoveredIds)
+GameCubit(createMatch: (discoveredIds) => Match(...), store, random)  // discoveredIds read from the store at each start
   start()            // a new game; again = "Play again"
   submit(String) · hint() · giveUp()
   pause() · resume()  // app in the background: no time passes; the player taps to resume
@@ -111,7 +111,9 @@ Flow:
    ignored.
 4. When the bot gives up, the player wins. On timeout or surrender, the player
    loses.
-5. On `GameOver`, the result is folded into `PlayerData` and saved.
+5. On `GameOver`, the result is folded into `PlayerData`
+   (`PlayerData.withResult`) and saved. Win, timeout and giving up all end
+   in the same place, so every game is counted once.
 
 Keeping the bot turn a discrete step is the seam for future PvP.
 
@@ -243,6 +245,9 @@ data in memory. `main.dart` loads it before the first frame, and changes go
 through `update(change)`: applied at once, then written one at a time, in
 order, so Cubits saving different parts can't overwrite each other.
 `SetupCubit` and `SettingsCubit` start from it and save each change.
+`GameCubit` saves each result. `StatsCubit` (above the router) follows the
+store's `changes` stream, so Home's stats card (and Statistics, T19) shows new
+numbers as soon as a game ends.
 
 The schema is versioned. Unknown or corrupt data is backed up to
 `player_data.json.bak` and reset, so the app never crashes. A future format

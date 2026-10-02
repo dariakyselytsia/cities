@@ -118,7 +118,7 @@ final class MatchResult extends Equatable {
   final int chain;
 
   /// Cities the player named for the first time ever: they join the
-  /// player's discovered cities (T18).
+  /// player's discovered cities.
   final List<int> newCityIds;
 
   /// Every city the player named themselves, in order (not hinted ones).

@@ -1,14 +1,38 @@
 import 'package:cities/core/placeholder_screen.dart';
 import 'package:cities/core/router.dart';
+import 'package:cities/data/player_data.dart';
 import 'package:cities/engine/city_list.dart';
 import 'package:cities/engine/difficulty.dart';
+import 'package:cities/engine/match.dart';
 import 'package:cities/features/game/game_screen.dart';
 import 'package:cities/features/home/home_screen.dart';
 import 'package:cities/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/fake_player_store.dart';
 import '../helpers/test_app.dart';
+
+/// The stats card's two numbers: the longest chain, then cities discovered.
+List<String> _statCard(WidgetTester tester) => [
+  for (final label in ['home.best_chain', 'home.cities_discovered'])
+    tester
+            .widget<Text>(
+              find
+                  .descendant(
+                    of: find
+                        .ancestor(
+                          of: find.text(label),
+                          matching: find.byType(Column),
+                        )
+                        .first,
+                    matching: find.byType(Text),
+                  )
+                  .first,
+            )
+            .data ??
+        '',
+];
 
 void main() {
   testWidgets('Home → Game → (give up) → Home', (tester) async {
@@ -71,6 +95,36 @@ void main() {
     await tester.tap(find.text('home.best_chain'));
     await tester.pumpAndSettle();
     expect(find.byType(PlaceholderScreen), findsOneWidget);
+  });
+
+  testWidgets('the stats card shows saved progress, and a finished game '
+      'updates it', (tester) async {
+    final store = FakePlayerStore(
+      PlayerData(
+        discoveredIds: {2988507, 1275339}, // Paris, Mumbai
+        longestChain: 4,
+        settings: const Settings(firstTurn: Side.player),
+      ),
+    );
+    await tester.pumpWidget(testApp(createRouter(), store: store));
+    expect(_statCard(tester), ['4', '2']);
+
+    // Name Kyiv, then give up while CityBot thinks.
+    await startGame(tester);
+    await tester.enterText(find.byType(TextField), 'Kyiv');
+    await tester.tap(find.byTooltip('game.send'));
+    await tester.pump();
+    await tester.tap(find.byTooltip('game.give_up'));
+    await settle(tester);
+    await tester.tap(find.text('game.give_up').last);
+    await settle(tester);
+    await tester.tap(find.text('game.home'));
+    await settle(tester);
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    // The longest chain stays 4 (this one was 1); Kyiv is discovered.
+    expect(_statCard(tester), ['4', '3']);
+    expect(store.data.gamesPlayed, 1);
   });
 
   testWidgets('a game link opens that game; a bad one goes Home', (

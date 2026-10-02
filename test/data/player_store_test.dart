@@ -67,6 +67,16 @@ void main() {
     expect(await saved, isTrue);
   });
 
+  test('every change is announced, before it is saved', () async {
+    final playerStore = store();
+    final announced = <int>[];
+    playerStore.changes.listen((data) => announced.add(data.gamesPlayed));
+    final saved = playerStore.update((data) => data.copyWith(gamesPlayed: 1));
+    await playerStore.update((data) => data.copyWith(gamesPlayed: 2));
+    await saved;
+    expect(announced, [1, 2]);
+  });
+
   test('quick changes from different places all land, in order', () async {
     final playerStore = store();
     await playerStore.load();

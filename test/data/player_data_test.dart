@@ -56,6 +56,92 @@ void main() {
     expect(PlayerData.fromJson(_json(const PlayerData())), const PlayerData());
   });
 
+  group('withResult folds in a finished game', () {
+    const ukraineMedium = GameSetup();
+    const worldHard = GameSetup(
+      list: CityListKind.world,
+      difficulty: Difficulty.hard,
+    );
+
+    MatchResult result(
+      MatchOutcome outcome, {
+      int score = 0,
+      List<int> named = const [],
+      List<int> fresh = const [],
+    }) => MatchResult(
+      outcome: outcome,
+      score: score,
+      chain: named.length,
+      newCityIds: fresh,
+      namedCityIds: named,
+    );
+
+    test('a first win', () {
+      final data = const PlayerData().withResult(
+        ukraineMedium,
+        result(
+          MatchOutcome.botGaveUp,
+          score: 150,
+          named: [703448, 702550],
+          fresh: [703448, 702550],
+        ),
+      );
+      expect(
+        data,
+        PlayerData(
+          discoveredIds: const {703448, 702550},
+          records: {ukraineMedium: const ModeRecord(wins: 1, bestScore: 150)},
+          gamesPlayed: 1,
+          gamesWon: 1,
+          longestChain: 2,
+        ),
+      );
+    });
+
+    test('a loss after it: totals add up, bests only go up, the setup and '
+        'settings stay', () {
+      final before = _veteran;
+      final data = before.withResult(
+        ukraineMedium,
+        result(
+          MatchOutcome.timeout,
+          score: 60,
+          named: [703448, 706483], // Kyiv was known; Kharkiv is new
+          fresh: [706483],
+        ),
+      );
+      expect(data.discoveredIds, {...before.discoveredIds, 706483});
+      expect(
+        data.records[ukraineMedium],
+        const ModeRecord(wins: 3, losses: 3, bestScore: 410),
+      );
+      expect(data.records[worldHard], before.records[worldHard]);
+      expect(data.gamesPlayed, 7);
+      expect(data.gamesWon, 3);
+      expect(data.longestChain, 17);
+      expect(data.lastSetup, before.lastSetup);
+      expect(data.settings, before.settings);
+    });
+
+    test('a better score and a longer chain are recorded', () {
+      final data = _veteran.withResult(
+        worldHard,
+        result(
+          MatchOutcome.surrendered,
+          score: 500,
+          named: List.generate(20, (i) => i + 1),
+        ),
+      );
+      expect(
+        data.records[worldHard],
+        const ModeRecord(losses: 2, bestScore: 500),
+      );
+      expect(data.longestChain, 20);
+      // Every named city counts as discovered, even if the game missed it.
+      expect(data.discoveredIds, containsAll(List.generate(20, (i) => i + 1)));
+    });
+  });
+
   group('rejects with a FormatException', () {
     final valid = _json(_veteran);
     final cases = <String, Object?>{
