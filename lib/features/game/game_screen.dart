@@ -12,6 +12,7 @@ import '../../engine/city_list.dart';
 import '../../engine/difficulty.dart';
 import '../../engine/letter_rule.dart';
 import '../../engine/match.dart';
+import '../settings/settings_cubit.dart';
 import 'game_cubit.dart';
 import 'game_state.dart';
 import 'widgets/chat_bubble.dart';
@@ -22,18 +23,13 @@ import 'widgets/pause_overlay.dart';
 import 'widgets/turn_banner.dart';
 
 /// The game route: builds a [GameCubit] for the chosen setup, with city
-/// names in the app's language (game_design §2.4), and starts it.
+/// names in the app's language (game_design §2.4) and who starts from
+/// Settings, and starts it.
 class GameScreen extends StatelessWidget {
-  const GameScreen({
-    super.key,
-    required this.list,
-    required this.difficulty,
-    this.firstTurn = Side.bot,
-  });
+  const GameScreen({super.key, required this.list, required this.difficulty});
 
   final CityListKind list;
   final Difficulty difficulty;
-  final Side firstTurn;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +37,7 @@ class GameScreen extends StatelessWidget {
         ? NameLanguage.uk
         : NameLanguage.en;
     final index = context.read<CityCatalog>().index(list, language);
+    final firstTurn = context.read<SettingsCubit>().state.firstTurn;
     return BlocProvider(
       create: (_) {
         final random = Random();

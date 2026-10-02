@@ -55,7 +55,7 @@
 | T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [x] |
 | T14 | Home screen + router | M4 App shell | M | [x] |
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [x] |
-| T16 | Settings screen (language + About) | M4 App shell | S | [ ] |
+| T16 | Settings screen (language + About) | M4 App shell | S | [x] |
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [ ] |
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [ ] |
 | T19 | Statistics screen | M5 Progress | M | [ ] |
@@ -736,6 +736,31 @@ timer and the bot's vocabulary.
 
 **Done when:** switching language re-renders every screen, and game names
 follow the app language.
+
+**Result (2026-10-02):**
+- `features/settings/`: `SettingsScreen` replaces the T14 placeholder.
+  - **Language:** 🇺🇦 Українська / 🇬🇧 English (each named in itself,
+    flag emoji), via `context.setLocale`: every screen re-renders at once,
+    and `easy_localization` saves the choice (checked on the emulator: it
+    survives a restart). New games take city names from the app language.
+  - **Who starts:** CityBot / Я, held by `SettingsCubit` (above the
+    router, in memory until T17). `GameScreen` passes it to
+    `Match(firstTurn:)`.
+  - **About:** the app and its version (`appVersion` in
+    `core/app_info.dart`, checked against `pubspec.yaml` by a test, so no
+    plugin is needed), the GeoNames CC BY 4.0 attribution with the license
+    link, and Flutter's licenses page.
+- The setup sheet's option card moved to `core/choice_tile.dart`
+  (`ChoiceTile`, with an optional `leading` widget for the flags).
+- Translations pruned (the old leaderboard and statistics strings). A test
+  checks that both languages have the same keys and placeholders, no empty
+  text, and that every literal key in `lib/` exists.
+- Tests: the cubit; "Я" makes the player open the next game; the licenses
+  page; and one test with real translations (switch to English: Settings,
+  About and Home re-render, and a new game shows English city names). Real
+  translations need a shared_preferences stand-in and real-time loading
+  (`setUpLocalization`, `pumpLocalized` in `test/helpers/test_app.dart`),
+  and they stay loaded for the rest of a test file, so that test runs last.
 
 ---
 

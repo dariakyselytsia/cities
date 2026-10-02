@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app.dart';
 import 'data/city_loader.dart';
+import 'features/settings/settings_cubit.dart';
 import 'features/setup/setup_cubit.dart';
 import 'features/startup/startup_cubit.dart';
 
@@ -24,8 +25,9 @@ Future<void> main() async {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => StartupCubit(CityLoader())..load()),
-          // Above the router, so the setup sheet remembers the last choice.
+          // Above the router, so every screen and new game sees them.
           BlocProvider(create: (_) => SetupCubit()),
+          BlocProvider(create: (_) => SettingsCubit()),
         ],
         child: const CitiesApp(),
       ),

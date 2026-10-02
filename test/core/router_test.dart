@@ -4,6 +4,7 @@ import 'package:cities/engine/city_list.dart';
 import 'package:cities/engine/difficulty.dart';
 import 'package:cities/features/game/game_screen.dart';
 import 'package:cities/features/home/home_screen.dart';
+import 'package:cities/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -47,15 +48,15 @@ void main() {
     expect(find.byType(GameView), findsNothing);
   });
 
-  for (final (tooltip, title) in [
-    ('statistics.title', 'statistics.title'),
-    ('settings.title', 'settings.title'),
+  for (final (title, screen) in [
+    ('statistics.title', PlaceholderScreen),
+    ('settings.title', SettingsScreen),
   ]) {
     testWidgets('Home → $title → back', (tester) async {
       await tester.pumpWidget(testApp(createRouter()));
-      await tester.tap(find.byTooltip(tooltip));
+      await tester.tap(find.byTooltip(title));
       await tester.pumpAndSettle();
-      expect(find.byType(PlaceholderScreen), findsOneWidget);
+      expect(find.byType(screen), findsOneWidget);
       expect(find.text(title), findsOneWidget);
 
       await tester.tap(find.byType(BackButton));

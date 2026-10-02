@@ -19,14 +19,19 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "city_list": "City list",
-    "world_cities": "World Cities",
-    "world_cities_desc": "all countries, ~3,000 cities",
-    "ukrainian_cities": "Ukrainian Cities",
-    "ukrainian_cities_desc": "Ukraine-only, ~150 cities",
-    "city_list_hint": "Select one or both — matches use cities pulled from checked lists.",
-    "gameplay": "Gameplay",
-    "sound_effects": "Sound effects"
+    "language_uk": "Українська",
+    "language_uk_desc": "Interface and city names in Ukrainian",
+    "language_en": "English",
+    "language_en_desc": "Interface and city names in English",
+    "first_turn": "Who starts",
+    "first_turn_bot": "CityBot",
+    "first_turn_bot_desc": "CityBot names the first city",
+    "first_turn_player": "Me",
+    "first_turn_player_desc": "You start with any city",
+    "about": "About",
+    "version": "Version {version}",
+    "geonames": "City names and data: GeoNames ({site}), licensed under CC BY 4.0 ({license}). Filtered and corrected for this game.",
+    "licenses": "Licenses"
   },
   "game": {
     "citybot": "CityBot",
@@ -68,25 +73,8 @@
     "paused": "Paused",
     "tap_to_resume": "Tap to continue"
   },
-  "leaderboard": {
-    "title": "Leaderboard",
-    "weekly": "Weekly",
-    "global": "Global",
-    "friends": "Friends",
-    "you": "You",
-    "footer_top": "you're #1 this week, keep it up!"
-  },
   "statistics": {
-    "title": "Statistics",
-    "cities_discovered": "cities found",
-    "longest_streak": "longest streak",
-    "games_played": "games played",
-    "high_scores": "High scores",
-    "ukraine": "Ukraine",
-    "world": "World",
-    "recent_sessions": "Recent games",
-    "no_sessions": "No games yet — play a round to see your stats here.",
-    "cities_count": "{} cities"
+    "title": "Statistics"
   },
   "list": {
     "ukraine": "Ukraine",

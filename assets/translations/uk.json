@@ -19,14 +19,19 @@
   "settings": {
     "title": "Налаштування",
     "language": "Мова",
-    "city_list": "Список міст",
-    "world_cities": "Міста світу",
-    "world_cities_desc": "усі країни, ~3 000 міст",
-    "ukrainian_cities": "Міста України",
-    "ukrainian_cities_desc": "лише Україна, ~150 міст",
-    "city_list_hint": "Оберіть один або обидва — гра бере міста з позначених списків.",
-    "gameplay": "Гра",
-    "sound_effects": "Звукові ефекти"
+    "language_uk": "Українська",
+    "language_uk_desc": "Інтерфейс і назви міст українською",
+    "language_en": "English",
+    "language_en_desc": "Інтерфейс і назви міст англійською",
+    "first_turn": "Хто починає",
+    "first_turn_bot": "CityBot",
+    "first_turn_bot_desc": "CityBot називає перше місто",
+    "first_turn_player": "Я",
+    "first_turn_player_desc": "Ви починаєте з будь-якого міста",
+    "about": "Про гру",
+    "version": "Версія {version}",
+    "geonames": "Назви та дані міст — GeoNames ({site}), ліцензія CC BY 4.0 ({license}). Для гри дані відфільтровано й виправлено.",
+    "licenses": "Ліцензії"
   },
   "game": {
     "citybot": "CityBot",
@@ -68,25 +73,8 @@
     "paused": "Пауза",
     "tap_to_resume": "Торкніться, щоб продовжити"
   },
-  "leaderboard": {
-    "title": "Таблиця лідерів",
-    "weekly": "Тиждень",
-    "global": "Світ",
-    "friends": "Друзі",
-    "you": "Ви",
-    "footer_top": "ви #1 цього тижня, так тримати!"
-  },
   "statistics": {
-    "title": "Статистика",
-    "cities_discovered": "відкрито міст",
-    "longest_streak": "найдовша серія",
-    "games_played": "зіграно ігор",
-    "high_scores": "Рекорди",
-    "ukraine": "Україна",
-    "world": "Світ",
-    "recent_sessions": "Останні ігри",
-    "no_sessions": "Ще немає ігор — зіграйте раунд, щоб побачити статистику.",
-    "cities_count": "{} міст"
+    "title": "Статистика"
   },
   "list": {
     "ukraine": "Україна",

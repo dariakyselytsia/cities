@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/choice_tile.dart';
 import '../../core/router.dart';
 import '../../core/theme.dart';
 import '../../engine/city_list.dart';
@@ -67,7 +68,7 @@ class SetupSheet extends StatelessWidget {
                   for (final (i, list) in CityListKind.values.indexed) ...[
                     if (i > 0) const SizedBox(width: 12),
                     Expanded(
-                      child: _Option(
+                      child: ChoiceTile(
                         icon: _listIcons[list] ?? Icons.place_rounded,
                         title: 'list.${list.name}'.tr(),
                         subtitle: 'setup.list_desc.${list.name}'.tr(),
@@ -81,7 +82,7 @@ class SetupSheet extends StatelessWidget {
               const SizedBox(height: 20),
               _SectionLabel('setup.difficulty'.tr()),
               for (final difficulty in Difficulty.values) ...[
-                _Option(
+                ChoiceTile(
                   icon: _difficultyIcons[difficulty] ?? Icons.tune_rounded,
                   title: 'difficulty.${difficulty.name}'.tr(),
                   subtitle: 'setup.difficulty_desc.${difficulty.name}'.tr(),
@@ -116,86 +117,4 @@ class _SectionLabel extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 10),
     child: Text(text, style: heading(size: 16, color: AppColors.inkSoft)),
   );
-}
-
-/// A selectable card: teal border and check when [selected].
-class _Option extends StatelessWidget {
-  const _Option({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-    this.trailing,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-
-  /// A short note on the right, e.g. the seconds per turn.
-  final String? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final accent = selected ? AppColors.tealDark : AppColors.inkSoft;
-    return Semantics(
-      selected: selected,
-      button: true,
-      child: Material(
-        color: selected
-            ? AppColors.teal.withValues(alpha: 0.10)
-            : AppColors.card,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadii.input),
-          side: BorderSide(
-            color: selected ? AppColors.teal : Colors.transparent,
-            width: 2,
-          ),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppRadii.input),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              children: [
-                Icon(icon, color: accent),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: heading(size: 17)),
-                      Text(
-                        subtitle,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AppColors.inkSoft,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (trailing case final trailing?) ...[
-                  const SizedBox(width: 8),
-                  Text(trailing, style: heading(size: 14, color: accent)),
-                ],
-                if (selected) ...[
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.check_circle_rounded,
-                    color: AppColors.teal,
-                    size: 20,
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
