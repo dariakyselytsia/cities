@@ -12,6 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'fake_player_store.dart';
+
 // Without EasyLocalization set up, `.tr()` returns the key, so the tests
 // find the keys.
 
@@ -25,8 +27,10 @@ final fixtureCatalog = CityCatalog.fromJson(
 Widget testApp(GoRouter router, {SetupCubit? setup, SettingsCubit? settings}) =>
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => setup ?? SetupCubit()),
-        BlocProvider(create: (_) => settings ?? SettingsCubit()),
+        BlocProvider(create: (_) => setup ?? SetupCubit(FakePlayerStore())),
+        BlocProvider(
+          create: (_) => settings ?? SettingsCubit(FakePlayerStore()),
+        ),
       ],
       child: RepositoryProvider.value(
         value: fixtureCatalog,
@@ -88,8 +92,8 @@ Widget localizedTestApp(
   saveLocale: false,
   child: MultiBlocProvider(
     providers: [
-      BlocProvider(create: (_) => SetupCubit()),
-      BlocProvider(create: (_) => settings ?? SettingsCubit()),
+      BlocProvider(create: (_) => SetupCubit(FakePlayerStore())),
+      BlocProvider(create: (_) => settings ?? SettingsCubit(FakePlayerStore())),
     ],
     child: RepositoryProvider.value(
       value: fixtureCatalog,

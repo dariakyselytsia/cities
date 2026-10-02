@@ -56,7 +56,7 @@
 | T14 | Home screen + router | M4 App shell | M | [x] |
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [x] |
 | T16 | Settings screen (language + About) | M4 App shell | S | [x] |
-| T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [ ] |
+| T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [x] |
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [ ] |
 | T19 | Statistics screen | M5 Progress | M | [ ] |
 | T25 | Review rare-letter skipping | M6 Release | S | [ ] |
@@ -776,13 +776,45 @@ follow the app language.
 **Done when:** tests cover the round-trip, a missing file, a corrupt file, and
 the version field.
 
+**Result (2026-10-02):**
+- `data/player_data.dart`: `PlayerData` (tech_design §6) with typed
+  `fromJson` / `toJson` and `version: 1` (`playerDataVersion`). `GameSetup`
+  (list + difficulty, also the key of the per-mode `ModeRecord`s, saved as
+  `"ukraine.medium"`) and `Settings` moved here from their Cubits, which
+  re-export them. Enums are saved by name.
+- `data/player_store.dart`: the `PlayerStore` interface and
+  `FilePlayerStore` (`player_data.json` in the app documents directory).
+  - It holds the current data in memory; `update(change)` applies a change
+    at once, then saves, one write at a time and in order, so the setup and
+    settings Cubits can't overwrite each other.
+  - Atomic write: a `.tmp` file, then a rename.
+  - A missing file is a new player. Corrupt JSON, a wrong shape, an unknown
+    version or bytes that aren't text are renamed to
+    `player_data.json.bak` and the player starts over. Without a documents
+    directory the app still runs, it just can't remember. Errors go to the
+    debug log only.
+- `main.dart` loads the store before the first frame (it's small) and
+  provides it. `SettingsCubit` and `SetupCubit` start from the saved data
+  and save every change, so «Хто починає» and the last list and difficulty
+  survive a restart (brought forward from T18).
+- Discovered cities, records and totals are in the format and round-trip;
+  recording them on `GameOver` is T18.
+- Tests: `PlayerData` (defaults, the exact JSON, round-trip, ten malformed
+  inputs), `FilePlayerStore` on a temporary directory (missing file,
+  round-trip, version field, no leftover temp file, 20 quick changes land in
+  order, five kinds of unreadable file backed up and reset, no directory, a
+  failed save retried), and the Cubits with an in-memory
+  `FakePlayerStore`.
+- Checked on the emulator: «Я» and Світ / Складно are still selected after
+  force-stopping and relaunching the app.
+
 ### T18 · Record results + new-city bonus + Home stats card · M
 - On `GameOver`, fold the result into `PlayerData` and save it:
   discovered ids, per list × difficulty W/L and best score, games played/won,
   longest chain.
 - Feed `discoveredIds` into `Match`, which makes the **+25 new-city bonus
   live**.
-- Persist the last setup.
+- ~~Persist the last setup.~~ Done in T17.
 - The Home stats card shows real numbers and refreshes when you return to Home.
 
 **Done when:**

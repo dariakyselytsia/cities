@@ -238,8 +238,16 @@ settings: {firstTurn: bot | player}     // "Who starts" (game_design §2.2)
 
 The locale is persisted by `easy_localization` itself.
 
-The schema is versioned. Unknown or corrupt data is backed up and reset, so
-the app never crashes.
+`PlayerStore` (an interface, so tests use an in-memory fake) holds the current
+data in memory. `main.dart` loads it before the first frame, and changes go
+through `update(change)`: applied at once, then written one at a time, in
+order, so Cubits saving different parts can't overwrite each other.
+`SetupCubit` and `SettingsCubit` start from it and save each change.
+
+The schema is versioned. Unknown or corrupt data is backed up to
+`player_data.json.bak` and reset, so the app never crashes. A future format
+change bumps `playerDataVersion` and must read the old version, or players
+lose their progress.
 
 ## 7. Testing strategy
 - **Engine (most of the value):**

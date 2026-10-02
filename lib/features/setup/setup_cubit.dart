@@ -1,35 +1,29 @@
-import 'package:equatable/equatable.dart';
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/player_data.dart';
+import '../../data/player_store.dart';
 import '../../engine/city_list.dart';
 import '../../engine/difficulty.dart';
 
-/// What the player picked for the next game (game_design §2.1).
-final class GameSetup extends Equatable {
-  const GameSetup({
-    this.list = CityListKind.ukraine,
-    this.difficulty = Difficulty.medium,
-  });
+export '../../data/player_data.dart' show GameSetup;
 
-  final CityListKind list;
-  final Difficulty difficulty;
-
-  GameSetup copyWith({CityListKind? list, Difficulty? difficulty}) => GameSetup(
-    list: list ?? this.list,
-    difficulty: difficulty ?? this.difficulty,
-  );
-
-  @override
-  List<Object?> get props => [list, difficulty];
-}
-
-/// The setup sheet's choice. It lives above the router, so the sheet opens
-/// with the last choice; it's in memory until T17 saves it.
+/// The setup sheet's choice. It lives above the router and starts from the
+/// saved last setup, so the sheet opens with the last choice, even after a
+/// restart; every change is saved.
 class SetupCubit extends Cubit<GameSetup> {
-  SetupCubit([super.initial = const GameSetup()]);
+  SetupCubit(this._store) : super(_store.data.lastSetup);
 
-  void selectList(CityListKind list) => emit(state.copyWith(list: list));
+  final PlayerStore _store;
+
+  void selectList(CityListKind list) => _select(state.copyWith(list: list));
 
   void selectDifficulty(Difficulty difficulty) =>
-      emit(state.copyWith(difficulty: difficulty));
+      _select(state.copyWith(difficulty: difficulty));
+
+  void _select(GameSetup setup) {
+    emit(setup);
+    unawaited(_store.update((data) => data.copyWith(lastSetup: setup)));
+  }
 }

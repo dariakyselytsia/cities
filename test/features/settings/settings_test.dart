@@ -1,5 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cities/core/router.dart';
+import 'package:cities/data/player_data.dart';
 import 'package:cities/engine/bot.dart';
 import 'package:cities/engine/match.dart';
 import 'package:cities/features/game/game_screen.dart';
@@ -8,6 +9,7 @@ import 'package:cities/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/fake_player_store.dart';
 import '../../helpers/test_app.dart';
 
 Future<void> _openSettings(WidgetTester tester) async {
@@ -31,20 +33,39 @@ void main() {
   setUpAll(setUpLocalization);
 
   group('SettingsCubit', () {
-    test('CityBot starts by default', () {
-      expect(SettingsCubit().state, const Settings(firstTurn: Side.bot));
+    test('CityBot starts for a new player', () {
+      expect(
+        SettingsCubit(FakePlayerStore()).state,
+        const Settings(firstTurn: Side.bot),
+      );
     });
 
+    test('starts from the saved settings', () {
+      final store = FakePlayerStore(
+        const PlayerData(settings: Settings(firstTurn: Side.player)),
+      );
+      expect(
+        SettingsCubit(store).state,
+        const Settings(firstTurn: Side.player),
+      );
+    });
+
+    late FakePlayerStore store;
     blocTest<SettingsCubit, Settings>(
-      'remembers who starts',
-      build: SettingsCubit.new,
+      'remembers and saves who starts',
+      setUp: () => store = FakePlayerStore(),
+      build: () => SettingsCubit(store),
       act: (cubit) => cubit.setFirstTurn(Side.player),
       expect: () => const [Settings(firstTurn: Side.player)],
+      verify: (_) => expect(
+        store.data,
+        const PlayerData(settings: Settings(firstTurn: Side.player)),
+      ),
     );
   });
 
   testWidgets('"Me" makes the player open the next game', (tester) async {
-    final settings = SettingsCubit();
+    final settings = SettingsCubit(FakePlayerStore());
     await tester.pumpWidget(testApp(createRouter(), settings: settings));
     await _openSettings(tester);
     expect(find.byType(SettingsScreen), findsOneWidget);

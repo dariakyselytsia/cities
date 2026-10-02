@@ -9,6 +9,7 @@ import 'package:cities/features/setup/setup_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/fake_player_store.dart';
 import '../../helpers/test_app.dart';
 
 /// Whether the option titled [title] is marked selected.
@@ -41,7 +42,7 @@ void main() {
 
   testWidgets('the chosen list and difficulty drive the game, and are '
       'remembered', (tester) async {
-    final setup = SetupCubit();
+    final setup = SetupCubit(FakePlayerStore());
     await tester.pumpWidget(testApp(createRouter(), setup: setup));
     await openSetup(tester);
     await _tap(tester, 'list.world');
