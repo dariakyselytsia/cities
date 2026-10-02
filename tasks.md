@@ -53,7 +53,7 @@
 | T12 | Game screen (chat UI) | M3 Playable | L | [x] |
 | T13 | Game-over view | M3 Playable | S | [x] |
 | T26 | Pause the turn timer when the app is in the background | M3 Playable | S | [x] |
-| T14 | Home screen + router | M4 App shell | M | [ ] |
+| T14 | Home screen + router | M4 App shell | M | [x] |
 | T15 | Setup sheet (list + difficulty) | M4 App shell | S | [ ] |
 | T16 | Settings screen (language + About) | M4 App shell | S | [ ] |
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [ ] |
@@ -677,6 +677,29 @@ background, so a phone call or a notification can lose the game on timeout.
 
 **Done when:** you can navigate Home ↔ Game ↔ Home, and the temporary route
 from T12 is removed.
+
+**Result (2026-10-02):**
+- `core/router.dart`: `createRouter()` with `/`, `/game`, `/settings`,
+  `/stats`; screens are pushed over Home. The game's setup travels in the
+  link (`Routes.gameFor(list, difficulty)` →
+  `/game?list=ukraine&difficulty=medium`; enums become names only there),
+  and a link with a missing or unknown setup redirects Home. `app.dart`
+  is `MaterialApp.router` (the router is created once per app, so a
+  language change keeps the stack); `StartupGate` still wraps every route.
+- Home ported from `archive/v0`: Statistics / Settings buttons pinned to
+  the top, the hero, «Міста» + tagline, a stats card (zeros until T18;
+  opens Statistics) and the big Play button, which opens Ukraine / Medium
+  until the setup sheet (T15). Leaderboard, Play Online and How to play
+  were left out (Future). The temporary T12 button is gone.
+- Settings and Statistics are `PlaceholderScreen`s ("Скоро буде") until
+  T16 / T19.
+- The game screen reads the language with `Localizations.localeOf`, and
+  leaving pops back to Home, or goes Home when the game was opened by its
+  link.
+- Tests: Home → Game → Back (give up) → Home, game over → Home, Home ↔
+  Settings / Statistics, the stats card, game links (valid and invalid).
+- Checked on the emulator, including Android's system Back mid-game (it
+  asks before giving up).
 
 ### T15 · Setup sheet · S
 - Play opens a bottom sheet: list (Ukraine/World) + difficulty + Start.

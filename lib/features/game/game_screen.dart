@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/router.dart';
 import '../../engine/city.dart';
 import '../../engine/city_catalog.dart';
 import '../../engine/city_list.dart';
@@ -35,7 +37,7 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final language = context.locale.languageCode == 'uk'
+    final language = Localizations.localeOf(context).languageCode == 'uk'
         ? NameLanguage.uk
         : NameLanguage.en;
     final index = context.read<CityCatalog>().index(list, language);
@@ -132,7 +134,18 @@ class _GameViewState extends State<GameView> {
 
   /// Leaving mid-game is giving up, so it asks first.
   Future<void> _onBlockedPop() async {
-    if (await _confirmGiveUp() && mounted) Navigator.pop(context);
+    if (await _confirmGiveUp() && mounted) _leave();
+  }
+
+  /// Back to the screen below (Home), or to Home when the game was opened
+  /// directly by its link.
+  void _leave() {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else {
+      GoRouter.maybeOf(context)?.go(Routes.home);
+    }
   }
 
   /// What the listener saw last, to react to changes only (the state is
@@ -195,7 +208,7 @@ class _GameViewState extends State<GameView> {
           difficulty: widget.difficulty,
           secondsLeft: state.secondsLeft,
           isCounting: isPlayerTurn,
-          onBack: () => Navigator.maybePop(context),
+          onBack: _onBlockedPop,
           onGiveUp: _confirmGiveUp,
         ),
         Expanded(
@@ -233,14 +246,14 @@ class _GameViewState extends State<GameView> {
         GameHeader(
           list: widget.list,
           difficulty: widget.difficulty,
-          onBack: () => Navigator.maybePop(context),
+          onBack: _leave,
         ),
         Expanded(
           child: GameOverView(
             state: state,
             language: widget.language,
             onPlayAgain: _cubit.start,
-            onHome: () => Navigator.maybePop(context),
+            onHome: _leave,
           ),
         ),
       ],

@@ -1,5 +1,8 @@
 {
   "app_title": "Cities",
+  "common": {
+    "coming_soon": "Coming soon"
+  },
   "startup": {
     "loading": "Loading cities…",
     "error_title": "Couldn't load the cities",
@@ -7,17 +10,11 @@
     "retry": "Try again"
   },
   "home": {
-    "play": "Play",
-    "leaderboard": "Leaderboard",
-    "settings": "Settings",
     "tagline": "type it. chain it. win it.",
-    "play_vs_bot": "Play vs Bot",
-    "play_vs_bot_sub": "Endurance — beat your best",
-    "play_online": "Play Online",
-    "play_online_sub": "Coming soon",
-    "how_to_play": "how to play",
-    "best_streak": "best streak",
-    "cities_played": "cities played"
+    "play": "Play",
+    "play_sub": "Out-name CityBot",
+    "best_chain": "longest chain",
+    "cities_discovered": "cities discovered"
   },
   "settings": {
     "title": "Settings",
