@@ -11,6 +11,8 @@ import 'package:cities/features/game/game_cubit.dart';
 import 'package:cities/features/game/game_screen.dart';
 import 'package:cities/features/game/widgets/chat_bubble.dart';
 import 'package:cities/features/game/widgets/game_over_view.dart';
+import 'package:cities/features/game/widgets/give_up_dialog.dart';
+import 'package:cities/features/game/widgets/out_of_time_view.dart';
 import 'package:cities/features/game/widgets/pause_overlay.dart';
 import 'package:cities/features/game/widgets/turn_banner.dart';
 import 'package:flutter/material.dart';
@@ -175,6 +177,9 @@ void main() {
     await tester.tap(find.byTooltip('game.give_up'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
+    // No chain yet, so the warning doesn't mention one.
+    expect(find.byType(GiveUpDialog), findsOneWidget);
+    expect(find.text('game.give_up_body_no_chain'), findsOneWidget);
     await tester.tap(find.text('game.keep_playing'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -194,13 +199,34 @@ void main() {
     await _close(tester);
   });
 
-  testWidgets('the timer runs out: a loss', (tester) async {
+  testWidgets('the dialog warns that a chain ends', (tester) async {
+    await _openGame(tester, [kyiv]);
+    await _botThinks(tester);
+    await tester.enterText(find.byType(TextField), 'Vilnius');
+    await tester.tap(find.byTooltip('game.send'));
+    await tester.pump();
+
+    await tester.tap(find.byTooltip('game.give_up'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('game.give_up_body'), findsOneWidget);
+
+    await _close(tester);
+  });
+
+  testWidgets('the timer runs out: Out of time, then a loss', (tester) async {
     await _openGame(tester, [kyiv]);
     await _botThinks(tester);
 
     await tester.pump(const Duration(seconds: 25));
     expect(find.text('5'), findsOneWidget);
     await tester.pump(const Duration(seconds: 5));
+    expect(find.byType(OutOfTimeView), findsOneWidget);
+    expect(find.text('game.out_of_time.title'), findsOneWidget);
+    expect(find.byType(GameOverView), findsNothing);
+
+    await tester.tap(find.text('game.out_of_time.see_results'));
+    await tester.pump();
     expect(find.text('game.loss'), findsOneWidget);
     expect(find.text('game.outcome.timeout'), findsOneWidget);
     expect(find.byType(GameOverView), findsOneWidget);
@@ -208,7 +234,7 @@ void main() {
     await _close(tester);
   });
 
-  testWidgets('back mid-game is giving up: it asks, then leaves', (
+  testWidgets('back mid-game is giving up: it asks, then shows the results', (
     tester,
   ) async {
     await _openGame(tester, [kyiv]);
@@ -222,8 +248,8 @@ void main() {
     await tester.tap(find.text('game.give_up').last);
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    expect(find.text('home'), findsOneWidget);
-    expect(find.byType(GameView), findsNothing);
+    expect(find.byType(GameOverView), findsOneWidget);
+    expect(find.text('game.outcome.surrendered'), findsOneWidget);
 
     await _close(tester);
   });

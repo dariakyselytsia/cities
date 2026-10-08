@@ -168,8 +168,15 @@ class GameCubit extends Cubit<GameState> {
     _endGame(match);
   }
 
+  /// From the "Out of time!" moment ([OutOfTime]) to the results.
+  void showResults() {
+    if (state case OutOfTime(:final result, :final history)) {
+      emit(GameOver(result: result, history: history));
+    }
+  }
+
   /// Every way a game ends (win, timeout, giving up) comes here, so every
-  /// result is saved.
+  /// result is saved. A timeout shows [OutOfTime] first, then [showResults].
   void _endGame(Match match) {
     _cancelTimers();
     final result = match.result;
@@ -179,7 +186,11 @@ class GameCubit extends Cubit<GameState> {
       difficulty: match.difficulty,
     );
     unawaited(_store.update((data) => data.withResult(mode, result)));
-    emit(GameOver(result: result, history: match.history));
+    emit(
+      result.outcome == MatchOutcome.timeout
+          ? OutOfTime(result: result, history: match.history)
+          : GameOver(result: result, history: match.history),
+    );
   }
 
   void _emitPlaying(Match match) => emit(

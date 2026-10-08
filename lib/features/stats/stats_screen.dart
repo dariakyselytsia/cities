@@ -459,7 +459,6 @@ class _EmptyStats extends StatelessWidget {
               icon: const Icon(Icons.play_arrow_rounded),
               label: Text('home.play'.tr()),
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.teal,
                 padding: const EdgeInsets.symmetric(horizontal: 32),
               ),
             ),

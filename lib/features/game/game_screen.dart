@@ -1,11 +1,12 @@
 import 'dart:math';
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router.dart';
+import '../../core/theme.dart';
 import '../../data/player_store.dart';
 import '../../engine/city.dart';
 import '../../engine/city_catalog.dart';
@@ -18,8 +19,10 @@ import 'game_cubit.dart';
 import 'game_state.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/game_over_view.dart';
+import 'widgets/give_up_dialog.dart';
 import 'widgets/game_header.dart';
 import 'widgets/input_bar.dart';
+import 'widgets/out_of_time_view.dart';
 import 'widgets/pause_overlay.dart';
 import 'widgets/turn_banner.dart';
 
@@ -107,33 +110,22 @@ class _GameViewState extends State<GameView> {
 
   void _submit() => _cubit.submit(_input.text);
 
-  /// Asks before giving up; true when the player confirmed.
+  /// Asks before giving up; true when the player confirmed. Either way the
+  /// player stays: a give-up shows the results, like any other end.
   Future<bool> _confirmGiveUp() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('game.give_up_title'.tr()),
-        content: Text('game.give_up_body'.tr()),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('game.keep_playing'.tr()),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text('game.give_up'.tr()),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return false;
+    final chain = switch (_cubit.state) {
+      GamePlaying(:final chain) => chain,
+      _ => 0,
+    };
+    final confirmed = await showGiveUpDialog(context, chain: chain);
+    if (!confirmed || !mounted) return false;
     _cubit.giveUp();
     return true;
   }
 
-  /// Leaving mid-game is giving up, so it asks first.
+  /// Back mid-game is giving up, so it asks first; then the results show.
   Future<void> _onBlockedPop() async {
-    if (await _confirmGiveUp() && mounted) _leave();
+    await _confirmGiveUp();
   }
 
   /// Back to the screen below (Home), or to Home when the game was opened
@@ -184,13 +176,26 @@ class _GameViewState extends State<GameView> {
         onPopInvokedWithResult: (didPop, _) {
           if (!didPop) _onBlockedPop();
         },
-        child: Scaffold(
-          body: SafeArea(
-            child: switch (state) {
-              GameLoading() => const Center(child: CircularProgressIndicator()),
-              GamePlaying() => _board(state),
-              GameOver() => _ended(state),
-            },
+        // The Out-of-time moment is dark, status bar included.
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: state is OutOfTime
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
+          child: Scaffold(
+            backgroundColor: state is OutOfTime ? AppColors.ink : null,
+            body: SafeArea(
+              child: switch (state) {
+                GameLoading() => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                GamePlaying() => _board(state),
+                OutOfTime() => OutOfTimeView(
+                  chain: state.result.chain,
+                  onSeeResults: _cubit.showResults,
+                ),
+                GameOver() => _ended(state),
+              },
+            ),
           ),
         ),
       ),

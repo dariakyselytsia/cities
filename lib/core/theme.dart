@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 
 /// Design tokens for the "Cities" vibrant/playful palette (from the shared
-/// design file). Text is dark slate on warm cream; primary actions are coral,
-/// secondary are teal, with yellow/purple accents.
+/// design file). Text is dark slate on warm cream, with yellow/purple
+/// accents.
+///
+/// Buttons follow one rule (T27): **positive** actions (Play, Start, Play
+/// again, Keep playing) are teal; **negative** ones (Give up) are coral.
+/// Coral is also the brand color (the logo).
 abstract final class AppColors {
-  static const Color coral = Color(0xFFFF6B5B); // primary / brand CTA
-  static const Color teal = Color(0xFF17B0A6); // secondary CTA
+  static const Color coral = Color(0xFFFF6B5B); // brand, negative actions
+  static const Color teal = Color(0xFF17B0A6); // positive actions
   static const Color yellow = Color(0xFFFFE9A8); // highlight accent
   static const Color purple = Color(0xFF5B3AA8); // accent
   static const Color green = Color(0xFF2FB16B); // success / player accent
   static const Color tealDark = Color(0xFF0D6D66);
   static const Color tealLight = Color(0xFFA8F0E8); // teal text on coral/purple
+
+  /// Coral for **text** on cream, such as a negative text button: plain
+  /// coral is too light to read there.
+  static const Color coralDeep = Color(0xFFD63F31);
 
   static const Color background = Color(0xFFFBF7F0); // app surface (cream)
   static const Color surfaceAlt = Color(0xFFEDEAE3); // slightly deeper cream
@@ -66,7 +74,8 @@ TextStyle heading({
     );
 
 /// Builds the app [ThemeData]: Rubik body, Nunito headings, coral/teal
-/// accents, rounded components.
+/// accents, rounded components. Filled and text buttons are teal: positive
+/// by default (see [AppColors]); a negative button sets coral itself.
 ThemeData buildAppTheme() {
   const scheme = ColorScheme(
     brightness: Brightness.light,
@@ -112,16 +121,22 @@ ThemeData buildAppTheme() {
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: AppColors.coral,
+        backgroundColor: AppColors.teal,
         foregroundColor: Colors.white,
         minimumSize: const Size(0, 56),
         padding: const EdgeInsets.symmetric(horizontal: 28),
         elevation: 8,
-        shadowColor: AppColors.coral.withValues(alpha: 0.45),
+        shadowColor: AppColors.teal.withValues(alpha: 0.45),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.button),
         ),
         textStyle: heading(size: 18, weight: FontWeight.w700, color: Colors.white),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: AppColors.tealDark,
+        textStyle: heading(size: 16, weight: FontWeight.w700),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(

@@ -35,7 +35,9 @@ List<String> _statCard(WidgetTester tester) => [
 ];
 
 void main() {
-  testWidgets('Home → Game → (give up) → Home', (tester) async {
+  testWidgets('Home → Game → (Back, give up) → results → Home', (
+    tester,
+  ) async {
     await tester.pumpWidget(testApp(createRouter()));
     expect(find.byType(HomeScreen), findsOneWidget);
 
@@ -45,10 +47,14 @@ void main() {
     expect(game.list, CityListKind.ukraine);
     expect(game.difficulty, Difficulty.medium);
 
-    // Back mid-game asks first; giving up returns Home.
+    // Back mid-game asks first; giving up shows the results, then Back
+    // returns Home.
     await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
     await settle(tester);
     await tester.tap(find.text('game.give_up').last);
+    await settle(tester);
+    expect(find.text('game.loss'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
     await settle(tester);
     expect(find.byType(GameView), findsNothing);
     expect(find.byType(HomeScreen), findsOneWidget);

@@ -48,7 +48,8 @@
       "already_used": "That city was already named"
     },
     "give_up_title": "Give up?",
-    "give_up_body": "The game will end as a loss.",
+    "give_up_body": "Giving up now counts as a loss and ends your chain of {chain}.",
+    "give_up_body_no_chain": "Giving up now counts as a loss.",
     "keep_playing": "Keep playing",
     "win": "You won!",
     "loss": "You lost",
@@ -60,6 +61,12 @@
     "play_again": "Play again",
     "home": "Home",
     "or": "or",
+    "out_of_time": {
+      "title": "Out of time!",
+      "body": "The timer hit zero, so this game ends as a loss.",
+      "chain": "your chain",
+      "see_results": "See results"
+    },
     "over": {
       "new_title": "New discoveries",
       "named_title": "Your cities",

@@ -93,6 +93,9 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
 - `GameLoading` (before `start()`)
 - `GamePlaying`, which carries: history, whose turn, required letter, seconds
   left, score, hints left, and the last rejection
+- `OutOfTime` (T27), after a timeout: the result is already saved, and the
+  screen shows "Out of time!" until `showResults()`. It's the seam for a
+  Future ad revive.
 - `GameOver`, which carries the result summary and the history (named, new
   and already-known cities for the game-over view)
 
@@ -100,6 +103,7 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
 GameCubit(createMatch: (discoveredIds) => Match(...), store, random)  // discoveredIds read from the store at each start
   start()            // a new game; again = "Play again"
   submit(String) · hint() · giveUp()
+  showResults()      // OutOfTime → GameOver
   pause() · resume()  // app in the background: no time passes; the player taps to resume
 ```
 
@@ -114,7 +118,7 @@ Flow:
    ignored.
 4. When the bot gives up, the player wins. On timeout or surrender, the player
    loses.
-5. On `GameOver`, the result is folded into `PlayerData`
+5. When the game ends (`OutOfTime` or `GameOver`), the result is folded into `PlayerData`
    (`PlayerData.withResult`) and saved. Win, timeout and giving up all end
    in the same place, so every game is counted once.
 

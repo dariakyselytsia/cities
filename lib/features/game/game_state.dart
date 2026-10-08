@@ -85,6 +85,21 @@ final class GamePlaying extends GameState {
   ];
 }
 
+/// The player's timer ran out (game_design §3.5). The game is over and its
+/// result already saved; the screen shows the "Out of time!" moment, and
+/// `GameCubit.showResults` moves on to [GameOver].
+///
+/// A Future "watch an ad for more time" revive would be offered here.
+final class OutOfTime extends GameState {
+  const OutOfTime({required this.result, required this.history});
+
+  final MatchResult result;
+  final List<Turn> history;
+
+  @override
+  List<Object?> get props => [result, history];
+}
+
 /// The game ended: [result] is the summary, and [history] is every city
 /// played, for the game-over view.
 final class GameOver extends GameState {

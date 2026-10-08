@@ -138,7 +138,14 @@ Starting guesses:
 ### 2.7 End of game
 - **Win:** CityBot can't answer.
 - **Loss:** the player's timer hits zero, or the player taps **Give up**.
-  Leaving the game mid-way (Back) counts as giving up; both ask first.
+  Leaving the game mid-way (Back) counts as giving up; both ask first,
+  and both end on the results, like any other end.
+  - The **give-up dialog** says the game will be a loss and, once the player
+    has named cities, that their chain of N ends. "Keep playing" is the big
+    teal button, and "Give up" the quieter coral one.
+  - A **timeout** first shows a dark **"Out of time!"** screen: the empty
+    timer, the chain the player built, and "See results". A rewarded-ad
+    "revive" (Future, §5) would be offered here; until then it's hidden.
 - The game-over view shows: Win/Loss, score, cities you named, **new cities
   discovered** this game, and the **Play again** / **Home** actions.
 
@@ -159,6 +166,10 @@ rounded cards, chat bubbles, and glow buttons. The fonts are Nunito (headings)
 and Rubik (body). They replace the design file's Baloo 2 and Poppins, which
 can't render Ukrainian.
 
+**Button colors (T27):** positive actions (Play, Start, Play again, Keep
+playing, Try again) are **teal**; negative ones (Give up) are **coral**.
+Coral stays the brand color (the logo).
+
 1. **Home.** Hero, a **Play** button (opens the setup sheet), a small lifetime
    stats card (tapping it opens Statistics), a Settings icon and a Statistics
    icon.
@@ -176,7 +187,8 @@ can't render Ukrainian.
    - When the app goes to the background, the game pauses: the countdown
      stops, and the chat is blurred under a big pause icon (‖) so the clock
      can't be used to look cities up. A tap resumes it.
-4. **Game over.** A win/loss view, as in §2.7.
+4. **Game over.** The give-up dialog, the "Out of time!" screen and a
+   win/loss view, as in §2.7.
 5. **Settings.**
    - Language: Ukrainian / English, applied live.
    - Who starts: CityBot (default) / me (§2.2).

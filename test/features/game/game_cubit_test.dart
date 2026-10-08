@@ -150,7 +150,8 @@ void main() {
       });
     });
 
-    test('the countdown ticks each second; timeout is a loss', () {
+    test('the countdown ticks each second; a timeout is a loss, shown as '
+        'Out of time first, then the results', () {
       final cubit = _cubit([kyiv]);
       _inFakeTime(cubit, (async) {
         async.elapse(botThinkingMax);
@@ -164,19 +165,20 @@ void main() {
         expect(cubit.state, isA<GamePlaying>());
 
         async.elapse(const Duration(seconds: 1));
-        expect(
-          cubit.state,
-          GameOver(
-            result: const MatchResult(
-              outcome: MatchOutcome.timeout,
-              score: 0,
-              chain: 0,
-              newCityIds: [],
-              namedCityIds: [],
-            ),
-            history: [_bot(kyiv)],
-          ),
+        const result = MatchResult(
+          outcome: MatchOutcome.timeout,
+          score: 0,
+          chain: 0,
+          newCityIds: [],
+          namedCityIds: [],
         );
+        expect(cubit.state, OutOfTime(result: result, history: [_bot(kyiv)]));
+
+        cubit.showResults();
+        expect(cubit.state, GameOver(result: result, history: [_bot(kyiv)]));
+        // Only from Out of time: a second call changes nothing.
+        cubit.showResults();
+        expect(cubit.state, isA<GameOver>());
         sub.cancel();
       });
     });
@@ -513,7 +515,8 @@ void main() {
         cubit.submit('Vilnius');
         async.elapse(botThinkingMax);
         async.elapse(_difficulty.turnTime);
-        expect(cubit.state, isA<GameOver>());
+        // Saved already at Out of time, before the results are shown.
+        expect(cubit.state, isA<OutOfTime>());
         expect(
           store.data,
           PlayerData(

@@ -60,7 +60,7 @@
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [x] |
 | T19 | Statistics screen | M5 Progress | M | [x] |
 | T25 | Review rare-letter skipping | M6 Release | S | [x] |
-| T27 | UI/UX improvements: give-up design, teal Play buttons | M6 Release | M | [ ] |
+| T27 | UI/UX improvements: give-up design, teal Play buttons | M6 Release | M | [x] |
 | T20 | Balance simulator + tuning pass | M6 Release | M | [ ] |
 | T21 | Polish pass | M6 Release | M | [ ] |
 | T22 | Release prep | M6 Release | M | [ ] |
@@ -1010,6 +1010,49 @@ unfinished, before T21's polish pass.
 **Done when:** the give-up flow matches the agreed design, every play or
 start button is teal, both languages fit on a small phone, and the change is
 checked on the emulator.
+
+**Result (2026-10-08):** built from Daria's two mockups (give-up card,
+"Out of time!").
+- **Button colors:** the theme's `FilledButton` is teal, and so is
+  `TextButton` (tealDark).
+  - Positive actions are teal everywhere: Start, Play again, Keep playing,
+    and "Try again" on the load-error screen.
+  - Negative ones set coral themselves: Give up uses the new
+    `AppColors.coralDeep`, since plain coral is too light for text on cream.
+  - Coral stays the brand color (logo, tagline).
+- **Give-up dialog** (`widgets/give_up_dialog.dart`), replacing the plain
+  `AlertDialog`:
+  - a cream card over a blurred game, with a coral flag tile and "Give up?";
+  - "Giving up now counts as a loss and ends your chain of N" (without the
+    chain part at 0). It's worded so Ukrainian needs no plural forms:
+    «ланцюжок довжиною N»;
+  - a big teal "Keep playing", and a coral "Give up".
+  - Giving up from Back now also shows the results (Daria's review), like
+    the flag. Before, it went straight Home.
+- **Out of time** (`widgets/out_of_time_view.dart`): a timeout now shows a
+  dark screen before the results.
+  - It has the empty timer (0 in a coral ring), "Out of time!", a white card
+    with the chain, and an outlined "See results". The status bar turns
+    light.
+  - It's a new `GameState`, `OutOfTime`. The result is saved before it
+    appears, and `GameCubit.showResults()` moves on to `GameOver`.
+  - The mockup's "Watch ad to revive" is **hidden until ads exist**
+    (Future). `OutOfTime` is where it would plug in; a revive would then
+    also have to hold the save back.
+- Tests:
+  - the theme's button colors;
+  - the cubit's timeout → `OutOfTime` → `showResults()` → `GameOver`, with
+    the save already done at `OutOfTime`;
+  - the screen: dialog texts with and without a chain, Back → give up →
+    results, and Out of time → results;
+  - both new screens fit a 320 × 568 phone in Ukrainian and English. This
+    caught the chain card's label overflowing in Ukrainian; it wraps now.
+- Checked on the emulator in Ukrainian: «Почати», the dialog from the flag
+  and from Back (then the results), a timeout → «Час вийшов!» → results
+  with a teal «Ще раз».
+- Not changed: the turn timer keeps running while the dialog is open, as
+  before. Pausing it there would let a player stop the clock to think.
+
 
 ### T20 · Balance simulator + tuning pass · M
 - `tool/simulate.dart` runs many seeded games of the bot against a "player"
