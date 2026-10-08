@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +18,17 @@ String quoteLetters(List<String> letters) {
 /// "Your turn — «К»" (or «К» або «Е»), "Your turn — name any city", or
 /// "CityBot is thinking…".
 class TurnBanner extends StatelessWidget {
-  const TurnBanner({super.key, required this.turn, required this.letters});
+  const TurnBanner({
+    super.key,
+    required this.turn,
+    required this.letters,
+    this.compact = false,
+  });
 
   final Side turn;
+
+  /// Slimmer, for a short screen with the keyboard open.
+  final bool compact;
 
   /// The letters the player may answer with; empty when any will do.
   final List<String> letters;
@@ -39,8 +49,8 @@ class TurnBanner extends StatelessWidget {
     final background = isPlayerTurn ? AppColors.teal : AppColors.inkSoft;
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(20, 4, 20, 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: EdgeInsets.fromLTRB(20, compact ? 2 : 4, 20, compact ? 4 : 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: compact ? 6 : 12),
       decoration: BoxDecoration(
         color: background.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(16),
@@ -68,7 +78,8 @@ class TurnBanner extends StatelessWidget {
 }
 
 /// Why the last answer was rejected, shown inline above the turn banner
-/// (game_design §2.4).
+/// (game_design §2.4). It shakes when it appears; give it a new key per
+/// rejection (`GamePlaying.rejections`) to shake again on a repeat.
 class RejectionBanner extends StatelessWidget {
   const RejectionBanner({
     super.key,
@@ -81,8 +92,24 @@ class RejectionBanner extends StatelessWidget {
   /// The letters the player may answer with.
   final List<String> letters;
 
+  static const Duration shakeDuration = Duration(milliseconds: 400);
+
   @override
   Widget build(BuildContext context) {
+    // Three swings that die out; none when animations are turned off.
+    final shake = MediaQuery.disableAnimationsOf(context) ? 0.0 : 1.0;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: shake, end: 0),
+      duration: shakeDuration,
+      builder: (context, t, child) => Transform.translate(
+        offset: Offset(6 * t * sin(t * 6 * pi), 0),
+        child: child,
+      ),
+      child: _banner(context),
+    );
+  }
+
+  Widget _banner(BuildContext context) {
     final message = switch (reason) {
       RejectionReason.empty => 'game.rejection.empty'.tr(),
       RejectionReason.notInList => 'game.rejection.not_in_list'.tr(),

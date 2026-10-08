@@ -46,6 +46,7 @@ class GameCubit extends Cubit<GameState> {
   int _secondsLeft = 0;
   bool _paused = false;
   RejectionReason? _lastRejection;
+  int _rejections = 0;
 
   /// Starts a new game, dropping any game in progress. When the bot opens,
   /// it thinks first; when the player opens, their countdown starts right
@@ -56,6 +57,7 @@ class GameCubit extends Cubit<GameState> {
     final match = _createMatch(_store.data.discoveredIds);
     _match = match;
     _lastRejection = null;
+    _rejections = 0;
     _beginTurn(match);
   }
 
@@ -70,6 +72,7 @@ class GameCubit extends Cubit<GameState> {
         _beginTurn(match);
       case Rejected(:final reason):
         _lastRejection = reason;
+        _rejections++;
         _emitPlaying(match);
     }
   }
@@ -205,6 +208,7 @@ class GameCubit extends Cubit<GameState> {
       chain: match.chain,
       hintsLeft: match.hintsLeft,
       lastRejection: _lastRejection,
+      rejections: _rejections,
       isPaused: _paused,
     ),
   );

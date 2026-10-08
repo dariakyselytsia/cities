@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/theme.dart';
@@ -79,6 +81,93 @@ class ChatBubble extends StatelessWidget {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// CityBot "typing" (T21): three dots in a bot bubble, rising in turn,
+/// while it thinks. With animations turned off in the system settings the
+/// dots stand still.
+class ThinkingBubble extends StatefulWidget {
+  const ThinkingBubble({super.key});
+
+  /// One rise of all three dots.
+  static const Duration cycle = Duration(milliseconds: 900);
+
+  @override
+  State<ThinkingBubble> createState() => _ThinkingBubbleState();
+}
+
+class _ThinkingBubbleState extends State<ThinkingBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: ThinkingBubble.cycle,
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller.stop();
+    } else if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: const BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
+            bottomLeft: Radius.circular(4),
+            bottomRight: Radius.circular(18),
+          ),
+        ),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < 3; i++) _dot(i),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Dot [i] rises during its third of the cycle, a third later than the
+  /// one before it.
+  Widget _dot(int i) {
+    final phase = (_controller.value - i / 3) % 1;
+    final rise = phase < 1 / 3 ? sin(phase * 3 * pi) : 0.0;
+    return Padding(
+      padding: EdgeInsets.only(left: i == 0 ? 0 : 5),
+      child: Transform.translate(
+        offset: Offset(0, -4 * rise),
+        child: Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: Color.lerp(AppColors.disabled, AppColors.inkSoft, rise),
+            shape: BoxShape.circle,
+          ),
         ),
       ),
     );

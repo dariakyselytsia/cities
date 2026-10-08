@@ -85,6 +85,7 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   final _input = TextEditingController();
   final _focus = FocusNode();
+  final _chatScroll = ScrollController();
 
   /// Pauses the game when the app leaves the foreground: a phone call, a
   /// notification, the app switcher. "Inactive" comes first on every
@@ -103,6 +104,7 @@ class _GameViewState extends State<GameView> {
     _lifecycle.dispose();
     _input.dispose();
     _focus.dispose();
+    _chatScroll.dispose();
     super.dispose();
   }
 
@@ -144,6 +146,7 @@ class _GameViewState extends State<GameView> {
   int _historyLength = 0;
   Side? _turn;
   bool _paused = false;
+  int _rejections = 0;
 
   void _onState(BuildContext context, GameState state) {
     if (state is! GamePlaying) {
@@ -151,9 +154,17 @@ class _GameViewState extends State<GameView> {
       return;
     }
     final history = state.history;
+    final grew = history.length > _historyLength;
     // An accepted answer or a hint: the typed text is done with.
-    if (history.length > _historyLength && history.last.side == Side.player) {
+    if (grew && history.last.side == Side.player) {
       _input.clear();
+      if (!history.last.isHint) HapticFeedback.lightImpact();
+    }
+    if (state.rejections > _rejections) HapticFeedback.heavyImpact();
+    // A new city or the bot's "typing" bubble: bring the newest message
+    // into view if the player scrolled up the chat.
+    if (grew || (state.turn == Side.bot && _turn != Side.bot)) {
+      _scrollToNewest();
     }
     // Focus once per player turn (and again after a pause), so a keyboard
     // the player closed stays closed until their next turn.
@@ -165,6 +176,16 @@ class _GameViewState extends State<GameView> {
     _historyLength = history.length;
     _turn = state.turn;
     _paused = state.isPaused;
+    _rejections = state.rejections;
+  }
+
+  void _scrollToNewest() {
+    if (!_chatScroll.hasClients || _chatScroll.offset <= 0) return;
+    _chatScroll.animateTo(
+      0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
@@ -216,33 +237,67 @@ class _GameViewState extends State<GameView> {
           onGiveUp: _confirmGiveUp,
         ),
         Expanded(
-          child: Stack(
-            children: [
-              Column(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxHeight < _compactBoardBelow;
+              final rejection = state.lastRejection;
+              return Stack(
                 children: [
-                  StatPills(chain: state.chain, score: state.score),
-                  Expanded(child: _chat(state.history, state.letterMarks)),
-                  if (state.lastRejection case final reason?)
-                    RejectionBanner(reason: reason, letters: letters),
-                  TurnBanner(turn: state.turn, letters: letters),
-                  InputBar(
-                    controller: _input,
-                    focusNode: _focus,
-                    canSend: isPlayerTurn,
-                    hintsLeft: state.hintsLeft,
-                    onSubmit: _submit,
-                    onHint: _cubit.hint,
+                  Column(
+                    children: [
+                      if (!compact)
+                        StatPills(chain: state.chain, score: state.score),
+                      Expanded(
+                        child: _chat(
+                          state.history,
+                          state.letterMarks,
+                          isBotThinking:
+                              state.turn == Side.bot && !state.isPaused,
+                        ),
+                      ),
+                      if (rejection != null)
+                        RejectionBanner(
+                          key: ValueKey(state.rejections),
+                          reason: rejection,
+                          letters: letters,
+                        ),
+                      // Compact: the typing bubble already says CityBot
+                      // is thinking.
+                      if (!compact ||
+                          (rejection == null && state.turn == Side.player))
+                        TurnBanner(
+                          turn: state.turn,
+                          letters: letters,
+                          compact: compact,
+                        ),
+                      InputBar(
+                        controller: _input,
+                        focusNode: _focus,
+                        canSend: isPlayerTurn,
+                        hintsLeft: state.hintsLeft,
+                        onSubmit: _submit,
+                        onHint: _cubit.hint,
+                      ),
+                    ],
                   ),
+                  if (state.isPaused)
+                    Positioned.fill(
+                      child: PauseOverlay(onResume: _cubit.resume),
+                    ),
                 ],
-              ),
-              if (state.isPaused)
-                Positioned.fill(child: PauseOverlay(onResume: _cubit.resume)),
-            ],
+              );
+            },
           ),
         ),
       ],
     );
   }
+
+  /// Below this height (a short phone with the keyboard open) the board
+  /// turns compact, so the city to answer stays visible (T21): no chain and
+  /// score pills, a slimmer turn banner only on the player's turn, and a
+  /// rejection shown in place of it rather than above it.
+  static const double _compactBoardBelow = 320;
 
   Widget _ended(GameOver state) {
     return Column(
@@ -265,16 +320,29 @@ class _GameViewState extends State<GameView> {
   }
 
   /// Newest at the bottom: a reversed list stays scrolled to the latest
-  /// city without a scroll controller. Only the newest city has its letters
-  /// marked: that's the one to answer.
-  Widget _chat(List<Turn> history, LetterMarks? marks) => ListView.builder(
-    reverse: true,
-    padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-    itemCount: history.length,
-    itemBuilder: (_, i) => ChatBubble(
-      turn: history[history.length - 1 - i],
-      language: widget.language,
-      marks: i == 0 ? marks : null,
-    ),
-  );
+  /// city, also when the keyboard opens. Only the newest city has its
+  /// letters marked: that's the one to answer. While CityBot thinks, its
+  /// "typing" bubble is the newest message.
+  Widget _chat(
+    List<Turn> history,
+    LetterMarks? marks, {
+    required bool isBotThinking,
+  }) {
+    final typing = isBotThinking ? 1 : 0;
+    return ListView.builder(
+      controller: _chatScroll,
+      reverse: true,
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+      itemCount: history.length + typing,
+      itemBuilder: (_, i) {
+        if (i < typing) return const ThinkingBubble();
+        final n = i - typing;
+        return ChatBubble(
+          turn: history[history.length - 1 - n],
+          language: widget.language,
+          marks: n == 0 ? marks : null,
+        );
+      },
+    );
+  }
 }

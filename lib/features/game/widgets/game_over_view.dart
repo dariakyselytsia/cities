@@ -217,13 +217,17 @@ class _Total extends StatelessWidget {
                 color: foreground,
               ),
             ),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: foreground.withValues(alpha: 0.8),
-                fontWeight: FontWeight.w600,
+            // Shrinks rather than cuts a long label («Ланцюжок») on a
+            // small phone.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: foreground.withValues(alpha: 0.8),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

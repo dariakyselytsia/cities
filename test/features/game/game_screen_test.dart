@@ -16,6 +16,7 @@ import 'package:cities/features/game/widgets/out_of_time_view.dart';
 import 'package:cities/features/game/widgets/pause_overlay.dart';
 import 'package:cities/features/game/widgets/turn_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -340,6 +341,83 @@ void main() {
       await _close(tester);
     },
   );
+
+  testWidgets(
+    'CityBot "types" while it thinks; answers buzz, and a repeated mistake '
+    'shakes the banner again',
+    (tester) async {
+      final haptics = <Object?>[];
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'HapticFeedback.vibrate') haptics.add(call.arguments);
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+      Finder banner(int rejections) => find.byWidgetPredicate(
+        (w) => w is RejectionBanner && w.key == ValueKey(rejections),
+      );
+
+      await _openGame(tester, [kyiv, seoul]);
+      expect(find.byType(ThinkingBubble), findsOneWidget);
+      await _botThinks(tester);
+      expect(find.byType(ThinkingBubble), findsNothing);
+
+      for (final n in [1, 2]) {
+        await tester.enterText(find.byType(TextField), 'Paris');
+        await tester.tap(find.byTooltip('game.send'));
+        await tester.pump();
+        expect(banner(n), findsOneWidget, reason: 'a new banner shakes');
+      }
+      expect(haptics, List.filled(2, 'HapticFeedbackType.heavyImpact'));
+
+      await tester.enterText(find.byType(TextField), 'Vilnius');
+      await tester.tap(find.byTooltip('game.send'));
+      await tester.pump();
+      expect(haptics.last, 'HapticFeedbackType.lightImpact');
+      expect(find.byType(ThinkingBubble), findsOneWidget);
+
+      // A hint is not the player's own city: no buzz.
+      await _botThinks(tester);
+      await tester.tap(find.byTooltip('game.hint'));
+      await tester.pump();
+      expect(_bubble('Lima'), findsOneWidget);
+      expect(haptics, hasLength(3));
+
+      await _close(tester);
+    },
+  );
+
+  testWidgets('a new message scrolls a scrolled-up chat back down', (
+    tester,
+  ) async {
+    // A short screen, so the few cities overflow the chat. (Wide enough
+    // for the untranslated keys this file shows.)
+    tester.view
+      ..physicalSize = const Size(420, 300)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await _openGame(tester, [kyiv, seoul]);
+    await _botThinks(tester);
+    await tester.enterText(find.byType(TextField), 'Vilnius');
+    await tester.tap(find.byTooltip('game.send'));
+    await tester.pump();
+
+    final chat = find.byType(Scrollable).first;
+    ScrollPosition position() =>
+        tester.state<ScrollableState>(chat).position;
+    expect(position().maxScrollExtent, greaterThan(0));
+    position().jumpTo(position().maxScrollExtent); // read back to Kyiv
+    await tester.pump();
+
+    await _botThinks(tester); // Seoul arrives
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(position().pixels, 0);
+
+    await _close(tester);
+  });
 
   test('allowed letters are quoted and joined with "or"', () {
     // Without EasyLocalization, 'game.or'.tr() is the key itself.

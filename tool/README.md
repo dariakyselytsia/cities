@@ -93,6 +93,31 @@ For each list × language it prints:
 Use it when you retune the letter rule (game_design §2.3, T20) or after a
 data update.
 
+## `render_icons.dart`: app icons and splash images (T21)
+
+```bash
+flutter test tool/render_icons.dart
+```
+
+It's a test only because it needs the Flutter engine to paint. It draws the
+brand mark from `lib/core/brand.dart` (the white pin on coral, the same
+shape as the badge on Home and the splash) into every PNG the platforms
+need, so they always match the app:
+
+| Output | What it is |
+|---|---|
+| `ios/…/AppIcon.appiconset/*.png` | every iOS icon size: full-bleed coral, **no alpha channel** (the App Store rejects one) |
+| `ios/…/LaunchImage.imageset/*.png` | the 120 pt badge for `LaunchScreen.storyboard` |
+| `android/…/mipmap-*/ic_launcher.png` | the legacy icon (before Android 8) |
+| `android/…/mipmap-*/ic_launcher_foreground.png`, `…_monochrome.png` | the adaptive icon's pin and the themed-icon layer (Android 13+) |
+| `android/…/drawable-*/splash_icon.png` | the 120 dp badge in a 288 dp box: the Android 12+ splash icon, also centered on older launch screens |
+
+The XML around them is written by hand: `mipmap-anydpi-v26/ic_launcher.xml`
+(adaptive icon), `values/colors.xml` (coral, cream), `values*/styles.xml`
+(splash themes), `drawable/launch_background.xml` and iOS
+`LaunchScreen.storyboard`. Run the script again after changing the brand
+mark or its sizes (the constants at the top of the script).
+
 ## Fixing names: `overrides.json`
 
 GeoNames has gaps and errors. Each fix goes in `tool/overrides.json`, keyed by

@@ -31,6 +31,7 @@ final class GamePlaying extends GameState {
     required this.chain,
     required this.hintsLeft,
     this.lastRejection,
+    this.rejections = 0,
     this.isPaused = false,
   });
 
@@ -65,6 +66,11 @@ final class GamePlaying extends GameState {
   /// Why the player's last answer was rejected, until they play a city.
   final RejectionReason? lastRejection;
 
+  /// How many answers were rejected this game. It changes on every
+  /// rejection, so the screen reacts (a shake, a buzz) to the same mistake
+  /// made twice, which leaves [lastRejection] unchanged.
+  final int rejections;
+
   /// The app went to the background: no time passes, and the chat is
   /// hidden until the player resumes.
   final bool isPaused;
@@ -81,6 +87,7 @@ final class GamePlaying extends GameState {
     chain,
     hintsLeft,
     lastRejection,
+    rejections,
     isPaused,
   ];
 }

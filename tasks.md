@@ -63,8 +63,9 @@
 | T27 | UI/UX improvements: give-up design, teal Play buttons | M6 Release | M | [x] |
 | T20 | Balance simulator + tuning pass | M6 Release | M | [x] |
 | T28 | Playtest: turn timers + open questions | M6 Release | S | [ ] |
-| T21 | Polish pass | M6 Release | M | [ ] |
-| T22 | Release prep | M6 Release | M | [ ] |
+| T21 | Polish pass | M6 Release | M | [x] |
+| T22 | Release prep without store accounts: friends can install it | M6 Release | L | [ ] |
+| T29 | Publish: Play + App Store testing (needs accounts, not scheduled) | M6 Release | M | [ ] |
 
 ---
 
@@ -1197,17 +1198,157 @@ purpose.
 **Done when:** no layout overflow on a small phone (iPhone SE size), and the
 app works in both languages.
 
-### T22 · Release prep · M
-- Version/build numbers and release signing (Android keystore, iOS team).
-- A privacy policy: the app collects no data.
-- Store listing text in UA/EN and screenshots.
-- A TestFlight + Play internal testing build.
-- Measure the cold-start load on a real mid-range Android phone. It should
-  be about 1 s or less (T10 measured 0.65–0.87 s on the emulator); read the
-  `city_loader:` line in logcat.
+**Result (done 2026-10-09):**
+- **Brand mark:** `lib/core/brand.dart` draws the white pin on coral as a
+  path (`BrandMark`, `BrandBadge`), so Home, the splash and the icons share
+  one shape.
+- **App icon and native splash:** `tool/render_icons.dart` (run with
+  `flutter test`) renders every icon and splash PNG from that mark. No new
+  dependency: it has its own small PNG writer, so the iOS icons have no
+  alpha channel.
+  - Android: an adaptive icon with a themed (monochrome) layer, and the
+    legacy icon.
+  - The launch screen is the badge on cream on Android before 12, on 12+
+    and on iOS. The Flutter splash puts the badge at the exact screen
+    center, so the hand-over doesn't jump. The window behind Flutter is
+    cream too: no white flash. The night themes are gone (the app is light
+    only).
+- **Localized app name:** Android `values/strings.xml` (Cities) and
+  `values-uk` (Міста). iOS `InfoPlist.strings` in `en.lproj` / `uk.lproj`,
+  added to the Xcode project by hand. `CFBundleLocalizations` now lists
+  en and uk, which iOS also needs to report Ukrainian to Flutter at all.
+  The iOS changes can't be built here; T22's cloud build checks them.
+- **Game screen:**
+  - CityBot "types" in the chat while it thinks: three dots, still when
+    the system turns animations off.
+  - A new message scrolls a scrolled-up chat back down.
+  - Haptics: a light tap when your city is accepted (not for hints), a
+    heavy one on a rejection.
+  - The rejection banner shakes. `GamePlaying.rejections` counts the
+    rejections, so the same mistake twice still shakes and buzzes.
+- **Small phones (checked at 320 × 568 on the emulator, both languages):**
+  - The game board turns compact when it's short (a small phone with the
+    keyboard open). The chain and score pills hide, the turn banner is
+    slimmer and shows only on your turn, and a rejection replaces it.
+    Before, the city to answer was cut off.
+  - Home: a shorter hero, so Play fits without scrolling.
+  - Setup sheet: the two list cards stack below a 360 dp width. Side by
+    side, «Україна» broke mid-word.
+  - Game over: a long stat label (Ланцюжок) shrinks instead of being cut.
+- Tests:
+  - `test/core/small_phone_test.dart`: 320 × 568 in both languages with
+    the real fonts (the test font is much wider). Play on screen, the lists
+    stacked, and the city visible above the keyboard.
+  - The typing bubble, the haptics and the repeat shake, the scroll back.
+  - The rejection count in the cubit.
 
-**Done when:** testers can install it from TestFlight and Play internal
-testing.
+### Release in two steps (T22, T29)
+Split on 2026-10-08. The store accounts cost money (Google Play Console $25
+once, Apple Developer Program $99 a year) and are on hold. **T22** does
+everything that needs no account and ends with friends playing the real
+app on their own phones. **T29** is only accounts, uploads and forms.
+
+### T22 · Release prep without store accounts: friends can install it · L
+Needs T21 (app icon, splash) first: the screenshots and the friends' build
+should show the final app.
+
+**1. Release build and Android signing**
+- **Lock the app id.** `com.daria.cities` on Android and iOS can never
+  change once published. Confirm it, or change it now.
+- **Version scheme:** `1.0.0+1` in `pubspec.yaml`, with the build number
+  bumped on every build given to anyone. Write the rule down in
+  tech_design.
+- **Android upload keystore:**
+  - kept outside the repo and backed up: it's the key Play will expect in
+    T29, and every APK friends update to must be signed with it;
+  - `android/key.properties`, gitignored, read by `build.gradle.kts`;
+  - the `release` build type signs with it, not the debug key.
+- `flutter build apk --release` and `flutter build appbundle` both succeed.
+  Note the download size, and confirm the release manifest asks for no
+  permissions (no INTERNET).
+
+**2. iOS cloud build + CI (GitHub Actions, free on a public repo)**
+- Every push: `flutter analyze` and `flutter test` (Ubuntu).
+- On a tag or manually, on macOS: `flutter build ios --release
+  --no-codesign`, then zip `Runner.app` into `Payload/` to make an unsigned
+  `cities.ipa`.
+- iOS project settings: minimum iOS version, portrait only, and
+  `ITSAppUsesNonExemptEncryption = NO` in `Info.plist`. Check that T21's
+  hand edits build: the localized display name (`InfoPlist.strings`),
+  `CFBundleLocalizations` and the launch screen.
+
+**3. Friends' download: a GitHub Release**
+- A tag (`v1.0.0-beta.1`) builds and attaches the signed APK and the
+  unsigned IPA to a GitHub Release. Friends get one link.
+- **Android:** download the APK, allow "install unknown apps" once,
+  install. A newer APK installs over it and keeps progress (same key).
+- **iPhone:** sideload the IPA with **Sideloadly** on a Windows PC and a
+  free Apple ID: Daria's, with the friend's phone on her PC, or the
+  friend's own.
+  - Steps: connect by USB → drag the IPA into Sideloadly → sign in →
+    Start. On the phone: Settings → General → VPN & Device Management →
+    trust the profile, then (iOS 16+) Settings → Privacy & Security →
+    Developer Mode → on, and restart.
+  - Limits of a free Apple ID: the app stops opening after **7 days**
+    until it's re-signed (re-signing keeps progress; Sideloadly can
+    refresh over Wi-Fi while the PC is on), and at most 3 sideloaded apps
+    per phone.
+- `INSTALL.md` (UA/EN), linked from the Release, walks friends through
+  both.
+
+**4. Real-phone checks**
+- Install on at least one Android phone and one iPhone. Play a full game
+  in each language; check the keyboard, the safe areas and the background
+  timer pause (T26) on iOS.
+- Cold-start load on a mid-range Android phone: about 1 s or less (T10
+  measured 0.65–0.87 s on the emulator). Read the `city_loader:` line in
+  logcat.
+
+**5. Store material, ready for T29**
+- **Privacy policy** in UA/EN: the app collects, sends and shares no
+  data; progress stays in a file on the device. Host it free on GitHub
+  Pages and link it from Settings → About.
+- **Listing text in UA/EN**, within the store limits:
+  - app name (30 characters on both stores);
+  - Play short description (80) and full description (4,000);
+  - App Store subtitle (30), promotional text (170), description (4,000)
+    and keywords (100).
+- **Store forms answered in advance:** Play Data safety (no data
+  collected), the content rating questionnaire (IARC; expect "Everyone"),
+  App Store privacy labels ("Data Not Collected"), category (Word / Puzzle;
+  Education as secondary on iOS) and the listing's contact email.
+- **Graphics** in UA and EN: screenshots (Home, the game mid-duel, Game
+  over, Statistics) for Play phones and the App Store's 6.9″ (1320 × 2868)
+  and 6.5″ sizes (recheck Apple's current sizes), the Play feature graphic
+  (1024 × 500) and the 512 × 512 Play icon.
+- All of it lives in `store/`, so T29 is copy and paste.
+
+**Done when:**
+- a tag produces a GitHub Release with a signed APK and an unsigned IPA;
+- a friend has installed and played it on Android, and another on an
+  iPhone via Sideloadly, following `INSTALL.md`;
+- CI is green on main;
+- the privacy policy is live and linked in the app, and every store text,
+  form answer and image exists in both languages;
+- the signing and release steps are written down so they can be repeated.
+
+### T29 · Publish: Play + App Store testing (needs accounts) · M
+**Blocked: needs the Play Console and Apple Developer accounts. Not
+scheduled.**
+- Create both developer accounts. Play requires identity verification, and
+  new personal accounts must run a closed test with testers for a while
+  before they can publish to production.
+- Create the app records with the T22 app id, paste the `store/` text and
+  forms, and upload the graphics.
+- **Android:** upload the AAB signed with the T22 upload key to internal
+  testing, then the closed test. Enroll in Play App Signing.
+- **iOS:** add signing to the T22 workflow (an App Store Connect API key,
+  with fastlane match or Codemagic) and upload to TestFlight. Friends can
+  then drop Sideloadly: TestFlight builds last 90 days and update
+  themselves.
+- Move the T22 friends to the store test tracks.
+
+**Done when:** testers can install it from TestFlight and Play testing.
 
 ---
 

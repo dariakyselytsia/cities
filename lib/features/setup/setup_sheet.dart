@@ -45,6 +45,10 @@ class SetupSheet extends StatelessWidget {
     router.push(Routes.gameFor(setup.list, setup.difficulty));
   }
 
+  /// The narrowest content width that fits the two list cards side by
+  /// side (about a 410 dp phone).
+  static const double _listsSideBySideFrom = 360;
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SetupCubit>();
@@ -63,21 +67,39 @@ class SetupSheet extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               _SectionLabel('setup.list'.tr()),
-              Row(
-                children: [
-                  for (final (i, list) in CityListKind.values.indexed) ...[
-                    if (i > 0) const SizedBox(width: 12),
-                    Expanded(
-                      child: ChoiceTile(
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final tiles = [
+                    for (final list in CityListKind.values)
+                      ChoiceTile(
                         icon: _listIcons[list] ?? Icons.place_rounded,
                         title: 'list.${list.name}'.tr(),
                         subtitle: 'setup.list_desc.${list.name}'.tr(),
                         selected: setup.list == list,
                         onTap: () => cubit.selectList(list),
                       ),
-                    ),
-                  ],
-                ],
+                  ];
+                  // Side by side only where «Україна» fits on one line;
+                  // stacked on narrower phones (T21).
+                  if (constraints.maxWidth < _listsSideBySideFrom) {
+                    return Column(
+                      children: [
+                        for (final (i, tile) in tiles.indexed) ...[
+                          if (i > 0) const SizedBox(height: 10),
+                          tile,
+                        ],
+                      ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      for (final (i, tile) in tiles.indexed) ...[
+                        if (i > 0) const SizedBox(width: 12),
+                        Expanded(child: tile),
+                      ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 20),
               _SectionLabel('setup.difficulty'.tr()),

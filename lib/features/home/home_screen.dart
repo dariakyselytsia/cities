@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/brand.dart';
 import '../../core/router.dart';
 import '../../core/theme.dart';
 import '../setup/setup_sheet.dart';
@@ -16,7 +17,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -45,35 +45,10 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const _HeroArt(),
-                          const SizedBox(height: 28),
-                          Text(
-                            'app_title'.tr(),
-                            textAlign: TextAlign.center,
-                            style: textTheme.displayLarge,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'home.tagline'.tr(),
-                            textAlign: TextAlign.center,
-                            style: heading(
-                              size: 15,
-                              weight: FontWeight.w600,
-                              color: AppColors.coral,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          _StatCard(onTap: () => context.push(Routes.stats)),
-                          const SizedBox(height: 28),
-                          _PlayButton(onTap: () => showSetupSheet(context)),
-                        ],
-                      ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => _body(
+                      context,
+                      compact: constraints.maxHeight < _compactBelow,
                     ),
                   ),
                 ),
@@ -84,16 +59,61 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  /// Below this height the full layout doesn't fit, and Play would need a
+  /// scroll (an iPhone SE / 320 × 568 phone has about 480).
+  static const double _compactBelow = 640;
+
+  /// Everything under the top icons, centered. [compact] shrinks the hero
+  /// and the gaps so Play stays on screen on small phones (T21).
+  Widget _body(BuildContext context, {required bool compact}) {
+    final textTheme = Theme.of(context).textTheme;
+    final gap = compact ? 16.0 : 28.0;
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(24, 8, 24, compact ? 16 : 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _HeroArt(compact: compact),
+            SizedBox(height: gap),
+            Text(
+              'app_title'.tr(),
+              textAlign: TextAlign.center,
+              style: textTheme.displayLarge,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'home.tagline'.tr(),
+              textAlign: TextAlign.center,
+              style: heading(
+                size: 15,
+                weight: FontWeight.w600,
+                color: AppColors.coral,
+              ),
+            ),
+            SizedBox(height: compact ? 16 : 24),
+            _StatCard(onTap: () => context.push(Routes.stats)),
+            SizedBox(height: gap),
+            _PlayButton(onTap: () => showSetupSheet(context)),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-/// Decorative hero: soft color blobs behind a coral location-pin badge.
+/// Decorative hero: soft color blobs behind the brand badge.
 class _HeroArt extends StatelessWidget {
-  const _HeroArt();
+  const _HeroArt({required this.compact});
+
+  /// A shorter hero with a smaller badge, for small phones.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 260,
+      height: compact ? 110 : 260,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -104,22 +124,7 @@ class _HeroArt extends StatelessWidget {
             child: _blob(320, AppColors.teal.withValues(alpha: 0.28)),
           ),
           Positioned(right: -180, top: 0, child: _blob(340, AppColors.yellow)),
-          Align(
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.coral,
-                borderRadius: BorderRadius.circular(36),
-                boxShadow: AppColors.coralGlow,
-              ),
-              child: const Icon(
-                Icons.location_on_rounded,
-                color: Colors.white,
-                size: 68,
-              ),
-            ),
-          ),
+          Align(child: BrandBadge(size: compact ? 88 : 120)),
         ],
       ),
     );

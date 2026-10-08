@@ -51,6 +51,7 @@ GamePlaying _playing(
   int chain = 0,
   int hintsLeft = hintsPerGame,
   RejectionReason? rejection,
+  int rejections = 0,
   bool isPaused = false,
 }) => GamePlaying(
   history: history,
@@ -62,6 +63,7 @@ GamePlaying _playing(
   chain: chain,
   hintsLeft: hintsLeft,
   lastRejection: rejection,
+  rejections: rejections,
   isPaused: isPaused,
 );
 
@@ -198,6 +200,7 @@ void main() {
             letter: 'v',
             secondsLeft: _turnSeconds - 5,
             rejection: RejectionReason.notInList,
+            rejections: 1,
           ),
         );
 
@@ -211,10 +214,12 @@ void main() {
             letter: 'v',
             secondsLeft: _turnSeconds - 6,
             rejection: RejectionReason.wrongLetter,
+            rejections: 2,
           ),
         );
 
-        // The next turn starts with the full time, and no rejection.
+        // The next turn starts with the full time, and no rejection (the
+        // count is for the whole game).
         cubit.submit('Vilnius');
         async.elapse(botThinkingMax);
         expect(
@@ -225,6 +230,7 @@ void main() {
             letter: 'l',
             score: 25,
             chain: 1,
+            rejections: 2,
           ),
         );
       });
@@ -600,9 +606,30 @@ void main() {
           const [],
           turn: Side.player,
           rejection: RejectionReason.notInList,
+          rejections: 1,
         ),
         isA<GameOver>(),
         _playing(const [], turn: Side.player),
+      ],
+    );
+
+    blocTest<GameCubit, GameState>(
+      'the same mistake twice is a new state each time (the screen reacts)',
+      build: () => _cubit(const [], firstTurn: Side.player),
+      act: (cubit) {
+        cubit.start();
+        cubit.submit('Paris');
+        cubit.submit('Paris');
+      },
+      expect: () => [
+        _playing(const [], turn: Side.player),
+        for (final n in [1, 2])
+          _playing(
+            const [],
+            turn: Side.player,
+            rejection: RejectionReason.notInList,
+            rejections: n,
+          ),
       ],
     );
   });
