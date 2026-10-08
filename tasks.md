@@ -42,7 +42,7 @@
 | T03 | GeoNames build script → `cities.json` | M1 Data | L | [x] |
 | T04 | Name review & overrides | M1 Data | M | [x] |
 | T23 | World list: filter big-city districts | M1 Data | M | [x] |
-| T24 | World list: review tiers 2–3 (districts + duplicates) | M1 Data | M | [ ] |
+| T24 | World list: review tiers 2–3 (districts + duplicates) | M1 Data | M | [x] |
 | T05 | `City` model + answer normalization | M2 Engine | M | [x] |
 | T06 | `CityCatalog` (indexes, lists, tiers) | M2 Engine | M | [x] |
 | T07 | Letter rule on the catalog | M2 Engine | S | [x] |
@@ -303,6 +303,42 @@ those need the same cleanup as the top 1,500.
 and no known duplicate pairs remain there.
 
 Do this before T20: the balance simulator should run on clean tiers.
+
+**Result (2026-10-08):** done after T20, which changed what needed review.
+- **New scope: the cities CityBot can play,** not the World top 5,000.
+  Since T20, Hard knows each language's top 1,500 plus the 10 best known of
+  every letter: 2,138 World cities across both languages. Most lie beyond
+  the T23-reviewed top 1,500 only in Ukrainian.
+  - The build now asks the engine for that set (`CityBot.knows` on both
+    World indexes), so the scope follows any retuning.
+  - It prints the pending district and duplicate candidates in it, and the
+    review sheet lists them. Candidates further down are only counted:
+    players may name them, but CityBot never plays them.
+- **Duplicates:** a new `findDuplicateCandidates` (`tool/src/districts.dart`,
+  tested) flags a smaller place within 15 km of a bigger one in the same
+  country whose name, normalized as the game does, equals or extends it.
+  It finds 139 list-wide, 28 that CityBot could meet.
+- **Reviewed: 71 district and 28 duplicate candidates** (the build said 786
+  in the old top-5,000 scope).
+  - Excluded 4 districts (Mokotów, Xizhi, Randburg, Roodepoort).
+  - Excluded 20 duplicates and parts of cities: Lexington-Fayette, the
+    second La Ceiba, Ezhou, Salé Al Jadida, Ottawa South, Bangkok Noi/Yai,
+    five Indian cantonments, Puyang Chengguanzhen, Montréal-Nord, Brno střed,
+    Adelaide Hills, Shenzhen City Centre, Seremban 2, Tirupati NMA,
+    Laval-des-Rapides.
+  - The surviving La Ceiba takes the copy's Ukrainian name, and Lexington
+    gains "Lexington-Fayette" as an alias.
+  - Kept 75 real cities next to bigger ones (Bonn, Newark, Jersey City,
+    Gatineau, Kansas City, Kansas, Miami Beach, …).
+- The build reports **0 pending** in CityBot's World vocabulary, after the
+  exclusions moved new cities into it.
+- **Copied populations:** Sahiwal's was already fixed (the small town is
+  excluded). A new one, Greater Noida, has Noida's 293,908. It's kept as a
+  real city; its fame is overstated, so it sits in tier 2 instead of 3.
+  Fixing the number would need a `pop` override field, which isn't worth it
+  for one city.
+- World is now 31,383 cities (7,173 with a Ukrainian name). `overrides.json`
+  has 512 entries.
 
 ---
 

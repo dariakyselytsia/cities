@@ -53,6 +53,10 @@
       "_name": "Ruiru (reviewed: a separate city)",
       "exclude": false
     },
+    "192126": {
+      "_name": "Kikuyu",
+      "exclude": false
+    },
     "217831": {
       "_name": "Bukavu",
       "uk": "Букаву"
@@ -148,6 +152,10 @@
       "_name": "Juba",
       "uk": "Джуба"
     },
+    "379251": {
+      "_name": "Bahri (Khartoum North, a city of its own)",
+      "exclude": false
+    },
     "426272": {
       "_name": "Gitega",
       "uk": "Гітега"
@@ -192,6 +200,14 @@
       "_name": "Krasnodar",
       "uk": "Краснодар"
     },
+    "550280": {
+      "_name": "Khimki",
+      "exclude": false
+    },
+    "563464": {
+      "_name": "Engels",
+      "exclude": false
+    },
     "571476": {
       "_name": "Bryansk",
       "uk": "Брянськ"
@@ -221,6 +237,10 @@
       "akaUk": [
         "Ювілейне"
       ]
+    },
+    "688148": {
+      "_name": "Yenakiieve",
+      "exclude": false
     },
     "688501": {
       "_name": "Yampil’",
@@ -388,6 +408,10 @@
       "_name": "Bağcılar (district of Istanbul)",
       "exclude": true
     },
+    "764484": {
+      "_name": "Mokotów (district of Warsaw)",
+      "exclude": true
+    },
     "792680": {
       "_name": "Belgrade",
       "uk": "Белград"
@@ -400,9 +424,21 @@
       "_name": "Saint-Denis",
       "uk": "Сен-Дені"
     },
+    "936374": {
+      "_name": "Roodepoort (part of the City of Johannesburg)",
+      "exclude": true
+    },
     "953781": {
       "_name": "Soweto (district of Johannesburg)",
       "exclude": true
+    },
+    "963241": {
+      "_name": "Randburg (part of the City of Johannesburg)",
+      "exclude": true
+    },
+    "1002108": {
+      "_name": "Germiston (Ekurhuleni, not Johannesburg)",
+      "exclude": false
     },
     "1017780": {
       "_name": "Boksburg (reviewed: a separate city)",
@@ -509,6 +545,10 @@
       "_name": "Ghaziabad (reviewed: a separate city)",
       "exclude": false
     },
+    "1273292": {
+      "_name": "Delhi Cantonment (military area of Delhi)",
+      "exclude": true
+    },
     "1273294": {
       "_name": "Delhi (GeoNames uk is \"Старе Делі\" = Old Delhi)",
       "uk": "Делі"
@@ -543,6 +583,10 @@
       "akaUk": [
         "Аллахабад"
       ]
+    },
+    "1329221": {
+      "_name": "Amarapura (former royal capital)",
+      "exclude": false
     },
     "1348843": {
       "_name": "Maheshtala (reviewed: a separate city)",
@@ -603,6 +647,14 @@
       "_name": "Samut Prakan (reviewed: a separate city)",
       "exclude": false
     },
+    "1619457": {
+      "_name": "Bangkok Yai (district of Bangkok)",
+      "exclude": true
+    },
+    "1619460": {
+      "_name": "Bangkok Noi (district of Bangkok)",
+      "exclude": true
+    },
     "1622786": {
       "_name": "Makassar",
       "uk": "Макасар"
@@ -662,6 +714,10 @@
     "1675151": {
       "_name": "Hsinchu",
       "uk": "Сіньчжу"
+    },
+    "1675393": {
+      "_name": "Xizhi (district of New Taipei City)",
+      "exclude": true
     },
     "1680102": {
       "_name": "Valenzuela (reviewed: a separate city)",
@@ -731,6 +787,10 @@
       "_name": "Kampung Larkin Lama (district of Johor Bahru)",
       "exclude": true
     },
+    "1732905": {
+      "_name": "Klang",
+      "exclude": false
+    },
     "1733432": {
       "_name": "Kota Kinabalu",
       "uk": "Кота-Кінабалу"
@@ -791,6 +851,10 @@
       "_name": "Qingpu (district of Shanghai)",
       "exclude": true
     },
+    "1798422": {
+      "_name": "Puyang Chengguanzhen (urban core of 655674 Puyang)",
+      "exclude": true
+    },
     "1798439": {
       "_name": "Putuo (district of Shanghai)",
       "exclude": true
@@ -818,6 +882,10 @@
     "1809498": {
       "_name": "Guilin",
       "uk": "Гуйлінь"
+    },
+    "1811619": {
+      "_name": "Ezhou (duplicate of 6642286 E’zhou)",
+      "exclude": true
     },
     "1814544": {
       "_name": "Dachang (district of Shanghai)",
@@ -880,6 +948,18 @@
       "_name": "Ansan (reviewed: a separate city)",
       "exclude": false
     },
+    "1847963": {
+      "_name": "Atsugi",
+      "exclude": false
+    },
+    "1847966": {
+      "_name": "Akashi",
+      "exclude": false
+    },
+    "1848087": {
+      "_name": "Yukuhashi",
+      "exclude": false
+    },
     "1848313": {
       "_name": "Yokosuka (reviewed: a separate city)",
       "exclude": false
@@ -891,6 +971,10 @@
     "1849053": {
       "_name": "Utsunomiya",
       "uk": "Уцуномія"
+    },
+    "1849372": {
+      "_name": "Uji",
+      "exclude": false
     },
     "1849814": {
       "_name": "Toyota (reviewed: a separate city)",
@@ -904,13 +988,25 @@
       "_name": "Toyama",
       "uk": "Тояма"
     },
+    "1850181": {
+      "_name": "Tokorozawa",
+      "exclude": false
+    },
     "1851483": {
       "_name": "Suita (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1852225": {
+      "_name": "Shimonoseki",
       "exclude": false
     },
     "1853195": {
       "_name": "Sakai",
       "uk": "Сакаї",
+      "exclude": false
+    },
+    "1853574": {
+      "_name": "Ōtsu",
       "exclude": false
     },
     "1854383": {
@@ -929,6 +1025,10 @@
       "_name": "Nagasaki",
       "uk": "Нагасакі"
     },
+    "1856184": {
+      "_name": "Nagareyama",
+      "exclude": false
+    },
     "1856717": {
       "_name": "Miyazaki",
       "uk": "Міядзакі"
@@ -941,9 +1041,17 @@
       "_name": "Machida (reviewed: a separate city)",
       "exclude": false
     },
+    "1858296": {
+      "_name": "Kure",
+      "exclude": false
+    },
     "1858421": {
       "_name": "Kumamoto",
       "uk": "Кумамото"
+    },
+    "1858729": {
+      "_name": "Koshigaya",
+      "exclude": false
     },
     "1859642": {
       "_name": "Kawasaki (reviewed: a separate city)",
@@ -951,6 +1059,18 @@
     },
     "1859730": {
       "_name": "Kawaguchi (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1859740": {
+      "_name": "Kawagoe",
+      "exclude": false
+    },
+    "1859884": {
+      "_name": "Kasukabe",
+      "exclude": false
+    },
+    "1859891": {
+      "_name": "Kasugai",
       "exclude": false
     },
     "1860243": {
@@ -961,12 +1081,24 @@
       "_name": "Kagoshima",
       "uk": "Кагосіма"
     },
+    "1861310": {
+      "_name": "Itami",
+      "exclude": false
+    },
     "1861949": {
       "_name": "Ichinomiya (reviewed: a separate city)",
       "exclude": false
     },
+    "1862033": {
+      "_name": "Ibaraki",
+      "exclude": false
+    },
     "1862540": {
       "_name": "Hirakata (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1862599": {
+      "_name": "Hino",
       "exclude": false
     },
     "1862752": {
@@ -975,6 +1107,10 @@
     },
     "1864092": {
       "_name": "Fujisawa (reviewed: a separate city)",
+      "exclude": false
+    },
+    "1864624": {
+      "_name": "Chigasaki",
       "exclude": false
     },
     "1865387": {
@@ -1018,6 +1154,10 @@
       "_name": "Sendai",
       "uk": "Сендай"
     },
+    "2112664": {
+      "_name": "Ichihara",
+      "exclude": false
+    },
     "2113015": {
       "_name": "Chiba",
       "uk": "Тіба"
@@ -1046,6 +1186,10 @@
       "_name": "Touba",
       "uk": "Туба"
     },
+    "2246512": {
+      "_name": "Rufisque",
+      "exclude": false
+    },
     "2255414": {
       "_name": "Pointe-Noire",
       "uk": "Пуент-Нуар"
@@ -1065,6 +1209,10 @@
     "2293521": {
       "_name": "Abobo (district of Abidjan)",
       "exclude": true
+    },
+    "2304121": {
+      "_name": "Ashaiman",
+      "exclude": false
     },
     "2337639": {
       "_name": "Ilorin",
@@ -1157,6 +1305,14 @@
       "_name": "Masina (district of Kinshasa)",
       "exclude": true
     },
+    "2633691": {
+      "_name": "Wolverhampton",
+      "exclude": false
+    },
+    "2650839": {
+      "_name": "Dudley",
+      "exclude": false
+    },
     "2747373": {
       "_name": "The Hague",
       "uk": "Гаага"
@@ -1167,6 +1323,10 @@
       "akaUk": [
         "Франкфурт"
       ]
+    },
+    "2946447": {
+      "_name": "Bonn",
+      "exclude": false
     },
     "2993458": {
       "_name": "Monaco",
@@ -1187,6 +1347,26 @@
     "3042091": {
       "_name": "Saint Helier",
       "uk": "Сент-Гельєр"
+    },
+    "3116025": {
+      "_name": "Móstoles",
+      "exclude": false
+    },
+    "3118594": {
+      "_name": "Leganés",
+      "exclude": false
+    },
+    "3121437": {
+      "_name": "Getafe",
+      "exclude": false
+    },
+    "3121960": {
+      "_name": "Fuenlabrada",
+      "exclude": false
+    },
+    "3129028": {
+      "_name": "Badalona",
+      "exclude": false
     },
     "3176219": {
       "_name": "Genoa",
@@ -1223,6 +1403,18 @@
     "3424934": {
       "_name": "Saint-Pierre",
       "uk": "Сен-П'єр"
+    },
+    "3429652": {
+      "_name": "Quilmes",
+      "exclude": false
+    },
+    "3432135": {
+      "_name": "Lanús",
+      "exclude": false
+    },
+    "3448632": {
+      "_name": "São José dos Pinhais",
+      "exclude": false
     },
     "3448877": {
       "_name": "São João de Meriti (reviewed: a separate city)",
@@ -1276,6 +1468,10 @@
     },
     "3466998": {
       "_name": "Carapicuíba (reviewed: a separate city)",
+      "exclude": false
+    },
+    "3470353": {
+      "_name": "Barueri",
       "exclude": false
     },
     "3489854": {
@@ -1338,6 +1534,10 @@
       "_name": "Ecatepec de Morelos (reviewed: a separate city)",
       "exclude": false
     },
+    "3529986": {
+      "_name": "Cuautitlán (its own municipality, next to Cuautitlán Izcalli)",
+      "exclude": false
+    },
     "3530139": {
       "_name": "Coyoacán (district of Mexico City)",
       "exclude": true
@@ -1370,9 +1570,17 @@
       "_name": "San Pedro Sula",
       "uk": "Сан-Педро-Сула"
     },
+    "3608248": {
+      "_name": "La Ceiba (survives 8556321)",
+      "uk": "Ла-Сейба"
+    },
     "3630297": {
       "_name": "Petare (district of Caracas)",
       "exclude": true
+    },
+    "3633622": {
+      "_name": "Los Teques",
+      "exclude": false
     },
     "3648559": {
       "_name": "Barcelona",
@@ -1461,9 +1669,59 @@
       "_name": "Culiacán",
       "uk": "Кульякан"
     },
+    "4158482": {
+      "_name": "Hialeah Gardens",
+      "exclude": false
+    },
+    "4164143": {
+      "_name": "Miami Beach",
+      "exclude": false
+    },
+    "4273837": {
+      "_name": "Kansas City, Kansas (not Kansas City, Missouri)",
+      "exclude": false
+    },
+    "4297983": {
+      "_name": "Lexington, Kentucky",
+      "akaEn": [
+        "Lexington-Fayette"
+      ]
+    },
+    "4297999": {
+      "_name": "Lexington-Fayette (duplicate of 4297983 Lexington)",
+      "exclude": true
+    },
     "4553433": {
       "_name": "Tulsa",
       "uk": "Талса"
+    },
+    "4693003": {
+      "_name": "Garland",
+      "exclude": false
+    },
+    "4694482": {
+      "_name": "Grand Prairie",
+      "exclude": false
+    },
+    "4700168": {
+      "_name": "Irving",
+      "exclude": false
+    },
+    "4833320": {
+      "_name": "Cleveland Heights",
+      "exclude": false
+    },
+    "5099836": {
+      "_name": "Jersey City",
+      "exclude": false
+    },
+    "5101798": {
+      "_name": "Newark",
+      "exclude": false
+    },
+    "5105634": {
+      "_name": "Union City, New Jersey",
+      "exclude": false
     },
     "5110266": {
       "_name": "The Bronx (New York City borough, not a city)",
@@ -1485,16 +1743,96 @@
       "_name": "Staten Island (New York City borough, not a city)",
       "exclude": true
     },
+    "5295985": {
+      "_name": "Glendale, Arizona",
+      "exclude": false
+    },
     "5304391": {
       "_name": "Mesa (reviewed: a separate city)",
+      "exclude": false
+    },
+    "5308480": {
+      "_name": "Peoria, Arizona",
+      "exclude": false
+    },
+    "5313457": {
+      "_name": "Scottsdale",
+      "exclude": false
+    },
+    "5336899": {
+      "_name": "Chula Vista",
+      "exclude": false
+    },
+    "5350734": {
+      "_name": "Fremont",
+      "exclude": false
+    },
+    "5352423": {
+      "_name": "Glendale, California",
+      "exclude": false
+    },
+    "5404555": {
+      "_name": "Union City, California",
+      "exclude": false
+    },
+    "5411046": {
+      "_name": "Yucaipa",
+      "exclude": false
+    },
+    "5811729": {
+      "_name": "Spokane Valley",
+      "exclude": false
+    },
+    "5814616": {
+      "_name": "Vancouver, Washington",
+      "exclude": false
+    },
+    "5911592": {
+      "_name": "Burlington, Ontario",
       "exclude": false
     },
     "5950268": {
       "_name": "Etobicoke (district of Toronto since 1998)",
       "exclude": true
     },
+    "5959974": {
+      "_name": "Gatineau",
+      "exclude": false
+    },
     "6050610": {
       "_name": "Laval (reviewed: a separate city)",
+      "exclude": false
+    },
+    "6050619": {
+      "_name": "Laval-des-Rapides (district of Laval)",
+      "exclude": true
+    },
+    "6059891": {
+      "_name": "Longueuil",
+      "exclude": false
+    },
+    "6066513": {
+      "_name": "Markham",
+      "exclude": false
+    },
+    "6092122": {
+      "_name": "Oakville",
+      "exclude": false
+    },
+    "6094835": {
+      "_name": "Ottawa South (part of Ottawa)",
+      "exclude": true
+    },
+    "6122085": {
+      "_name": "Richmond, BC",
+      "exclude": false
+    },
+    "6122091": {
+      "_name": "Richmond Hill",
+      "exclude": false
+    },
+    "6173577": {
+      "_name": "Vaughan",
       "exclude": false
     },
     "6295587": {
@@ -1509,8 +1847,16 @@
       "_name": "Vatican City",
       "uk": "Ватикан"
     },
+    "6694367": {
+      "_name": "Brno střed (district of Brno)",
+      "exclude": true
+    },
     "6696918": {
       "_name": "Taoyuan (reviewed: a separate city)",
+      "exclude": false
+    },
+    "6822182": {
+      "_name": "Yachiyo",
       "exclude": false
     },
     "6940394": {
@@ -1522,9 +1868,17 @@
       "_name": "Beylikdüzü (district of Istanbul)",
       "exclude": true
     },
+    "6954929": {
+      "_name": "Greater Noida (its population is a copy of Noida’s)",
+      "exclude": false
+    },
     "6955677": {
       "_name": "Çankaya (district of Ankara)",
       "exclude": true
+    },
+    "7279746": {
+      "_name": "Noida",
+      "exclude": false
     },
     "7290466": {
       "_name": "Pasig (reviewed: a separate city)",
@@ -1532,6 +1886,10 @@
     },
     "7290718": {
       "_name": "Barra da Tijuca (district of Rio de Janeiro)",
+      "exclude": true
+    },
+    "7302628": {
+      "_name": "Adelaide Hills (a council area, not a city)",
       "exclude": true
     },
     "7304591": {
@@ -1589,6 +1947,10 @@
       "_name": "Saipan",
       "uk": "Сайпан"
     },
+    "7838895": {
+      "_name": "Russeifa",
+      "exclude": false
+    },
     "7874116": {
       "_name": "Santo Domingo Oeste (reviewed: a separate city)",
       "exclude": false
@@ -1612,6 +1974,14 @@
     "8504651": {
       "_name": "Sofiyivska Borschagivka",
       "uk": "Софіївська Борщагівка"
+    },
+    "8541484": {
+      "_name": "Jalandhar Cantonment (military area of Jalandhar)",
+      "exclude": true
+    },
+    "8556321": {
+      "_name": "La Ceiba (duplicate of 3608248 La Ceiba, which takes its uk name)",
+      "exclude": true
     },
     "8581443": {
       "_name": "South Tangerang (reviewed: a separate city)",
@@ -1639,6 +2009,10 @@
     },
     "10346824": {
       "_name": "Nilüfer (district of Bursa)",
+      "exclude": true
+    },
+    "10920963": {
+      "_name": "Salé Al Jadida (new town of 2537763 Salé)",
       "exclude": true
     },
     "10943053": {
@@ -1670,6 +2044,10 @@
       "_name": "Taman Petaling (district of Kuala Lumpur)",
       "exclude": true
     },
+    "12750582": {
+      "_name": "Seremban 2 (township of Seremban)",
+      "exclude": true
+    },
     "12750654": {
       "_name": "Mukim Pulai (district of Johor Bahru)",
       "exclude": true
@@ -1682,8 +2060,28 @@
       "_name": "Mandaluyong (duplicate of 1701966 Mandaluyong City)",
       "exclude": true
     },
+    "13156775": {
+      "_name": "Tirupati NMA (part of Tirupati)",
+      "exclude": true
+    },
+    "13156961": {
+      "_name": "Bhilai Charoda (its own municipal corporation)",
+      "exclude": false
+    },
     "13308620": {
       "_name": "Bao'an (district of Shenzhen)",
+      "exclude": true
+    },
+    "13308625": {
+      "_name": "Shenzhen City Centre (part of Shenzhen)",
+      "exclude": true
+    },
+    "13353374": {
+      "_name": "Jammu Cantonment (military area of Jammu)",
+      "exclude": true
+    },
+    "13353676": {
+      "_name": "Aurangabad Cantonment (military area of Aurangabad)",
       "exclude": true
     },
     "13353695": {
@@ -1696,6 +2094,10 @@
     },
     "13527052": {
       "_name": "Chéngguān Qū (district of Lhasa)",
+      "exclude": true
+    },
+    "13546320": {
+      "_name": "Montréal-Nord (borough of Montréal)",
       "exclude": true
     },
     "13546342": {
@@ -1724,6 +2126,10 @@
     },
     "13631351": {
       "_name": "Hoji ya Henda (district of Luanda)",
+      "exclude": true
+    },
+    "13645699": {
+      "_name": "Kanpur Cantonment (military area of Kanpur)",
       "exclude": true
     }
   }

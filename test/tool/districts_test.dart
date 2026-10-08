@@ -1,3 +1,4 @@
+import 'package:cities/engine/normalize.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../tool/src/city_builder.dart';
@@ -192,6 +193,52 @@ void main() {
       );
 
       expect(findDistrictCandidates([north, south]).keys, [2]);
+    });
+  });
+
+  group('findDuplicateCandidates', () {
+    // 0.05° of latitude ≈ 5.6 km.
+    Map<int, DuplicateCandidate> find(List<GeoCity> cities) =>
+        findDuplicateCandidates(cities, normalizeName);
+
+    test('flags the smaller of two nearby places with related names', () {
+      final tempe = place('Tempe', id: 1, population: 180000);
+      final junction = place(
+        'Tempe Junction',
+        id: 2,
+        population: 40000,
+        latitude: 0.05,
+      );
+      final same = place('Tempe', id: 3, population: 30000, latitude: -0.05);
+      final found = find([tempe, junction, same]);
+      expect(found.keys.toSet(), {2, 3});
+      expect(found[2]?.original.id, 1);
+    });
+
+    test('compares names as the game does: E’zhou is Ezhou', () {
+      final found = find([
+        place('E’zhou', id: 1, population: 600000),
+        place('Ezhou', id: 2, population: 200000, latitude: 0.05),
+      ]);
+      expect(found.keys, [2]);
+    });
+
+    test('ignores a shared first word, distance, and other countries', () {
+      final found = find([
+        place('San Jose', id: 1, population: 900000),
+        place('San Mateo', id: 2, population: 100000, latitude: 0.05),
+        place('Tempe', id: 3, population: 180000, latitude: 10),
+        place('Tempe City', id: 4, population: 50000, latitude: 10.5),
+        place('Kansas City', id: 5, population: 400000, latitude: 20),
+        place(
+          'Kansas City',
+          id: 6,
+          cc: 'YY',
+          population: 150000,
+          latitude: 20.05,
+        ),
+      ]);
+      expect(found, isEmpty);
     });
   });
 

@@ -3,6 +3,14 @@
 // Run from the project root:  dart run tool/build_cities.dart
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+
+import 'package:cities/engine/bot.dart';
+import 'package:cities/engine/city.dart';
+import 'package:cities/engine/city_catalog.dart';
+import 'package:cities/engine/city_list.dart';
+import 'package:cities/engine/difficulty.dart';
+import 'package:cities/engine/normalize.dart';
 
 import 'src/city_builder.dart';
 import 'src/districts.dart';
@@ -31,9 +39,6 @@ const String _reviewPath = 'tool/review/cities_review.csv';
 const int _reviewWorldTop = 1500;
 const int _reviewUkraineTop = 150;
 
-/// District candidates are listed for review down to this World rank: about
-/// the vocabulary of Hard CityBot (tiers 1–3, game_design §2.5).
-const int _reviewDistrictsTop = 5000;
 
 Future<void> main() async {
   final watch = Stopwatch()..start();
@@ -101,11 +106,31 @@ Future<void> main() async {
   final keptWorld = [for (final c in world) if (kept.contains(c.id)) c];
   final keptUkraine = [for (final c in ukraine) if (kept.contains(c.id)) c];
 
+  // What must be clean (T24): every World city CityBot can play, in either
+  // language. Hard knows the most, and the engine decides, so this follows
+  // any retuning of tiers or the per-letter minimum.
+  final catalog = CityCatalog.fromJson({'v': 1, 'cities': records});
+  final botWorld = <int>{};
+  for (final language in NameLanguage.values) {
+    final index = catalog.index(CityListKind.world, language);
+    final bot = CityBot(
+      index: index,
+      difficulty: Difficulty.hard,
+      random: Random(0),
+    );
+    botWorld.addAll([for (final city in index.cities) if (bot.knows(city)) city.id]);
+  }
+
   // Only undecided places are pending: an `exclude` override of either value
   // is a review decision.
   final candidates = findDistrictCandidates(keptWorld);
   final pendingDistricts = {
     for (final MapEntry(key: id, value: candidate) in candidates.entries)
+      if (overrides[id]?.exclude == null) id: candidate,
+  };
+  final duplicates = findDuplicateCandidates(keptWorld, normalizeName);
+  final pendingDuplicates = {
+    for (final MapEntry(key: id, value: candidate) in duplicates.entries)
       if (overrides[id]?.exclude == null) id: candidate,
   };
 
@@ -117,6 +142,8 @@ Future<void> main() async {
     overridden: overrides.keys.toSet(),
     candidates: candidates,
     pendingDistricts: pendingDistricts,
+    pendingDuplicates: pendingDuplicates,
+    botWorld: botWorld,
   );
 
   _report(
@@ -126,6 +153,8 @@ Future<void> main() async {
     overrideCount: overrides.length,
     autoExcluded: autoExcluded,
     pendingDistricts: pendingDistricts,
+    pendingDuplicates: pendingDuplicates,
+    botWorld: botWorld,
     outBytes: await out.length(),
     elapsed: watch.elapsed,
   );
@@ -143,10 +172,11 @@ Future<Map<int, CityOverride>> _readOverrides(File file) async {
 
 /// Writes the review sheet: World top-N and Ukraine top-N by population, plus
 /// every capital and Ukrainian city still missing a `uk` name, and the
-/// district candidates still waiting for a decision (T23).
+/// district and duplicate candidates still waiting for a decision among the
+/// cities CityBot can play ([botWorld], T23–T24).
 ///
 /// The `note` column names the bigger city a district candidate sits next
-/// to.
+/// to, or the place a duplicate candidate may repeat.
 ///
 /// It is sorted and deterministic, so a diff shows exactly what a GeoNames
 /// update or an override changed.
@@ -158,6 +188,8 @@ Future<void> _writeReview(
   required Set<int> overridden,
   required Map<int, DistrictCandidate> candidates,
   required Map<int, DistrictCandidate> pendingDistricts,
+  required Map<int, DuplicateCandidate> pendingDuplicates,
+  required Set<int> botWorld,
 }) async {
   int byPopulation(GeoCity a, GeoCity b) {
     final byPop = b.population.compareTo(a.population);
@@ -176,8 +208,17 @@ Future<void> _writeReview(
     (
       'district_candidates',
       [
-        for (final c in worldSorted.take(_reviewDistrictsTop))
-          if (pendingDistricts.containsKey(c.id)) c,
+        for (final c in worldSorted)
+          if (pendingDistricts.containsKey(c.id) && botWorld.contains(c.id)) c,
+      ],
+    ),
+    (
+      'duplicate_candidates',
+      [
+        for (final c in worldSorted)
+          if (pendingDuplicates[c.id] case final d?
+              when botWorld.contains(c.id) || botWorld.contains(d.original.id))
+            c,
       ],
     ),
   ];
@@ -195,11 +236,18 @@ Future<void> _writeReview(
         if (names.uk == null) 'missing_uk',
         if (overridden.contains(city.id)) 'override',
         if (pendingDistricts.containsKey(city.id)) 'district?',
+        if (pendingDuplicates.containsKey(city.id)) 'duplicate?',
       ].join(' ');
       final candidate = candidates[city.id];
-      final note = candidate == null
-          ? ''
-          : 'near ${candidate.parent.name} (${candidate.distanceKm.round()} km)';
+      final duplicate = pendingDuplicates[city.id];
+      final note = [
+        if (candidate != null)
+          'near ${candidate.parent.name} (${candidate.distanceKm.round()} km)',
+        if (duplicate != null)
+          'same as ${duplicate.original.name} '
+              '(${duplicate.original.population}, '
+              '${duplicate.distanceKm.toStringAsFixed(1)} km)',
+      ].join('; ');
       buffer.writeln([
         section,
         '${index + 1}',
@@ -279,6 +327,8 @@ void _report({
   required int overrideCount,
   required Map<String, int> autoExcluded,
   required Map<int, DistrictCandidate> pendingDistricts,
+  required Map<int, DuplicateCandidate> pendingDuplicates,
+  required Set<int> botWorld,
   required int outBytes,
   required Duration elapsed,
 }) {
@@ -301,6 +351,13 @@ void _report({
       .take(top)
       .where((c) => pendingDistricts.containsKey(c.id))
       .length;
+  final pendingDistrictsInBot =
+      pendingDistricts.keys.where(botWorld.contains).length;
+  final pendingDuplicatesInBot = pendingDuplicates.values
+      .where(
+        (d) => botWorld.contains(d.city.id) || botWorld.contains(d.original.id),
+      )
+      .length;
   final autoTotal = autoExcluded.values.fold(0, (a, b) => a + b);
   final autoByReason =
       autoExcluded.entries.map((e) => '${e.key} ${e.value}').join(', ');
@@ -311,10 +368,14 @@ void _report({
         'in ${elapsed.inSeconds}s')
     ..writeln('Overrides applied: $overrideCount · review sheet: $_reviewPath')
     ..writeln('Districts excluded automatically: $autoTotal ($autoByReason)')
-    ..writeln('District candidates pending review: '
+    ..writeln('CityBot can play ${botWorld.length} World cities (Hard, '
+        'either language). Pending review among them: '
+        '$pendingDistrictsInBot district and '
+        '$pendingDuplicatesInBot duplicate candidates')
+    ..writeln('District candidates pending list-wide: '
         'World top $_reviewWorldTop: ${pendingIn(_reviewWorldTop)}, '
-        'top $_reviewDistrictsTop: ${pendingIn(_reviewDistrictsTop)}, '
-        'all: ${pendingDistricts.length}')
+        'all: ${pendingDistricts.length}; '
+        'duplicate candidates: ${pendingDuplicates.length}')
     ..writeln('World:   ${world.length} cities, $worldUk with a Ukrainian name')
     ..writeln('Ukraine: ${ukraine.length} cities ($uaOnly below 15k), '
         '$ukraineUk with a Ukrainian name')

@@ -120,7 +120,7 @@ alphabet, or an id that isn't in the lists, so typos can't slip through.
 To find an id, search `tool/review/cities_review.csv`, or the GeoNames dump
 by name.
 
-### What's in it (411 entries)
+### What's in it (512 entries)
 - 13 Ukrainian cities where GeoNames still shows the pre-renaming name
   (Червоноград → Шептицький, Кіровськ → Голубівка, …). The old name is kept
   as an alias.
@@ -140,6 +140,11 @@ by name.
   (Pudong, Iztapalapa, Üsküdar, Luanda's communes, Soweto, Tokyo's wards, …),
   5 duplicates merged into the surviving entry (Pimpri → Pimpri-Chinchwad,
   Wanxian → Wanzhou), and 109 places reviewed and kept.
+- The T24 review of every World city CityBot can play (see below): 4 more
+  districts (Mokotów, Xizhi, Randburg, Roodepoort), 20 duplicates and parts
+  of cities (Lexington-Fayette, Bangkok Noi/Yai, Indian cantonments,
+  Montréal-Nord, …), and 75 places reviewed and kept (Bonn, Newark,
+  Gatineau, Kansas City, Kansas, …).
 
 ## City districts
 
@@ -167,9 +172,20 @@ decides, and records it in `overrides.json`:
 - `"exclude": false`: its own municipality, even if it's in the metro area
   (Kawasaki, Guarulhos, Niterói, the Metro Manila cities).
 
-Candidates with no decision appear in the review sheet's
-`district_candidates` section (World top 5,000), and the build prints how
-many are pending. The World top 1,500 has none.
+**3. Duplicates, flagged for review (T24).** A place within 15 km of a
+bigger one in the same country, whose name equals or extends the bigger
+one's ("Tempe Junction", "Makakilo City", "Delhi Cantonment"), is a
+**duplicate candidate**. The review decides on the smaller place: `true`
+drops it (move a useful name onto the survivor as an alias), `false` keeps
+both (Kansas City, Kansas next to Kansas City, Missouri).
+
+**What must be reviewed: the cities CityBot can play.** The build asks the
+engine which World cities a Hard CityBot knows in either language (its
+tiers plus the per-letter minimum, about 2,100 cities) and prints how many
+district and duplicate candidates among them have no decision yet. It
+follows any retuning automatically. **Keep it at 0.** Those candidates are
+listed in the review sheet. Candidates further down the list are only
+counted: players may name them, but CityBot never plays them.
 
 ## Review sheet: `review/cities_review.csv`
 
@@ -178,10 +194,12 @@ opens correctly in Excel.
 
 - **Sections:** the World top 1,500 and Ukraine top 150 by population, plus
   any capital or Ukrainian city still missing a Ukrainian name, and the
-  pending district candidates in the World top 5,000.
-- **`status` column:** `missing_uk`, `override`, or `district?` (a pending
-  district candidate).
+  pending district and duplicate candidates among the cities CityBot can
+  play.
+- **`status` column:** `missing_uk`, `override`, `district?` or
+  `duplicate?` (a pending candidate).
 - **`note` column:** for a district candidate, the bigger city it's next to
-  ("near Shanghai (5 km)").
+  ("near Shanghai (5 km)"); for a duplicate, the place it may repeat
+  ("same as Delhi (11034555, 11.2 km)").
 - It's committed, so a diff shows what a GeoNames update or an override
   changed.

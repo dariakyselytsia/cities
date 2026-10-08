@@ -123,3 +123,66 @@ double distanceKm(GeoCity a, GeoCity b) {
           math.pow(math.sin(dLon / 2), 2);
   return 2 * earthRadiusKm * math.asin(math.sqrt(h));
 }
+
+/// Places this close together with related names may be one place listed
+/// twice (T24).
+const double duplicateRadiusKm = 15;
+
+/// A place that may duplicate [original]: same country, within
+/// [duplicateRadiusKm], and a name that equals or extends the original's
+/// ("Tempe Junction" next to Tempe, "Makakilo City" next to Makakilo).
+class DuplicateCandidate {
+  const DuplicateCandidate(this.city, this.original, this.distanceKm);
+
+  /// The smaller of the two: the one a review would drop.
+  final GeoCity city;
+  final GeoCity original;
+  final double distanceKm;
+}
+
+/// Finds likely duplicates in [cities], keyed by the smaller place's id.
+///
+/// Names are compared by [normalize] (the game's own normalization): equal,
+/// or one is the other plus more words. A shared first word alone isn't
+/// enough ("San Jose" and "San Mateo").
+Map<int, DuplicateCandidate> findDuplicateCandidates(
+  List<GeoCity> cities,
+  String Function(String name) normalize,
+) {
+  int cell(double degrees) => degrees.floor();
+  final grid = <(int, int), List<GeoCity>>{};
+  for (final c in cities) {
+    (grid[(cell(c.latitude), cell(c.longitude))] ??= []).add(c);
+  }
+  bool related(String a, String b) =>
+      a == b || a.startsWith('$b ') || b.startsWith('$a ');
+
+  final result = <int, DuplicateCandidate>{};
+  for (final city in cities) {
+    final name = normalize(city.name);
+    if (name.isEmpty) continue;
+    final (row, col) = (cell(city.latitude), cell(city.longitude));
+    for (var dRow = -1; dRow <= 1; dRow++) {
+      for (var dCol = -1; dCol <= 1; dCol++) {
+        for (final other in grid[(row + dRow, col + dCol)] ?? const <GeoCity>[]) {
+          // Each pair once, from its smaller place (ties: the higher id).
+          final isSmaller = city.population < other.population ||
+              (city.population == other.population && city.id > other.id);
+          if (other.id == city.id ||
+              !isSmaller ||
+              other.countryCode != city.countryCode ||
+              !related(name, normalize(other.name))) {
+            continue;
+          }
+          final distance = distanceKm(city, other);
+          final best = result[city.id];
+          if (distance <= duplicateRadiusKm &&
+              (best == null || distance < best.distanceKm)) {
+            result[city.id] = DuplicateCandidate(city, other, distance);
+          }
+        }
+      }
+    }
+  }
+  return result;
+}

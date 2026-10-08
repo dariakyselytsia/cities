@@ -149,7 +149,7 @@ Keeping the bot turn a discrete step is the seam for future PvP.
   (KMU No. 55, 2010) of the Ukrainian name. GeoNames' spellings become
   aliases.
 - Result:
-  - **World:** 31,407 cities, 7,177 of them with a Ukrainian name.
+  - **World:** 31,383 cities, 7,173 of them with a Ukrainian name.
   - **Ukraine:** 848 cities, all with a Ukrainian name.
 
 ### Build pipeline
