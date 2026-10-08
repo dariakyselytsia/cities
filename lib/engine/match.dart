@@ -194,27 +194,21 @@ class Match {
   int get chain => _history.where(_namedByPlayer).length;
 
   /// The letter the next city must start with, or `null` when any letter
-  /// will do (the opening move, or after a dead end). Which letters are
-  /// skipped depends on the [difficulty] (`LetterSkipping`). CityBot and
-  /// hints use this letter, and the [extraLetters] only when no unused city
+  /// will do (the opening move, or after a dead end). CityBot and hints
+  /// use this letter, and the [extraLetters] only when no unused city
   /// starts with it.
-  String? get requiredLetter => _history.isEmpty
-      ? null
-      : index.requiredLetterAfter(
-          _history.last.city,
-          difficulty.letterSkipping,
-        );
+  String? get requiredLetter =>
+      _history.isEmpty ? null : index.requiredLetterAfter(_history.last.city);
 
   /// The letters of the last city's name the chat marks, or `null` before
   /// the first move.
-  LetterMarks? get letterMarks => _history.isEmpty
-      ? null
-      : index.letterMarks(_history.last.city, difficulty.letterSkipping);
+  LetterMarks? get letterMarks =>
+      _history.isEmpty ? null : index.letterMarks(_history.last.city);
 
   /// Rarer letters the player may answer with instead of [requiredLetter]:
   /// the ones the letter rule skipped at the end of the last city because
-  /// too few cities start with them ("Кам'янське" → «к», or «е»), or, on
-  /// Easy, because they're traps (Полтава → «в», or «а»). A player who knows
+  /// too few cities start with them ("Кам'янське" → «к», or «е»), or because
+  /// they're traps (Полтава → «в», or «а»). A player who knows
   /// such a city (Енергодар) can use it. Letters no city starts with («ь»)
   /// never count. Empty when any letter will do.
   List<String> get extraLetters {

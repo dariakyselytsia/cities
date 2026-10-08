@@ -1,34 +1,33 @@
-import 'city_list.dart';
-
-/// How hard a game is (game_design §2.3, §2.5, §2.8).
+/// How hard a game is (game_design §2.5, §2.8).
 ///
-/// Every value here is a **tuning value**, a first guess to be set by the
-/// balance simulator and playtests (T20).
+/// Every value here is a **tuning value**. The vocabulary was set with the
+/// balance simulator (`tool/simulate.dart`, T20); the turn times wait for a
+/// real playtest (T28).
 enum Difficulty {
   easy(
     maxTier: 1,
     turnTime: Duration(seconds: 45),
     winMultiplier: 1,
-    letterSkipping: LetterSkipping.rareAndTraps,
+    minCitiesPerLetter: 2,
   ),
   medium(
     maxTier: 2,
     turnTime: Duration(seconds: 30),
     winMultiplier: 2,
-    letterSkipping: LetterSkipping.rare,
+    minCitiesPerLetter: 6,
   ),
   hard(
     maxTier: 3,
     turnTime: Duration(seconds: 20),
     winMultiplier: 3,
-    letterSkipping: LetterSkipping.rare,
+    minCitiesPerLetter: 10,
   );
 
   const Difficulty({
     required this.maxTier,
     required this.turnTime,
     required this.winMultiplier,
-    required this.letterSkipping,
+    required this.minCitiesPerLetter,
   });
 
   /// The bot's vocabulary: every city of tier 1 up to this tier. Easy knows
@@ -37,12 +36,23 @@ enum Difficulty {
 
   /// How long the player has for each turn. The timer doesn't reset on a
   /// wrong answer.
+  ///
+  /// Still the first guesses: the simulator measures what a player knows,
+  /// not how fast they recall it, so these are timed in the playtest
+  /// (T28).
   final Duration turnTime;
 
   /// The win bonus is `winBonus × winMultiplier` (see `scoring.dart`, T09).
   final int winMultiplier;
 
-  /// Which letters the letter rule skips. Easy also skips the trap letters,
-  /// so the player isn't stuck on Ukraine's «а» (T25).
-  final LetterSkipping letterSkipping;
+  /// CityBot also knows the best-known cities of **every letter**, at least
+  /// this many (or all of them, if fewer start with it), whatever their
+  /// tier.
+  ///
+  /// Why (T20): tiers follow population, so they leave holes. The Easy
+  /// World bot knew no «ж» city and the Medium one no «ю», and a player won
+  /// just by steering onto such a letter. In the Ukraine list, Easy games
+  /// ended after the player named ~4 cities; with this floor they last
+  /// ~14 for a keen player, and Medium ~20.
+  final int minCitiesPerLetter;
 }

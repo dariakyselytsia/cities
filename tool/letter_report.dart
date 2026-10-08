@@ -24,21 +24,29 @@ void main() {
 }
 
 void _report(CityIndex index) {
-  final skipped = index.firstLetters.difference(index.playableLetters);
+  final skipped = index.firstLetters
+      .difference(index.playableLetters)
+      .difference(index.trapLetters);
   stdout
-    ..writeln('\n## ${index.list.name} · ${index.language.name}: '
-        '${index.cities.length} cities')
-    ..writeln('Skipped as rare: ${_letters(skipped)}. '
-        'Also skipped on Easy (traps): ${_letters(index.trapLetters)}.')
+    ..writeln(
+      '\n## ${index.list.name} · ${index.language.name}: '
+      '${index.cities.length} cities',
+    )
+    ..writeln(
+      'Skipped as rare: ${_letters(skipped)}. '
+      'Skipped as traps: ${_letters(index.trapLetters)}.',
+    )
     ..writeln()
-    ..writeln('| Letter | Starters | Easy / Medium / Hard bot knows '
-        '| Demand if required | Demand ÷ starters |')
+    ..writeln(
+      '| Letter | Starters | Easy / Medium / Hard bot knows '
+      '| Demand if required | Demand ÷ starters |',
+    )
     ..writeln('|---|---|---|---|---|');
 
   final rows = <(double, String)>[];
   for (final letter in index.firstLetters) {
     // The names that would require [letter] if it were playable, with every
-    // other letter as on Medium.
+    // other letter as it is.
     final playable = {...index.playableLetters, letter};
     final demand = index.cities
         .where(

@@ -166,10 +166,37 @@ void main() {
       expect(world.tierOf(byId(16)), 4);
     });
 
-    test('are the same in both languages', () {
-      final worldUk = catalog.index(CityListKind.world, NameLanguage.uk);
-      for (final city in worldUk.cities) {
-        expect(worldUk.tierOf(city), world.tierOf(city), reason: city.nameEn);
+    test('rank among the cities playable in the language', () {
+      // X has no Ukrainian name: it takes a rank in English only, so Y and Z
+      // move up a tier in Ukrainian.
+      final ranked = CityCatalog([
+        const City(id: 1, nameEn: 'X', countryCode: 'XX', population: 3000),
+        const City(
+          id: 2,
+          nameUk: 'Ю',
+          nameEn: 'Y',
+          countryCode: 'XX',
+          population: 2000,
+        ),
+        const City(
+          id: 3,
+          nameUk: 'З',
+          nameEn: 'Z',
+          countryCode: 'XX',
+          population: 1000,
+        ),
+      ], tierLimits: const TierLimits(ukraine: [1, 2, 3], world: [1, 2, 3]));
+      final en = ranked.index(CityListKind.world, NameLanguage.en);
+      final uk = ranked.index(CityListKind.world, NameLanguage.uk);
+      expect([for (final c in en.cities) en.tierOf(c)], [1, 2, 3]);
+      expect([for (final c in uk.cities) uk.tierOf(c)], [1, 2]);
+    });
+
+    test('are the same in both languages when every city has both names', () {
+      final ukraineEn = catalog.index(CityListKind.ukraine, NameLanguage.en);
+      for (final city in ukraine.cities) {
+        expect(ukraine.tierOf(city), ukraineEn.tierOf(city),
+            reason: city.nameEn);
       }
     });
 
@@ -200,6 +227,14 @@ void main() {
       // Victoria, Seychelles (tier 1) before Victoria, Canada (tier 3).
       expect(ids(worldUk.startingWith('в')), [14, 13]);
       expect(ids(worldEn.startingWith('p')), [11, 12]);
+    });
+
+    test("letterRankOf is a city's place in startingWith", () {
+      expect(worldUk.letterRankOf(byId(1)), 0); // Київ, the best-known «к»
+      expect(worldUk.letterRankOf(byId(5)), 1); // Кам'янець-Подільський
+      expect(worldUk.letterRankOf(byId(13)), 1); // Вікторія, Canada
+      expect(worldUk.letterRankOf(byId(12)), isNull, reason: 'no uk name');
+      expect(worldEn.letterRankOf(byId(15)), isNull, reason: 'a digit');
     });
 
     test('uses the display name, not aliases', () {
@@ -274,27 +309,15 @@ void main() {
         // «a»: $over names require it, one city starts with it. Skipping it
         // moves them all to «v», which one city starts with too.
         expect(index.trapLetters, {'a', 'v'});
-        expect(index.playableLetters, containsAll(['a', 'v']));
-        expect(
-          index.playableLettersFor(LetterSkipping.rareAndTraps),
-          index.playableLetters.difference({'a', 'v'}),
-        );
-        expect(
-          index.playableLettersFor(LetterSkipping.rare),
-          index.playableLetters,
-        );
+        expect(index.playableLetters, isNot(contains('a')));
+        expect(index.playableLetters, isNot(contains('v')));
       });
 
-      test('the letter rule skips them only with rareAndTraps', () {
+      test('the letter rule skips them, and marks them as rare letters', () {
         final index = withVaNames(over);
         final bva = index.lookup('Bva').single;
-        expect(index.requiredLetterAfter(bva), 'a');
-        expect(index.requiredLetterAfter(bva, LetterSkipping.rare), 'a');
-        expect(
-          index.requiredLetterAfter(bva, LetterSkipping.rareAndTraps),
-          'b',
-        );
-        final marks = index.letterMarks(bva, LetterSkipping.rareAndTraps);
+        expect(index.requiredLetterAfter(bva), 'b');
+        final marks = index.letterMarks(bva);
         expect(marks.next?.letter, 'b');
         expect([for (final s in marks.skipped) s.letter], ['v', 'a']);
       });

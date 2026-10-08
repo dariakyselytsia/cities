@@ -30,8 +30,8 @@ final class LetterMarks extends Equatable {
 /// after [normalizeName], so apostrophes and hyphens don't count and `ґ`
 /// reads as `г`. Walking back from the end, every letter outside
 /// `playableLetters` is skipped: the soft sign `ь`, which no city starts
-/// with, letters too few cities start with (see `LetterMinimums`), and on
-/// Easy the trap letters (see `trapLetterRatio`).
+/// with, letters too few cities start with (see `LetterMinimums`), and the
+/// trap letters (see `trapLetterRatio`).
 /// "Кам'янець" → `ц` (in World), "Хмельницький" → `к`.
 ///
 /// The rule is dataset-driven: `CityIndex.playableLetters` decides, so there

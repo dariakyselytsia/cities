@@ -39,8 +39,14 @@ const _kVocabulary = {
 };
 
 void main() {
-  CityBot bot(Difficulty difficulty, {int seed = 1}) =>
-      CityBot(index: _index, difficulty: difficulty, random: Random(seed));
+  /// A bot that knows only its tiers: most tests are about those. The
+  /// per-letter minimum has its own group.
+  CityBot bot(Difficulty difficulty, {int seed = 1}) => CityBot(
+    index: _index,
+    difficulty: difficulty,
+    random: Random(seed),
+    minCitiesPerLetter: 0,
+  );
 
   /// Plays «k» until the bot gives up; returns what it played, in order.
   List<City> playOut(CityBot bot) {
@@ -175,6 +181,49 @@ void main() {
     expect(run(5), isNot(run(6)), reason: 'but varies between seeds');
   });
 
+  group('the per-letter minimum', () {
+    CityBot standard(Difficulty difficulty) =>
+        CityBot(index: _index, difficulty: difficulty, random: Random(1));
+    Set<String> knownOf(CityBot b, String letter) =>
+        _names(_index.startingWith(letter).where(b.knows));
+
+    test('adds the best-known cities of each letter, beyond the tiers', () {
+      // «k»: Medium's tiers stop at Kae; its 6 best known reach Kaf (tier 3).
+      expect(knownOf(standard(Difficulty.medium), 'k'), {
+        ..._kVocabulary[Difficulty.medium]!,
+        'Kaf',
+      });
+      // Hard's 10 reach into tier 4: Kai, Kaj.
+      expect(knownOf(standard(Difficulty.hard), 'k'), {
+        ..._kVocabulary[Difficulty.hard]!,
+        'Kai',
+        'Kaj',
+      });
+      // Easy's 2 best «k» are tier 1 anyway.
+      expect(
+        knownOf(standard(Difficulty.easy), 'k'),
+        _kVocabulary[Difficulty.easy],
+      );
+    });
+
+    test('a letter with fewer cities is known whole, even tier 4', () {
+      // «m»: Mia (tier 1) and Mib (tier 4).
+      expect(knownOf(standard(Difficulty.easy), 'm'), {'Mia', 'Mib'});
+      expect(
+        standard(Difficulty.hard).move(requiredLetter: 'm', usedIds: {1}),
+        BotPlays(_index.lookup('Mib').single),
+      );
+    });
+
+    test('is set per difficulty', () {
+      expect([for (final d in Difficulty.values) d.minCitiesPerLetter], [
+        2,
+        6,
+        10,
+      ]);
+    });
+  });
+
   group('Difficulty', () {
     test('harder levels know more, allow less time and pay more', () {
       expect([for (final d in Difficulty.values) d.maxTier], [1, 2, 3]);
@@ -183,14 +232,6 @@ void main() {
         [45, 30, 20],
       );
       expect([for (final d in Difficulty.values) d.winMultiplier], [1, 2, 3]);
-    });
-
-    test('only Easy skips the trap letters', () {
-      expect([for (final d in Difficulty.values) d.letterSkipping], [
-        LetterSkipping.rareAndTraps,
-        LetterSkipping.rare,
-        LetterSkipping.rare,
-      ]);
     });
   });
 

@@ -61,7 +61,8 @@
 | T19 | Statistics screen | M5 Progress | M | [x] |
 | T25 | Review rare-letter skipping | M6 Release | S | [x] |
 | T27 | UI/UX improvements: give-up design, teal Play buttons | M6 Release | M | [x] |
-| T20 | Balance simulator + tuning pass | M6 Release | M | [ ] |
+| T20 | Balance simulator + tuning pass | M6 Release | M | [x] |
+| T28 | Playtest: turn timers + open questions | M6 Release | S | [ ] |
 | T21 | Polish pass | M6 Release | M | [ ] |
 | T22 | Release prep | M6 Release | M | [ ] |
 
@@ -1070,12 +1071,86 @@ checked on the emulator.
   - check whether players win Medium and Hard too easily by steering CityBot
     onto «а». Easy skips «а» as a trap; Medium and Hard require it.
   - `tool/letter_report.dart` prints the demand and supply.
-- Then do a real playtest with 2–3 people, and settle game_design §6
-  "Open questions" (the alias-letter rule, the skipped letters, who starts
-  by default).
+- ~~Then do a real playtest with 2–3 people, and settle game_design §6
+  "Open questions".~~ Moved to T28: it needs people, not code.
 
 **Done when:** the tuning constants are updated and the reasoning is noted in
 a comment.
+
+**Result (2026-10-08):**
+- **The simulator:**
+  - `tool/simulate.dart` (logic in `tool/src/simulator.dart`, tested in
+    `test/tool/`) plays seeded games of the real `Match` and `CityBot`
+    against a player who knows the top N cities: Ukraine 30 / 100 / 300,
+    World 100 / 400 / 1,500.
+  - The player picks at random, or **steers**: names the city that leaves
+    CityBot the fewest options for its next letter.
+  - Per list × language × difficulty it reports the win rate, the average
+    chain and game length, and the letters games end on. 200 games per row
+    take about two minutes.
+- **What it found with the old values:**
+  - Ukraine Easy was trivial and short: a 30-city player won 93% after
+    naming ~4 cities.
+  - Ukraine Medium and Hard wins nearly all ended on «а», which the bots knew
+    4 and 8 cities for.
+  - World was too hard: a keen player won Medium ~1%. English was much
+    harder than Ukrainian (Hard bot 5,038 vs 2,138 cities).
+  - Tiers left holes a steering player won through: the Easy World bot knew
+    no «ж» city, Medium no «ю».
+- **Changes:**
+  - **Per-letter minimum** (`Difficulty.minCitiesPerLetter`, 2 / 6 / 10):
+    CityBot also knows the best-known few cities of every letter
+    (`CityIndex.letterRankOf`). The game is still won by exhausting the bot,
+    but no longer through a single letter.
+  - **Tiers rank per index** (list × language). The Ukrainian World bots now
+    know as many cities as the English ones (Hard 1,572 vs 1,559). The
+    Ukraine list is unaffected.
+  - **World tiers** `[300, 1500, 5000]` → `[150, 500, 1500]`. Ukraine stays
+    `[50, 150, 300]`.
+  - **The «а» trap is skipped on every difficulty** (Daria's call, on the
+    data). Keeping it on Medium and Hard didn't make them harder (keen 53%
+    vs 56%), but games were ~35% shorter and almost all ended on «а».
+    `LetterSkipping` and `Difficulty.letterSkipping` from T25 are gone; the
+    traps are part of `CityIndex.playableLetters`.
+  - `LetterMinimums` (5 / 20) and `trapLetterRatio` (6) stay. No game ends
+    disproportionately on a letter they let through.
+- **Result**, in Ukrainian, as player win %:
+  - Ukraine: Easy casual 54, keen 98; Medium keen 56; Hard keen 0, expert 94.
+    A keen player's Medium chain grew from ~13 to ~20 cities.
+  - World: Easy casual 38, keen 99; Medium keen 54; Hard keen 1, expert 94.
+  - English plays harder (World Medium keen 17%), because its letter
+    endings are spread differently.
+  - The reasoning is in the comments on `TierLimits`,
+    `Difficulty.minCitiesPerLetter` and `trapLetterRatio`, and in
+    game_design §2.3 and §2.5.
+- **Not changed:**
+  - **Turn timers** (45 / 30 / 20 s): the simulator measures knowledge, not
+    recall speed. They move to the playtest, T28.
+  - **Steering** still pays off for strong World players (Medium keen
+    54% → 100%), where CityBot is thinner on «і», «у», «о». That's skill
+    more than an exploit; the playtest will show whether real players find
+    it.
+- Tests:
+  - the per-letter minimum (bot);
+  - per-language tiers and letter ranks (catalog);
+  - the trap skipped on every difficulty (match, real data);
+  - the simulator: steering, running out, determinism.
+
+### T28 · Playtest: turn timers + open questions · S
+Split from T20: it needs 2–3 real players, not code.
+- Play a few games per difficulty, in both lists and both languages, and
+  time real turns. Are 45 / 30 / 20 s right, now that Hard games run 40–100
+  cities?
+- Settle game_design §6 "Open questions":
+  - the alias-letter rule;
+  - whether players understand "«В» or «А»" after Полтава;
+  - who starts by default.
+- Note anything that feels off in the T20 balance (a difficulty too easy or
+  too hard). `tool/simulate.dart` checks any retuning.
+
+**Done when:** the timers are confirmed or changed (with the reasoning in
+`difficulty.dart`), and every §6 question is decided or kept open on
+purpose.
 
 ### T21 · Polish pass · M
 - Bot thinking animation, auto-scroll of the chat, keyboard handling on small

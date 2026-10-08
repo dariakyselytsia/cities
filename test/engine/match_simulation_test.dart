@@ -35,17 +35,26 @@ void main() {
       firstTurn: firstTurn,
     );
     final seen = <int>{};
+    final vocabulary = CityBot(
+      index: index,
+      difficulty: difficulty,
+      random: Random(0),
+    );
 
     while (!match.isOver) {
       final letter = match.requiredLetter;
       if (match.turn == Side.bot) {
+        final extras = match.extraLetters;
         if (match.botMove() case BotPlays(:final city)) {
-          // The bot follows the letter rule and stays in its tiers.
+          // The bot follows the letter rule (falling back to a skipped
+          // letter only when it must) and plays only what it knows.
+          final name = city.name(index.language) ?? '';
           expect(
-            LetterRule.startsWithRequired(city.name(index.language) ?? '', letter),
+            LetterRule.startsWithRequired(name, letter) ||
+                extras.any((l) => LetterRule.startsWithRequired(name, l)),
             isTrue,
           );
-          expect(index.tierOf(city), lessThanOrEqualTo(difficulty.maxTier));
+          expect(vocabulary.knows(city), isTrue);
           expect(seen.add(city.id), isTrue, reason: 'no repeats');
         }
         continue;

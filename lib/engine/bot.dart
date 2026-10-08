@@ -47,21 +47,28 @@ Duration botThinkingTime(Random random) =>
     botThinkingMin + (botThinkingMax - botThinkingMin) * random.nextDouble();
 
 /// CityBot: the opponent. It knows only the cities of its [difficulty]'s
-/// tiers, and it's beatable because that vocabulary runs out
-/// (game_design §2.5).
+/// tiers, plus the best-known few of every letter, and it's beatable because
+/// that vocabulary runs out (game_design §2.5).
 ///
 /// Pure and deterministic for a given [random]: tests seed it; the game
 /// passes `Random()`.
 class CityBot {
+  /// [minCitiesPerLetter] exists for tests; the game uses the
+  /// [difficulty]'s.
   CityBot({
     required this.index,
     required this.difficulty,
     required Random random,
-  }) : _random = random;
+    int? minCitiesPerLetter,
+  }) : _random = random,
+       minCitiesPerLetter = minCitiesPerLetter ?? difficulty.minCitiesPerLetter;
 
   /// The list × language being played.
   final CityIndex index;
   final Difficulty difficulty;
+
+  /// See `Difficulty.minCitiesPerLetter`.
+  final int minCitiesPerLetter;
   final Random _random;
 
   /// Picks the bot's next city.
@@ -101,10 +108,13 @@ class CityBot {
     return city == null ? const BotGivesUp() : BotPlays(city);
   }
 
-  /// Whether [city] is in the bot's vocabulary.
+  /// Whether [city] is in the bot's vocabulary: within its tiers, or among
+  /// the [minCitiesPerLetter] best known of its letter.
   bool knows(City city) {
     final tier = index.tierOf(city);
-    return tier != null && tier <= difficulty.maxTier;
+    if (tier == null) return false;
+    return tier <= difficulty.maxTier ||
+        (index.letterRankOf(city) ?? minCitiesPerLetter) < minCitiesPerLetter;
   }
 
   City? _weightedPick(List<City> candidates) {

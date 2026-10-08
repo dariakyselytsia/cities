@@ -56,6 +56,27 @@ cities that have **no Ukrainian name**; those are candidates for manual fixes
 The name-selection logic lives in `tool/src/city_builder.dart` and is tested
 in `test/tool/`.
 
+## `simulate.dart`: the balance simulator (T20)
+
+```bash
+dart run tool/simulate.dart [--games 200]
+```
+
+It plays seeded games of the real `Match` and `CityBot` against simulated
+players who know the top N cities of an index (Ukraine 30 / 100 / 300,
+World 100 / 400 / 1,500) and never run out of time. Each player either
+picks a city at random, or **steers**: names the city that leaves CityBot
+the fewest options for its next letter.
+
+For each list × language × difficulty it prints the win rate, the average
+chain and game length, and the letters games end on. It takes about two
+minutes. The player logic is in `src/simulator.dart`.
+
+Use it when you change a tuning value (`TierLimits`,
+`Difficulty.minCitiesPerLetter`, `LetterMinimums`, `trapLetterRatio`) or
+the city data. It measures knowledge only, not how fast a player recalls a
+city, so the turn timers need a real playtest.
+
 ## `letter_report.dart`: the numbers behind the letter rule
 
 ```bash
@@ -63,8 +84,8 @@ dart run tool/letter_report.dart
 ```
 
 For each list × language it prints:
-- which letters are skipped as rare (`LetterMinimums`) and as traps on
-  Easy (`trapLetterRatio`);
+- which letters are skipped as rare (`LetterMinimums`) and as traps
+  (`trapLetterRatio`);
 - for every first letter:
   - how many cities start with it, and how many of those each bot knows;
   - how many names would require it, and the ratio of the two.

@@ -194,30 +194,29 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
   - `startingWith(letter)`: the cities whose **display name** starts with the
     letter, best known first (tier, then population).
   - `playableLetters`: the letters at least `LetterMinimums` cities start
-    with (Ukraine 5, World 20). The letter rule skips all others.
-  - `trapLetters`: the playable letters that more than `trapLetterRatio`
-    (6) times as many names require as cities start with (T25, «а» in
-    Ukraine).
+    with (Ukraine 5, World 20), minus the `trapLetters`. The letter rule
+    skips all others.
+  - `trapLetters`: letters that more than `trapLetterRatio` (6) times as
+    many names require as cities start with (T25, «а» in Ukraine).
     - They're found at build time, worst first, recounting demand after
       each, since skipping one moves its names' demand to the letter before.
     - This adds ~40 ms to the desktop build.
-  - Which set the rule uses is `Difficulty.letterSkipping`:
-    - `rare` on Medium and Hard;
-    - `rareAndTraps` on Easy.
-
-    `playableLettersFor(skipping)` returns the set.
-    `requiredLetterAfter(city, skipping)` applies `LetterRule` to the city's
-    display name. `letterMarks(city, skipping)` says which character of the
-    display name gives that letter, and which skipped letters after it the
-    player may use instead, so the chat can mark them.
-    `tool/letter_report.dart` prints the demand and supply behind both.
-  - `tierOf(city)`: tiers come from population rank within the **list**. They
-    are the same in both languages, because a city is as famous in either;
-    a city with no Ukrainian name is simply missing from the Ukrainian index.
-    Rank limits are the `TierLimits` constants. Capitals of **sovereign
+  - `requiredLetterAfter(city)` applies `LetterRule` to the city's display
+    name. `letterMarks(city)` says which character of the display name gives
+    that letter, and which skipped letters after it the player may use
+    instead, so the chat can mark them. `tool/letter_report.dart` prints the
+    demand and supply behind both.
+  - `tierOf(city)`: tiers come from population rank among the cities of the
+    **index** (list × language), T20. Most of the World list past its top
+    1,000 has no Ukrainian name, so ranking the whole list gave the
+    Ukrainian bots far smaller vocabularies than the English ones. Rank
+    limits are the `TierLimits` constants. Capitals of **sovereign
     states** are forced into T1. Territory capitals are excluded by a list of
     territory country codes, since a population threshold would also drop
     Vatican City.
+  - `letterRankOf(city)`: the city's place in `startingWith` its letter.
+    CityBot also knows the `Difficulty.minCitiesPerLetter` best known of
+    every letter (2 / 6 / 10), so the tiers leave no letter it can't answer.
 - Each name is normalized once per language and shared by both lists. The
   whole catalog builds in ~0.2 s on a desktop.
 

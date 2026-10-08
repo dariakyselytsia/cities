@@ -47,29 +47,31 @@ class CityCatalog {
     // Normalized once per language, shared by both lists' indexes.
     final ukNames = _normalizedNames(all, NameLanguage.uk);
     final enNames = _normalizedNames(all, NameLanguage.en);
-    CityIndex build(CityListKind list, Map<int, int> tiers, NameLanguage language) =>
-        CityIndex._(
-          list,
-          language,
-          all.where(list.contains),
-          tiers,
-          switch (language) {
-            NameLanguage.uk => ukNames,
-            NameLanguage.en => enNames,
-          },
-          letterMinimums.of(list),
-        );
+    CityIndex build(CityListKind list, NameLanguage language) {
+      final names = switch (language) {
+        NameLanguage.uk => ukNames,
+        NameLanguage.en => enNames,
+      };
+      final listCities = all.where(list.contains);
+      return CityIndex._(
+        list,
+        language,
+        listCities,
+        _tiers(
+          listCities.where((city) => names.containsKey(city.id)),
+          tierLimits.of(list),
+        ),
+        names,
+        letterMinimums.of(list),
+      );
+    }
 
-    final ukraineTiers =
-        _tiers(all.where(CityListKind.ukraine.contains), tierLimits.ukraine);
-    final worldTiers =
-        _tiers(all.where(CityListKind.world.contains), tierLimits.world);
     return CityCatalog._(
       all,
-      ukraineUk: build(CityListKind.ukraine, ukraineTiers, NameLanguage.uk),
-      ukraineEn: build(CityListKind.ukraine, ukraineTiers, NameLanguage.en),
-      worldUk: build(CityListKind.world, worldTiers, NameLanguage.uk),
-      worldEn: build(CityListKind.world, worldTiers, NameLanguage.en),
+      ukraineUk: build(CityListKind.ukraine, NameLanguage.uk),
+      ukraineEn: build(CityListKind.ukraine, NameLanguage.en),
+      worldUk: build(CityListKind.world, NameLanguage.uk),
+      worldEn: build(CityListKind.world, NameLanguage.en),
     );
   }
 
@@ -135,12 +137,14 @@ class CityCatalog {
         city.id: _NormalizedNames.of(display, city.aliases(language)),
   };
 
-  /// Assigns tiers within one list: by population rank against [limits],
-  /// then sovereign capitals are lifted to tier 1.
+  /// Assigns tiers within one index (list × language): by population rank
+  /// against [limits], then sovereign capitals are lifted to tier 1.
   ///
-  /// Tiers depend on the list, not the language: a city is as famous in
-  /// either language. A city with no Ukrainian name simply isn't in the
-  /// Ukrainian index.
+  /// Ranks count only the cities playable in that language (T20). Most of
+  /// the World list past its top 1,000 has no Ukrainian name, so ranking the
+  /// whole list left the Ukrainian Hard bot 2,138 cities against 5,038 in
+  /// English. Ranked per index, each language's bot knows the same number of
+  /// its best-known cities. The Ukraine list is the same in both languages.
   static Map<int, int> _tiers(Iterable<City> cities, List<int> limits) {
     for (var i = 0; i < limits.length; i++) {
       if (limits[i] <= 0 || (i > 0 && limits[i] <= limits[i - 1])) {
@@ -202,30 +206,32 @@ class CityIndex {
       for (final MapEntry(:key, :value) in byLetter.entries)
         key: List.unmodifiable(value),
     };
+    _letterRanks = {
+      for (final starters in _byLetter.values)
+        for (final (rank, city) in starters.indexed) city.id: rank,
+    };
     firstLetters = Set.unmodifiable(_byLetter.keys);
-    playableLetters = Set.unmodifiable({
+    final common = {
       for (final MapEntry(key: letter, value: starters) in _byLetter.entries)
         if (starters.length >= letterMinimum) letter,
-    });
-    _playableWithoutTraps = Set.unmodifiable(
-      _withoutTraps([
+    };
+    playableLetters = Set.unmodifiable(
+      _withoutTraps(common, [
         for (final city in playable)
           if (names[city.id] case final cityNames?) cityNames.display,
       ]),
     );
-    trapLetters = Set.unmodifiable(
-      playableLetters.difference(_playableWithoutTraps),
-    );
+    trapLetters = Set.unmodifiable(common.difference(playableLetters));
   }
 
-  /// [playableLetters] minus the trap letters ([trapLetterRatio]), given
-  /// every city's normalized display name.
+  /// [letters] minus the trap letters ([trapLetterRatio]), given every
+  /// city's normalized display name.
   ///
   /// Traps are removed one at a time, worst first, and the demand is counted
   /// again after each: skipping «а» moves Полтава's demand to «в», which may
   /// make «в» the next trap. It stops when no letter is over the ratio.
-  Set<String> _withoutTraps(List<String> displayNames) {
-    final kept = {...playableLetters};
+  Set<String> _withoutTraps(Set<String> letters, List<String> displayNames) {
+    final kept = {...letters};
     while (true) {
       final demand = <String, int>{};
       for (final name in displayNames) {
@@ -249,6 +255,7 @@ class CityIndex {
   final Map<int, int> _tiers;
   late final Map<String, List<City>> _byName;
   late final Map<String, List<City>> _byLetter;
+  late final Map<int, int> _letterRanks;
 
   /// Every city in [list] that has a name in [language], best known first.
   late final List<City> cities;
@@ -261,44 +268,29 @@ class CityIndex {
   /// The (normalized) letters at least one city's display name starts with.
   late final Set<String> firstLetters;
 
-  /// The letters the letter rule can require with [LetterSkipping.rare]:
-  /// those at least [LetterMinimums] cities start with. Every other letter
-  /// is skipped (game_design §2.3). A city starting with one (Йокогама in
-  /// World) is played as an opening move, or as a rare letter
-  /// (`Match.extraLetters`).
+  /// The letters the letter rule can require: those at least
+  /// [LetterMinimums] cities start with, minus the [trapLetters]. Every
+  /// other letter is skipped (game_design §2.3). A city starting with one
+  /// (Йокогама in World, Енергодар in Ukraine) is played as an opening move,
+  /// or as a rare letter (`Match.extraLetters`).
   late final Set<String> playableLetters;
 
-  /// The playable letters that are traps ([trapLetterRatio]): «а» in the
-  /// Ukraine list. [LetterSkipping.rareAndTraps] skips them too.
+  /// Letters enough cities start with that are skipped anyway, as traps
+  /// ([trapLetterRatio]): «а» in the Ukraine list.
   late final Set<String> trapLetters;
-
-  late final Set<String> _playableWithoutTraps;
-
-  /// The letters the letter rule can require with [skipping].
-  Set<String> playableLettersFor(LetterSkipping skipping) =>
-      switch (skipping) {
-        LetterSkipping.rare => playableLetters,
-        LetterSkipping.rareAndTraps => _playableWithoutTraps,
-      };
 
   /// The letter the city after [previous] must start with (see
   /// [LetterRule]), or `null` when any letter will do.
-  String? requiredLetterAfter(
-    City previous, [
-    LetterSkipping skipping = LetterSkipping.rare,
-  ]) => LetterRule.requiredNextLetter(
+  String? requiredLetterAfter(City previous) => LetterRule.requiredNextLetter(
     previous.name(language) ?? '',
-    playableLettersFor(skipping),
+    playableLetters,
   );
 
   /// Which letters of [city]'s display name the chat marks: the next letter
   /// and the rarer ones skipped after it (see [LetterRule.letterMarks]).
-  LetterMarks letterMarks(
-    City city, [
-    LetterSkipping skipping = LetterSkipping.rare,
-  ]) => LetterRule.letterMarks(
+  LetterMarks letterMarks(City city) => LetterRule.letterMarks(
     city.name(language) ?? '',
-    playableLettersFor(skipping),
+    playableLetters,
     startingLetters: firstLetters,
   );
 
@@ -314,8 +306,13 @@ class CityIndex {
   List<City> startingWith(String letter) =>
       _byLetter[normalizeName(letter)] ?? const [];
 
-  /// The tier of [city] in [list] (1 = best known), or `null` if the city
-  /// isn't in this index.
+  /// Where [city] stands among the cities starting with its letter: 0 for
+  /// the best known (see [startingWith]), or `null` if the city isn't in
+  /// this index or starts with a digit.
+  int? letterRankOf(City city) => _letterRanks[city.id];
+
+  /// The tier of [city] in this index (1 = best known), or `null` if the
+  /// city isn't in it.
   int? tierOf(City city) =>
       city.name(language) == null ? null : _tiers[city.id];
 }

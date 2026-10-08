@@ -255,11 +255,11 @@ void main() {
     });
   });
 
-  group('trap letters: Easy skips them, harder levels keep them', () {
+  group('trap letters are skipped, and can be played as rare letters', () {
     // More than trapLetterRatio× as many names end in «a» (Bva, Cva, …) as
     // start with it (Abu): «a» is a trap. Two cities start with «v», so «v»
     // isn't one. Tier 1 is the -va names and Abu; Vub and Vuc are tiers
-    // 2 and 3, unknown to the Easy bot.
+    // 2 and 3, unknown to an Easy bot without the per-letter minimum.
     final count = trapLetterRatio.floor() + 1;
     final vaNames = [
       for (var i = 0; i < count; i++)
@@ -279,29 +279,34 @@ void main() {
       letterMinimums: const LetterMinimums(ukraine: 1, world: 1),
     ).index(CityListKind.world, NameLanguage.en);
 
-    /// A game with the real CityBot, opened by the player.
-    Match game(Difficulty difficulty) => Match(
-      index: index,
-      difficulty: difficulty,
-      random: Random(1),
-      firstTurn: Side.player,
-    );
+    /// A game with a real CityBot that knows only its tiers, opened by the
+    /// player.
+    Match game(Difficulty difficulty) {
+      final random = Random(1);
+      return Match(
+        index: index,
+        difficulty: difficulty,
+        random: random,
+        firstTurn: Side.player,
+        bot: CityBot(
+          index: index,
+          difficulty: difficulty,
+          random: random,
+          minCitiesPerLetter: 0,
+        ),
+      );
+    }
 
     test('the fixture has one trap letter', () {
       expect(index.trapLetters, {'a'});
     });
 
-    test('after Bva: Easy asks for «v», or «a» as a rare letter; Medium and '
-        'Hard ask for «a»', () {
-      final easy = game(Difficulty.easy)..submit('Bva');
-      expect(easy.requiredLetter, 'v');
-      expect(easy.extraLetters, ['a']);
-      expect(easy.letterMarks?.next?.letter, 'v');
-
-      for (final difficulty in [Difficulty.medium, Difficulty.hard]) {
+    test('after Bva: «v», or «a» as a rare letter, on every difficulty', () {
+      for (final difficulty in Difficulty.values) {
         final match = game(difficulty)..submit('Bva');
-        expect(match.requiredLetter, 'a', reason: difficulty.name);
-        expect(match.extraLetters, isEmpty, reason: difficulty.name);
+        expect(match.requiredLetter, 'v', reason: difficulty.name);
+        expect(match.extraLetters, ['a'], reason: difficulty.name);
+        expect(match.letterMarks?.next?.letter, 'v', reason: difficulty.name);
       }
     });
 

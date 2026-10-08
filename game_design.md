@@ -37,8 +37,8 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
 - If too few cities in the active list start with that letter, skip back to
   the previous letter, and keep going until you reach a playable letter.
   Apostrophes, hyphens and spaces are not letters.
-  - **Rare letters, on every difficulty.** A letter is playable when at
-    least **5** (Ukraine list) or **20** (World) cities start with it.
+  - **Rare letters.** A letter is playable when at least **5** (Ukraine
+    list) or **20** (World) cities start with it.
     - So `ь` and `и` are always skipped. World also skips `й`, `ї` and `щ`:
       145 names end in `й` (Шанхай, Дубай) but only 16 start with it, and
       requiring it would jam most games. Ukraine skips `ї`, `ц`, `е`, `ф`,
@@ -46,14 +46,15 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
     - Skipping a letter few names end in costs nothing: its cities stay
       reachable through the rare-letter choice below. So the minimum
       doesn't need to be exact.
-  - **Trap letters, on Easy only (T25).** A letter is also a trap when
-    **more than 6×** as many names require it as cities start with it.
-    - Today that's only `а` in the Ukraine list: 235 names require it (Полтава,
-      Одеса, Біла Церква), but only 16 cities start with it, and the Easy
-      bot knows one. On Easy, Полтава asks for «в» (or «а», below), so the
-      player can play on.
-    - Medium and Hard keep `а` required. Getting stuck on «а» is part of
-      what makes them harder.
+  - **Trap letters (T25, T20).** A letter is also skipped when **more
+    than 6×** as many names require it as cities start with it.
+    - Today that's only `а` in the Ukraine list: 235 names require it
+      (Полтава, Одеса, Біла Церква), but only 16 cities start with it. So
+      Полтава asks for «в» (or «а», below).
+    - T25 kept `а` required on Medium and Hard. The T20 simulator showed
+      that didn't make them harder: games were ~35% shorter, almost all
+      ended on «а», and steering onto «а» paid off. So it's skipped on every
+      difficulty.
     - The ratio is counted after skipping. «ц» counts the "-ець" names, and
       once `а` is skipped its names count for the letter before it (Полтава
       for «в»). Traps are removed worst first until no letter is over the
@@ -67,8 +68,7 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
   - **Rare-letter choice.** The player may also answer with any letter that
     was skipped after the required one, as rare or as a trap: after
     «Кам'янське» you can play on «К» or on «Е» (Енергодар); after
-    «Кременець» on «Н», «Е» or «Ц»; on Easy, after «Полтава» on «В» or
-    «А». Letters no city starts with («ь», «и») never count. So a player who
+    «Кременець» on «Н», «Е» or «Ц»; after «Полтава» on «В» or «А». Letters no city starts with («ь», «и») never count. So a player who
     knows a rare city can use it, and nothing jams.
   - **CityBot and hints use the required letter, and a skipped letter only
     as a fallback (T25):** when no unused city they know starts with the
@@ -107,20 +107,38 @@ Ukrainian, a Latin-script answer like "Kyiv" is not accepted.
 
 ### 2.5 CityBot and difficulty
 Cities are ranked into **tiers** by fame. Fame is based on population rank
-within the active list, and capitals of sovereign states always count as
-tier 1 (territory capitals such as Flying Fish Cove don't). CityBot's
-vocabulary is the tiers its difficulty allows:
+among the cities playable in the active list **and language** (T20), and
+capitals of sovereign states always count as tier 1 (territory capitals such
+as Flying Fish Cove don't). CityBot's vocabulary is the tiers its difficulty
+allows, plus the best-known few cities of **every letter**:
 
-| Difficulty | Bot knows | Player turn timer |
-|---|---|---|
-| Easy   | tier 1 only (≈ the best-known cities)  | 45 s |
-| Medium | tiers 1–2                              | 30 s |
-| Hard   | tiers 1–3                              | 20 s |
+| Difficulty | Bot knows | …and per letter at least | Player turn timer |
+|---|---|---|---|
+| Easy   | tier 1 only (≈ the best-known cities) | 2  | 45 s |
+| Medium | tiers 1–2                             | 6  | 30 s |
+| Hard   | tiers 1–3                             | 10 | 20 s |
 
-Tier sizes are per list and are **tuning values**, to be set by playtesting.
-Starting guesses:
-- World: T1 ≈ 300, T2 ≈ 1,500, T3 ≈ 5,000, T4 = the rest.
-- Ukraine: T1 ≈ 50, T2 ≈ 150, T3 ≈ 300, T4 = the rest.
+Tier sizes are per list and are **tuning values**, set with the balance
+simulator (`tool/simulate.dart`, T20):
+- World: T1 = 150, T2 = 500, T3 = 1,500, T4 = the rest. The first guesses
+  (300 / 1,500 / 5,000) let a keen player win World Medium about 1% of the
+  time.
+- Ukraine: T1 = 50, T2 = 150, T3 = 300, T4 = the rest.
+- Ranking per language matters for World: most cities past its top 1,000
+  have no Ukrainian name. Ranked over the whole list, the Ukrainian Hard bot
+  knew 2,138 cities against 5,038 in English.
+- The per-letter minimum closes holes the tiers leave: the Easy World bot
+  knew no «ж» city and the Medium one no «ю», so a player could win just by
+  steering onto those letters.
+
+With these values, in simulated games against a player who knows the top N
+cities (Ukraine 30 / 100 / 300, World 100 / 400 / 1,500), in Ukrainian:
+- **Easy** is winnable: a casual player wins about half the Ukraine games
+  (38% in World), a keen one nearly all.
+- **Medium** is a challenge: a keen player wins about 55%.
+- **Hard** is rare: a keen player almost never wins; an expert wins ~94%.
+
+English plays harder at the same knowledge (World Medium: keen 17%).
 
 - The bot picks a **random** unused city from its vocabulary that satisfies the
   letter rule, weighted toward better-known cities: a tier-1 city is 4× as
@@ -254,7 +272,7 @@ List sizes (GeoNames, Sept 2026 build):
 ## 6. Open questions (revisit after playtesting)
 
 Rules that were decided provisionally. Each one is easy to change in
-`engine/`; decide after the playtest in T20.
+`engine/`; decide after the playtest (T28).
 
 - **Alias answers and the letter (T09, §2.4).** Today an answer fits the
   required letter by what was typed **or** by the city's display name, so
@@ -263,11 +281,12 @@ Rules that were decided provisionally. Each one is easy to change in
   - typed only: the next letter then follows what was typed, but the chat
     shows the display name.
   Watch whether players find the lenient rule confusing or exploit it.
-- **Which letters the letter rule skips (§2.3).** Decided in T25: per-list
-  minimums on every difficulty, plus trap letters on Easy. CityBot uses the
-  skipped letters as a fallback. In the playtest, check:
-  - whether Medium and Hard players feel the «а» trap is fair;
-  - whether steering CityBot onto «а» (Medium knows 4 cities for it, Hard 8)
-    becomes an easy way to win.
+- **Which letters the letter rule skips (§2.3).** Per-list minimums plus
+  trap letters, on every difficulty (T25, T20); CityBot uses the skipped
+  letters as a fallback. In the playtest, check that players understand
+  "«В» or «А»" after Полтава.
+- **Turn timers (§2.5).** 45 / 30 / 20 s are still the first guesses: the
+  simulator measures what a player knows, not how fast they recall it.
+  Time real turns in the playtest; Hard games now run 40–100 cities.
 - **Who starts by default (§2.2).** CityBot, with a setting to open
   yourself. Check which default new players prefer.
