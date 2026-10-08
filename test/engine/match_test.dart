@@ -255,6 +255,73 @@ void main() {
     });
   });
 
+  group('trap letters: Easy skips them, harder levels keep them', () {
+    // More than trapLetterRatio× as many names end in «a» (Bva, Cva, …) as
+    // start with it (Abu): «a» is a trap. Two cities start with «v», so «v»
+    // isn't one. Tier 1 is the -va names and Abu; Vub and Vuc are tiers
+    // 2 and 3, unknown to the Easy bot.
+    final count = trapLetterRatio.floor() + 1;
+    final vaNames = [
+      for (var i = 0; i < count; i++)
+        _city(200 + i, '${'bcdefghijklmnop'[i]}va', 1000 - i),
+    ];
+    final bva = vaNames[0];
+    final cva = vaNames[1];
+    final abu = _city(300, 'Abu', 2000);
+    final vub = _city(301, 'Vub', 10);
+    final vuc = _city(302, 'Vuc', 9);
+    final index = CityCatalog(
+      [...vaNames, abu, vub, vuc],
+      tierLimits: TierLimits(
+        ukraine: const [1, 2, 3],
+        world: [count + 1, count + 2, count + 3],
+      ),
+      letterMinimums: const LetterMinimums(ukraine: 1, world: 1),
+    ).index(CityListKind.world, NameLanguage.en);
+
+    /// A game with the real CityBot, opened by the player.
+    Match game(Difficulty difficulty) => Match(
+      index: index,
+      difficulty: difficulty,
+      random: Random(1),
+      firstTurn: Side.player,
+    );
+
+    test('the fixture has one trap letter', () {
+      expect(index.trapLetters, {'a'});
+    });
+
+    test('after Bva: Easy asks for «v», or «a» as a rare letter; Medium and '
+        'Hard ask for «a»', () {
+      final easy = game(Difficulty.easy)..submit('Bva');
+      expect(easy.requiredLetter, 'v');
+      expect(easy.extraLetters, ['a']);
+      expect(easy.letterMarks?.next?.letter, 'v');
+
+      for (final difficulty in [Difficulty.medium, Difficulty.hard]) {
+        final match = game(difficulty)..submit('Bva');
+        expect(match.requiredLetter, 'a', reason: difficulty.name);
+        expect(match.extraLetters, isEmpty, reason: difficulty.name);
+      }
+    });
+
+    test('the Easy bot, knowing no «v» city, falls back to «a»', () {
+      final match = game(Difficulty.easy)..submit('Bva');
+      expect(match.botMove(), BotPlays(abu));
+    });
+
+    test('a hint falls back the same way', () {
+      final match = game(Difficulty.easy);
+      _accepted(match.submit('Vub'));
+      expect(match.botMove(), BotPlays(bva)); // the only «b» city
+      _accepted(match.submit('Vuc'));
+      expect(match.botMove(), BotPlays(cva)); // the only «c» city
+      // «v» is used up; «a» is left.
+      expect(match.requiredLetter, 'v');
+      expect(match.hint()?.city, abu);
+    });
+  });
+
   group('scoring', () {
     test('a city never named before is worth $pointsForNewCity', () {
       final match = _match([kursk])..botMove();

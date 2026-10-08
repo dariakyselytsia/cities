@@ -75,7 +75,7 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
                               null = no hints left or no city fits, nothing spent)
   timeout()          -> MatchResult (player's turn only)
   surrender()        -> MatchResult (either turn)
-  state: turn, requiredLetter, extraLetters (rare letters the player may use too), usedIds, history (Turns), score, chain, hintsLeft, result?
+  state: turn, requiredLetter, extraLetters (skipped letters the player may use too), letterMarks, usedIds, history (Turns), score, chain, hintsLeft, result?
 ```
 
 - `Turn` = city, side, points, isNew, isHint. `MatchResult` = outcome
@@ -85,6 +85,9 @@ Match(index, difficulty, random, discoveredIds, firstTurn)   // index = catalog.
   programming error, not a game event.
 - Hints pick randomly within the best tier that still has an unused city for
   the letter.
+- CityBot (`move(requiredLetter, extraLetters, usedIds)`) and hints use the
+  `extraLetters` only as a fallback, when no unused city they know starts
+  with the required letter (T25).
 
 `GameCubit` state is a `sealed` hierarchy:
 - `GameLoading` (before `start()`)
@@ -188,10 +191,22 @@ One compact file, `assets/data/cities.json`. It is minified, with short keys:
     letter, best known first (tier, then population).
   - `playableLetters`: the letters at least `LetterMinimums` cities start
     with (Ukraine 5, World 20). The letter rule skips all others.
-    `requiredLetterAfter(city)` applies `LetterRule` to the city's display
-    name. `letterMarks(city)` says which character of the display name
-    gives that letter, and which rarer letters after it were skipped, so the
-    chat can mark them.
+  - `trapLetters`: the playable letters that more than `trapLetterRatio`
+    (6) times as many names require as cities start with (T25, «а» in
+    Ukraine).
+    - They're found at build time, worst first, recounting demand after
+      each, since skipping one moves its names' demand to the letter before.
+    - This adds ~40 ms to the desktop build.
+  - Which set the rule uses is `Difficulty.letterSkipping`:
+    - `rare` on Medium and Hard;
+    - `rareAndTraps` on Easy.
+
+    `playableLettersFor(skipping)` returns the set.
+    `requiredLetterAfter(city, skipping)` applies `LetterRule` to the city's
+    display name. `letterMarks(city, skipping)` says which character of the
+    display name gives that letter, and which skipped letters after it the
+    player may use instead, so the chat can mark them.
+    `tool/letter_report.dart` prints the demand and supply behind both.
   - `tierOf(city)`: tiers come from population rank within the **list**. They
     are the same in both languages, because a city is as famous in either;
     a city with no Ukrainian name is simply missing from the Ukrainian index.

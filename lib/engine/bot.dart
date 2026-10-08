@@ -69,15 +69,35 @@ class CityBot {
   /// It is a random city from the bot's vocabulary that starts with
   /// [requiredLetter] and isn't in [usedIds], weighted toward better-known
   /// tiers ([botTierWeights]). A `null` letter (the opening move, or after a
-  /// dead end) allows any city. With no such city left, the bot gives up.
-  BotMove move({required String? requiredLetter, required Set<int> usedIds}) {
-    final candidates = [
-      for (final city in requiredLetter == null
-          ? index.cities
-          : index.startingWith(requiredLetter))
+  /// dead end) allows any city.
+  ///
+  /// The [extraLetters] (`Match.extraLetters`) are a fallback: the bot plays
+  /// one only when it knows no city for [requiredLetter], so it doesn't give
+  /// up while it knows Енергодар for «е». It doesn't prefer them, so the
+  /// rare cities stay a find for the player (T25). With no city left for
+  /// any of these letters, the bot gives up.
+  BotMove move({
+    required String? requiredLetter,
+    List<String> extraLetters = const [],
+    required Set<int> usedIds,
+  }) {
+    List<City> candidates(Iterable<City> cities) => [
+      for (final city in cities)
         if (!usedIds.contains(city.id) && knows(city)) city,
     ];
-    final city = _weightedPick(candidates);
+    final city =
+        _weightedPick(
+          candidates(
+            requiredLetter == null
+                ? index.cities
+                : index.startingWith(requiredLetter),
+          ),
+        ) ??
+        _weightedPick(
+          candidates([
+            for (final letter in extraLetters) ...index.startingWith(letter),
+          ]),
+        );
     return city == null ? const BotGivesUp() : BotPlays(city);
   }
 

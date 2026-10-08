@@ -14,6 +14,9 @@ class ScriptedBot extends CityBot {
   final List<City> _script;
 
   @override
-  BotMove move({required String? requiredLetter, required Set<int> usedIds}) =>
-      _script.isEmpty ? const BotGivesUp() : BotPlays(_script.removeAt(0));
+  BotMove move({
+    required String? requiredLetter,
+    List<String> extraLetters = const [],
+    required Set<int> usedIds,
+  }) => _script.isEmpty ? const BotGivesUp() : BotPlays(_script.removeAt(0));
 }

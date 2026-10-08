@@ -56,6 +56,22 @@ cities that have **no Ukrainian name**; those are candidates for manual fixes
 The name-selection logic lives in `tool/src/city_builder.dart` and is tested
 in `test/tool/`.
 
+## `letter_report.dart`: the numbers behind the letter rule
+
+```bash
+dart run tool/letter_report.dart
+```
+
+For each list × language it prints:
+- which letters are skipped as rare (`LetterMinimums`) and as traps on
+  Easy (`trapLetterRatio`);
+- for every first letter:
+  - how many cities start with it, and how many of those each bot knows;
+  - how many names would require it, and the ratio of the two.
+
+Use it when you retune the letter rule (game_design §2.3, T20) or after a
+data update.
+
 ## Fixing names: `overrides.json`
 
 GeoNames has gaps and errors. Each fix goes in `tool/overrides.json`, keyed by

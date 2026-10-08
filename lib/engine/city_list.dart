@@ -66,3 +66,27 @@ class LetterMinimums {
     CityListKind.world => world,
   };
 }
+
+/// When a letter is a **trap**: more than this many times as many names
+/// require it as cities start with it (game_design §2.3, T25).
+///
+/// Why: enough cities can start with a letter and it can still jam games.
+/// In the Ukraine list 235 names require «а», but only 16 cities start with
+/// it, and the Easy bot knows one. On the real data any ratio from 5 to 8
+/// picks the same letters: «а» in the Ukraine list (in both languages) and
+/// nothing in World. The next worst letters are near 4.8 (Ukraine «i» in
+/// English, World «я»), so 6 leaves a margin. Tuning value (T20).
+const double trapLetterRatio = 6;
+
+/// Which letters the letter rule skips, set per difficulty
+/// (game_design §2.3).
+enum LetterSkipping {
+  /// Letters too few cities start with ([LetterMinimums]), like «й» in
+  /// World. A trap letter stays required, which makes a game harder.
+  rare,
+
+  /// Those, and the trap letters ([trapLetterRatio]): Полтава asks for «в»,
+  /// or «а» as a rare letter. Easy uses this, so the player can play on
+  /// instead of running out of «а» cities.
+  rareAndTraps,
+}

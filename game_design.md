@@ -37,21 +37,44 @@ Tapping **Play** opens a short setup sheet. It remembers the last choice:
 - If too few cities in the active list start with that letter, skip back to
   the previous letter, and keep going until you reach a playable letter.
   Apostrophes, hyphens and spaces are not letters.
-  - A letter is playable when at least **5** (Ukraine list) or **20** (World)
-    cities start with it. These are tuning values.
-  - So `ь` and `и` are always skipped. World also skips `й`, `ї` and `щ`:
-    145 names end in `й` (Шанхай, Дубай) but only 16 start with it, and
-    requiring it would jam most games. Ukraine skips `ї`, `ц`, `е`, `ф`, `є`
-    and `щ`.
+  - **Rare letters, on every difficulty.** A letter is playable when at
+    least **5** (Ukraine list) or **20** (World) cities start with it.
+    - So `ь` and `и` are always skipped. World also skips `й`, `ї` and `щ`:
+      145 names end in `й` (Шанхай, Дубай) but only 16 start with it, and
+      requiring it would jam most games. Ukraine skips `ї`, `ц`, `е`, `ф`,
+      `є` and `щ`.
+    - Skipping a letter few names end in costs nothing: its cities stay
+      reachable through the rare-letter choice below. So the minimum
+      doesn't need to be exact.
+  - **Trap letters, on Easy only (T25).** A letter is also a trap when
+    **more than 6×** as many names require it as cities start with it.
+    - Today that's only `а` in the Ukraine list: 235 names require it (Полтава,
+      Одеса, Біла Церква), but only 16 cities start with it, and the Easy
+      bot knows one. On Easy, Полтава asks for «в» (or «а», below), so the
+      player can play on.
+    - Medium and Hard keep `а` required. Getting stuck on «а» is part of
+      what makes them harder.
+    - The ratio is counted after skipping. «ц» counts the "-ець" names, and
+      once `а` is skipped its names count for the letter before it (Полтава
+      for «в»). Traps are removed worst first until no letter is over the
+      ratio. In World no playable letter comes close (the worst is `я`,
+      4.7×).
   - Examples: Хмельницький → «к», Шанхай → «а», Кременець → «ц» in World,
     but «н» in Ukraine.
-  - This is **dataset-driven**, with no hard-coded letter list.
+  - The minimums and the ratio are tuning values (T20). The letters
+    themselves are **dataset-driven**, with no hard-coded letter list.
+    `dart run tool/letter_report.dart` prints the numbers.
   - **Rare-letter choice.** The player may also answer with any letter that
-    was skipped *for being rare* after the required one: after «Кам'янське»
-    you can play on «К» or on «Е» (Енергодар); after «Кременець» on «Н»,
-    «Е» or «Ц». Letters no city starts with («ь», «и») never count. So a
-    player who knows a rare city can use it, and nothing jams. CityBot and
-    hints always use the required letter.
+    was skipped after the required one, as rare or as a trap: after
+    «Кам'янське» you can play on «К» or on «Е» (Енергодар); after
+    «Кременець» on «Н», «Е» or «Ц»; on Easy, after «Полтава» on «В» or
+    «А». Letters no city starts with («ь», «и») never count. So a player who
+    knows a rare city can use it, and nothing jams.
+  - **CityBot and hints use the required letter, and a skipped letter only
+    as a fallback (T25):** when no unused city they know starts with the
+    required letter. The bot doesn't give up while it knows Енергодар, but
+    it doesn't go looking for rare cities either, so they stay a find for
+    the player.
 - The game always shows the allowed letters on the player's turn
   ("Your turn — «К» or «Е»"), and the chat marks them in teal in the newest
   city.
@@ -228,8 +251,11 @@ Rules that were decided provisionally. Each one is easy to change in
   - typed only: the next letter then follows what was typed, but the chat
     shows the display name.
   Watch whether players find the lenient rule confusing or exploit it.
-- **Which letters the letter rule skips (T07, §2.3).** This is task T25: the
-  per-list minimums. The rare-letter choice (§2.3) is in since T12; check
-  whether CityBot should use the rare letters too.
+- **Which letters the letter rule skips (§2.3).** Decided in T25: per-list
+  minimums on every difficulty, plus trap letters on Easy. CityBot uses the
+  skipped letters as a fallback. In the playtest, check:
+  - whether Medium and Hard players feel the «а» trap is fair;
+  - whether steering CityBot onto «а» (Medium knows 4 cities for it, Hard 8)
+    becomes an easy way to win.
 - **Who starts by default (§2.2).** CityBot, with a setting to open
   yourself. Check which default new players prefer.

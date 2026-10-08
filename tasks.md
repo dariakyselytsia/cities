@@ -59,7 +59,8 @@
 | T17 | `PlayerStore` (JSON persistence) | M5 Progress | M | [x] |
 | T18 | Record results + new-city bonus + Home stats card | M5 Progress | M | [x] |
 | T19 | Statistics screen | M5 Progress | M | [x] |
-| T25 | Review rare-letter skipping | M6 Release | S | [ ] |
+| T25 | Review rare-letter skipping | M6 Release | S | [x] |
+| T27 | UI/UX improvements: give-up design, teal Play buttons | M6 Release | M | [ ] |
 | T20 | Balance simulator + tuning pass | M6 Release | M | [ ] |
 | T21 | Polish pass | M6 Release | M | [ ] |
 | T22 | Release prep | M6 Release | M | [ ] |
@@ -933,6 +934,83 @@ is decided.
 
 Do this before T20 finalizes the tuning values.
 
+**Result (2026-10-08):**
+- Measured with the new `tool/letter_report.dart`, which counts demand
+  *after* skipping (Кременець counts for «ц»):
+  - The finding: **Ukraine's «а» was the worst trap, and it was playable.**
+    235 names require it (Полтава, Одеса, Біла Церква), only 16 cities start
+    with it, and the Easy bot knows 1. That's 14.7×, more than World's «й»
+    (9.1×).
+  - Ukraine's «е» (157 → 2) and «ц» (17 → 2), and World's «й», stay
+    skipped.
+  - World in English has no letter above 4.3×.
+- **Decided (Daria): the skip rule depends on difficulty.**
+  - Every difficulty skips **rare** letters: unchanged `LetterMinimums`,
+    Ukraine 5, World 20.
+    - Lowering them wouldn't help. A rare letter's cities are just as
+      reachable through the rare-letter choice, and skipping gives the player
+      more options.
+  - **Easy** also skips **trap** letters: more than `trapLetterRatio` (6×)
+    as many names require them as cities start with them.
+    - Traps are removed worst first, recounting after each one.
+    - On the real data that's only «а» in the Ukraine list (both
+      languages), and any ratio from 5 to 8 gives the same result. The next
+      worst letters are around 4.8×.
+    - So on Easy, Полтава asks for «в» or «а», and the player can play on.
+  - **Medium and Hard** keep «а» required, so getting stuck on it is part of
+    the challenge.
+- **Decided (Daria): CityBot and hints use the skipped letters only as a
+  fallback**, when they have no unused city for the required letter.
+  `CityBot.move` takes `extraLetters`, and `Match.hint` falls back the same
+  way.
+- How it's built:
+  - `LetterSkipping { rare, rareAndTraps }` sets the rule, through
+    `Difficulty.letterSkipping`.
+  - `CityIndex` has `trapLetters` and `playableLettersFor(skipping)`.
+    `requiredLetterAfter` and `letterMarks` take the skipping.
+  - `Match.letterMarks` (used by `GameCubit`) and `extraLetters` follow the
+    difficulty.
+  - The trap pass adds ~40 ms to the catalog build on a desktop.
+- Tests:
+  - trap letters, including a knock-on trap and the exact-ratio boundary;
+  - Easy versus Medium in `Match`;
+  - the bot and hint fallbacks;
+  - on the real data: the trap sets per index, Полтава → «в» only on Easy,
+    and the marks and the rule agree, with cities to answer, in both modes.
+- Checked on the emulator, Ukraine · Easy in English:
+  1. Poltava: the bot answered on «v» (Vinnytsia).
+  2. Vinnytsia asked for «I» or «A», both marked in teal.
+  3. Avdiivka was accepted on «A».
+- Left for T20:
+  - tune `trapLetterRatio` along with `LetterMinimums`;
+  - check whether players can win Medium and Hard too easily by steering
+    CityBot onto «а» (Medium knows 4 cities for it, Hard 8).
+
+### T27 · UI/UX improvements · M
+Added after T25, at Daria's request. A design pass on the screens that feel
+unfinished, before T21's polish pass.
+- **A new design for giving up.** Today it's a plain Material dialog
+  («Здатися?», "Keep playing" / "Give up", both coral text). The loss
+  screen after it (`GameOverView`, "You lost · You gave up") gets the same
+  treatment.
+  - Start by agreeing on the design with Daria: a mockup or a reference
+    screen, and which of the two (or both) changes.
+  - Make "Keep playing" the clear main action, and giving up the quieter,
+    destructive one.
+- **Every "play" button is teal,** like Home's Play button (T18) and the
+  Statistics empty state (T19). Still coral today:
+  - the setup sheet's «Почати» / Start (`setup_sheet.dart`);
+  - the game-over «Грати ще» / Play again (`game_over_view.dart`).
+  - Do it through the theme where possible: a teal "play" button style, not
+    per-widget colors. The app-wide coral `FilledButton` theme stays for
+    other actions, such as "Try again" on the load-error screen.
+- Collect any other UI/UX issues found while playing, and fix the small ones
+  here. Anything bigger becomes a new task.
+
+**Done when:** the give-up flow matches the agreed design, every play or
+start button is teal, both languages fit on a small phone, and the change is
+checked on the emulator.
+
 ### T20 · Balance simulator + tuning pass · M
 - `tool/simulate.dart` runs many seeded games of the bot against a "player"
   that knows the top N cities.
@@ -944,9 +1022,11 @@ Do this before T20 finalizes the tuning values.
   English but 2,138 in Ukrainian, because tiers are per list and many cities
   lack a Ukrainian name (T08). Decide whether the uk index should get its own
   tier limits.
-- Also tune `LetterMinimums` (T07, reviewed in T25): report how often games
-  end on a rare letter (e.g. «а» in the Ukraine list: 232 names end in it, 16
-  start with it).
+- Also tune `LetterMinimums` and `trapLetterRatio` (T07, decided in T25):
+  - report how often games end on each letter, per difficulty;
+  - check whether players win Medium and Hard too easily by steering CityBot
+    onto «а». Easy skips «а» as a trap; Medium and Hard require it.
+  - `tool/letter_report.dart` prints the demand and supply.
 - Then do a real playtest with 2–3 people, and settle game_design §6
   "Open questions" (the alias-letter rule, the skipped letters, who starts
   by default).

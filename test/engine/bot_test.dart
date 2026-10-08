@@ -112,6 +112,32 @@ void main() {
     );
   });
 
+  test('falls back to an extra letter only when it knows no city for the '
+      'required one', () {
+    final b = bot(Difficulty.hard);
+    // Mia is free: it is always played, however many «k» cities there are.
+    for (var i = 0; i < 200; i++) {
+      expect(
+        b.move(requiredLetter: 'm', extraLetters: ['k'], usedIds: const {}),
+        const BotPlays(_mia),
+      );
+    }
+    // Mia is used (Mib is unknown): a «k» city it knows instead.
+    final seen = <String>{};
+    for (var i = 0; i < 300; i++) {
+      if (b.move(requiredLetter: 'm', extraLetters: ['k'], usedIds: {1})
+          case BotPlays(:final city)) {
+        seen.add(city.nameEn);
+      }
+    }
+    expect(seen, _kVocabulary[Difficulty.hard]);
+    // Nothing known for either letter: it gives up.
+    expect(
+      b.move(requiredLetter: 'm', extraLetters: ['z'], usedIds: {1}),
+      const BotGivesUp(),
+    );
+  });
+
   test('an opening move (no letter) can be any city it knows', () {
     final b = bot(Difficulty.easy);
     final seen = <String>{};
@@ -157,6 +183,14 @@ void main() {
         [45, 30, 20],
       );
       expect([for (final d in Difficulty.values) d.winMultiplier], [1, 2, 3]);
+    });
+
+    test('only Easy skips the trap letters', () {
+      expect([for (final d in Difficulty.values) d.letterSkipping], [
+        LetterSkipping.rareAndTraps,
+        LetterSkipping.rare,
+        LetterSkipping.rare,
+      ]);
     });
   });
 

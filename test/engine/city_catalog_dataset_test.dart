@@ -65,9 +65,14 @@ void main() {
   });
 
   group('the letter rule on the real lists', () {
-    String? after(CityListKind list, NameLanguage language, String name) {
+    String? after(
+      CityListKind list,
+      NameLanguage language,
+      String name, [
+      LetterSkipping skipping = LetterSkipping.rare,
+    ]) {
       final index = catalog.index(list, language);
-      return index.requiredLetterAfter(index.lookup(name).first);
+      return index.requiredLetterAfter(index.lookup(name).first, skipping);
     }
 
     const world = CityListKind.world;
@@ -106,21 +111,44 @@ void main() {
       expect(after(ukraine, en, 'Kamianets-Podilskyi'), 'i');
     });
 
+    test('the trap letters (T25): «а» in the Ukraine list, none in World',
+        () {
+      expect(catalog.index(ukraine, uk).trapLetters, {'а'});
+      expect(catalog.index(ukraine, en).trapLetters, {'a'});
+      expect(catalog.index(world, uk).trapLetters, isEmpty);
+      expect(catalog.index(world, en).trapLetters, isEmpty);
+    });
+
+    test('Easy skips the trap: Полтава asks for «в» on Easy, «а» otherwise',
+        () {
+      const traps = LetterSkipping.rareAndTraps;
+      expect(after(ukraine, uk, 'Полтава'), 'а');
+      expect(after(ukraine, uk, 'Полтава', traps), 'в');
+      expect(after(ukraine, uk, 'Одеса', traps), 'с');
+      expect(after(ukraine, en, 'Poltava', traps), 'v');
+      // World has no traps: the same in both modes.
+      expect(after(world, uk, 'Полтава', traps), 'а');
+    });
+
     test('the marked letters agree with the rule, for every city', () {
       for (final list in CityListKind.values) {
         for (final language in NameLanguage.values) {
-          final index = catalog.index(list, language);
-          for (final city in index.cities) {
-            final marks = index.letterMarks(city);
-            final reason =
-                '${list.name}/${language.name} ${city.name(language)}';
-            expect(marks.next?.letter, index.requiredLetterAfter(city),
-                reason: reason);
-            for (final skipped in marks.skipped) {
-              expect(index.firstLetters, contains(skipped.letter),
+          for (final skipping in LetterSkipping.values) {
+            final index = catalog.index(list, language);
+            final playable = index.playableLettersFor(skipping);
+            for (final city in index.cities) {
+              final marks = index.letterMarks(city, skipping);
+              final reason = '${list.name}/${language.name}/${skipping.name} '
+                  '${city.name(language)}';
+              expect(marks.next?.letter,
+                  index.requiredLetterAfter(city, skipping),
                   reason: reason);
-              expect(index.playableLetters, isNot(contains(skipped.letter)),
-                  reason: reason);
+              for (final skipped in marks.skipped) {
+                expect(index.firstLetters, contains(skipped.letter),
+                    reason: reason);
+                expect(playable, isNot(contains(skipped.letter)),
+                    reason: reason);
+              }
             }
           }
         }
@@ -130,12 +158,15 @@ void main() {
     test('every required letter has cities to answer with', () {
       for (final list in CityListKind.values) {
         for (final language in NameLanguage.values) {
-          final index = catalog.index(list, language);
-          for (final city in index.cities) {
-            final letter = index.requiredLetterAfter(city);
-            if (letter == null) continue;
-            expect(index.startingWith(letter), isNotEmpty,
-                reason: '${list.name}/${language.name} ${city.nameEn}');
+          for (final skipping in LetterSkipping.values) {
+            final index = catalog.index(list, language);
+            for (final city in index.cities) {
+              final letter = index.requiredLetterAfter(city, skipping);
+              if (letter == null) continue;
+              expect(index.startingWith(letter), isNotEmpty,
+                  reason: '${list.name}/${language.name}/${skipping.name} '
+                      '${city.nameEn}');
+            }
           }
         }
       }

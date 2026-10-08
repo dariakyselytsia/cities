@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/player_data.dart';
 import '../../data/player_store.dart';
 import '../../engine/bot.dart';
-import '../../engine/letter_rule.dart';
 import '../../engine/match.dart';
 import 'game_state.dart';
 
@@ -186,7 +185,7 @@ class GameCubit extends Cubit<GameState> {
   void _emitPlaying(Match match) => emit(
     GamePlaying(
       history: match.history,
-      letterMarks: _letterMarks(match),
+      letterMarks: match.letterMarks,
       turn: match.turn,
       requiredLetter: match.requiredLetter,
       extraLetters: match.extraLetters,
@@ -198,10 +197,6 @@ class GameCubit extends Cubit<GameState> {
       isPaused: _paused,
     ),
   );
-
-  static LetterMarks? _letterMarks(Match match) => match.history.isEmpty
-      ? null
-      : match.index.letterMarks(match.history.last.city);
 
   void _cancelTimers() {
     _botTimer?.cancel();

@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'bot.dart';
 import 'city.dart';
 import 'city_catalog.dart';
+import 'city_list.dart';
 import 'difficulty.dart';
 import 'letter_rule.dart';
 import 'normalize.dart';
@@ -193,20 +194,32 @@ class Match {
   int get chain => _history.where(_namedByPlayer).length;
 
   /// The letter the next city must start with, or `null` when any letter
-  /// will do (the opening move, or after a dead end). CityBot and hints
-  /// always use this letter.
-  String? get requiredLetter =>
-      _history.isEmpty ? null : index.requiredLetterAfter(_history.last.city);
+  /// will do (the opening move, or after a dead end). Which letters are
+  /// skipped depends on the [difficulty] (`LetterSkipping`). CityBot and
+  /// hints use this letter, and the [extraLetters] only when no unused city
+  /// starts with it.
+  String? get requiredLetter => _history.isEmpty
+      ? null
+      : index.requiredLetterAfter(
+          _history.last.city,
+          difficulty.letterSkipping,
+        );
+
+  /// The letters of the last city's name the chat marks, or `null` before
+  /// the first move.
+  LetterMarks? get letterMarks => _history.isEmpty
+      ? null
+      : index.letterMarks(_history.last.city, difficulty.letterSkipping);
 
   /// Rarer letters the player may answer with instead of [requiredLetter]:
   /// the ones the letter rule skipped at the end of the last city because
-  /// too few cities start with them ("Кам'янське" → «к», or «е»). A player
-  /// who knows such a city (Енергодар) can use it. Letters no city starts
-  /// with («ь») never count. Empty when any letter will do.
+  /// too few cities start with them ("Кам'янське" → «к», or «е»), or, on
+  /// Easy, because they're traps (Полтава → «в», or «а»). A player who knows
+  /// such a city (Енергодар) can use it. Letters no city starts with («ь»)
+  /// never count. Empty when any letter will do.
   List<String> get extraLetters {
-    if (_history.isEmpty) return const [];
-    final marks = index.letterMarks(_history.last.city);
-    if (marks.next == null) return const [];
+    final marks = letterMarks;
+    if (marks == null || marks.next == null) return const [];
     return List.unmodifiable({for (final s in marks.skipped) s.letter});
   }
 
@@ -218,7 +231,11 @@ class Match {
   /// CityBot's turn: it plays a city, or gives up and the player wins.
   BotMove botMove() {
     _expectTurn(Side.bot);
-    final move = _bot.move(requiredLetter: requiredLetter, usedIds: _usedIds);
+    final move = _bot.move(
+      requiredLetter: requiredLetter,
+      extraLetters: extraLetters,
+      usedIds: _usedIds,
+    );
     switch (move) {
       case BotPlays(:final city):
         _play(Turn(city: city, side: Side.bot));
@@ -281,23 +298,33 @@ class Match {
   /// [pointsForHint] points (game_design §2.6).
   ///
   /// It prefers well-known cities: a random one from the best-known tier
-  /// that still has an unused city for the letter. Returns `null`, and
-  /// spends no hint, when no hints are left or no city fits.
+  /// that still has an unused city for the [requiredLetter], or else, like
+  /// CityBot, for one of the [extraLetters]. Returns `null`, and spends no
+  /// hint, when no hints are left or no city fits.
   Turn? hint() {
     _expectTurn(Side.player);
     if (_hintsLeft == 0) return null;
-    final letter = requiredLetter;
-    final candidates = [
-      for (final city in letter == null ? index.cities : index.startingWith(letter))
+    List<City> unused(Iterable<City> cities) => [
+      for (final city in cities)
         if (!_usedIds.contains(city.id)) city,
     ];
+    final letter = requiredLetter;
+    var candidates = unused(
+      letter == null ? index.cities : index.startingWith(letter),
+    );
+    if (candidates.isEmpty) {
+      candidates = unused([
+        for (final extra in extraLetters) ...index.startingWith(extra),
+      ]);
+    }
     if (candidates.isEmpty) return null;
 
-    // Candidates are in fame order, so the first one's tier is the best.
-    final bestTier = index.tierOf(candidates.first);
+    final bestTier = candidates
+        .map((city) => index.tierOf(city) ?? tierCount)
+        .reduce(min);
     final best = [
       for (final city in candidates)
-        if (index.tierOf(city) == bestTier) city,
+        if ((index.tierOf(city) ?? tierCount) == bestTier) city,
     ];
     final turn = Turn(
       city: best[_random.nextInt(best.length)],

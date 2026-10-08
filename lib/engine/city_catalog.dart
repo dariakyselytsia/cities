@@ -207,6 +207,41 @@ class CityIndex {
       for (final MapEntry(key: letter, value: starters) in _byLetter.entries)
         if (starters.length >= letterMinimum) letter,
     });
+    _playableWithoutTraps = Set.unmodifiable(
+      _withoutTraps([
+        for (final city in playable)
+          if (names[city.id] case final cityNames?) cityNames.display,
+      ]),
+    );
+    trapLetters = Set.unmodifiable(
+      playableLetters.difference(_playableWithoutTraps),
+    );
+  }
+
+  /// [playableLetters] minus the trap letters ([trapLetterRatio]), given
+  /// every city's normalized display name.
+  ///
+  /// Traps are removed one at a time, worst first, and the demand is counted
+  /// again after each: skipping «а» moves Полтава's demand to «в», which may
+  /// make «в» the next trap. It stops when no letter is over the ratio.
+  Set<String> _withoutTraps(List<String> displayNames) {
+    final kept = {...playableLetters};
+    while (true) {
+      final demand = <String, int>{};
+      for (final name in displayNames) {
+        if (LetterRule.requiredNextLetter(name, kept) case final letter?) {
+          demand[letter] = (demand[letter] ?? 0) + 1;
+        }
+      }
+      String? worst;
+      var worstRatio = trapLetterRatio;
+      for (final letter in kept) {
+        final ratio = (demand[letter] ?? 0) / startingWith(letter).length;
+        if (ratio > worstRatio) (worst, worstRatio) = (letter, ratio);
+      }
+      if (worst == null) return kept;
+      kept.remove(worst);
+    }
   }
 
   final CityListKind list;
@@ -226,24 +261,44 @@ class CityIndex {
   /// The (normalized) letters at least one city's display name starts with.
   late final Set<String> firstLetters;
 
-  /// The letters the letter rule can require: those at least
-  /// [LetterMinimums] cities start with. Every other letter is skipped
-  /// (game_design §2.3), so a city starting with one (Йокогама in World) can
-  /// only be played as an opening move.
+  /// The letters the letter rule can require with [LetterSkipping.rare]:
+  /// those at least [LetterMinimums] cities start with. Every other letter
+  /// is skipped (game_design §2.3). A city starting with one (Йокогама in
+  /// World) is played as an opening move, or as a rare letter
+  /// (`Match.extraLetters`).
   late final Set<String> playableLetters;
+
+  /// The playable letters that are traps ([trapLetterRatio]): «а» in the
+  /// Ukraine list. [LetterSkipping.rareAndTraps] skips them too.
+  late final Set<String> trapLetters;
+
+  late final Set<String> _playableWithoutTraps;
+
+  /// The letters the letter rule can require with [skipping].
+  Set<String> playableLettersFor(LetterSkipping skipping) =>
+      switch (skipping) {
+        LetterSkipping.rare => playableLetters,
+        LetterSkipping.rareAndTraps => _playableWithoutTraps,
+      };
 
   /// The letter the city after [previous] must start with (see
   /// [LetterRule]), or `null` when any letter will do.
-  String? requiredLetterAfter(City previous) => LetterRule.requiredNextLetter(
+  String? requiredLetterAfter(
+    City previous, [
+    LetterSkipping skipping = LetterSkipping.rare,
+  ]) => LetterRule.requiredNextLetter(
     previous.name(language) ?? '',
-    playableLetters,
+    playableLettersFor(skipping),
   );
 
   /// Which letters of [city]'s display name the chat marks: the next letter
   /// and the rarer ones skipped after it (see [LetterRule.letterMarks]).
-  LetterMarks letterMarks(City city) => LetterRule.letterMarks(
+  LetterMarks letterMarks(
+    City city, [
+    LetterSkipping skipping = LetterSkipping.rare,
+  ]) => LetterRule.letterMarks(
     city.name(language) ?? '',
-    playableLetters,
+    playableLettersFor(skipping),
     startingLetters: firstLetters,
   );
 
@@ -267,7 +322,7 @@ class CityIndex {
 
 /// One city's names in one language, normalized once at build time.
 class _NormalizedNames {
-  _NormalizedNames(this.keys, this.firstLetter);
+  _NormalizedNames(this.display, this.keys, this.firstLetter);
 
   factory _NormalizedNames.of(String display, List<String> aliases) {
     final normalizedDisplay = normalizeName(display);
@@ -275,8 +330,15 @@ class _NormalizedNames {
       normalizedDisplay,
       for (final alias in aliases) normalizeName(alias),
     }..remove('');
-    return _NormalizedNames(keys, firstLetterOfNormalized(normalizedDisplay));
+    return _NormalizedNames(
+      normalizedDisplay,
+      keys,
+      firstLetterOfNormalized(normalizedDisplay),
+    );
   }
+
+  /// The normalized display name: what the letter rule reads.
+  final String display;
 
   /// Every normalized name the city answers to.
   final Set<String> keys;

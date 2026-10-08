@@ -249,6 +249,61 @@ void main() {
       expect(worldEn.requiredLetterAfter(byId(13)), 'v');
     });
 
+    group('trap letters', () {
+      City city(int id, String name) =>
+          City(id: id, nameEn: name, countryCode: 'XX', population: 1000 - id);
+
+      /// [count] names ending in "-va" (Bva, Cva, …), one city starting with
+      /// «a» and one with «v».
+      CityIndex withVaNames(int count) => CityCatalog(
+        [
+          for (var i = 0; i < count; i++)
+            city(i, '${'bcdefghijklmnop'[i]}va'),
+          city(100, 'Abu'),
+          city(101, 'Vux'),
+        ],
+        letterMinimums: const LetterMinimums(ukraine: 1, world: 1),
+      ).index(CityListKind.world, NameLanguage.en);
+
+      final over = trapLetterRatio.floor() + 1;
+
+      test('a letter more than $trapLetterRatio× as many names require as '
+          'start with it is a trap; skipping it can make the one before it '
+          'a trap too', () {
+        final index = withVaNames(over);
+        // «a»: $over names require it, one city starts with it. Skipping it
+        // moves them all to «v», which one city starts with too.
+        expect(index.trapLetters, {'a', 'v'});
+        expect(index.playableLetters, containsAll(['a', 'v']));
+        expect(
+          index.playableLettersFor(LetterSkipping.rareAndTraps),
+          index.playableLetters.difference({'a', 'v'}),
+        );
+        expect(
+          index.playableLettersFor(LetterSkipping.rare),
+          index.playableLetters,
+        );
+      });
+
+      test('the letter rule skips them only with rareAndTraps', () {
+        final index = withVaNames(over);
+        final bva = index.lookup('Bva').single;
+        expect(index.requiredLetterAfter(bva), 'a');
+        expect(index.requiredLetterAfter(bva, LetterSkipping.rare), 'a');
+        expect(
+          index.requiredLetterAfter(bva, LetterSkipping.rareAndTraps),
+          'b',
+        );
+        final marks = index.letterMarks(bva, LetterSkipping.rareAndTraps);
+        expect(marks.next?.letter, 'b');
+        expect([for (final s in marks.skipped) s.letter], ['v', 'a']);
+      });
+
+      test('exactly $trapLetterRatio× is not a trap', () {
+        expect(withVaNames(over - 1).trapLetters, isEmpty);
+      });
+    });
+
     test('firstLetters is the set of letters some city starts with', () {
       expect(worldUk.firstLetters, {'к', 'х', 'о', 'л', 'м', 'п', 'в', 'ф', 'г'});
       // "6th of October City" starts with a digit: it can be named, but no
