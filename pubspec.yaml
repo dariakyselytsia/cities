@@ -2,7 +2,7 @@ name: cities
 description: "Cities (Міста) — an offline word game: duel CityBot naming cities letter by letter."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.11.5

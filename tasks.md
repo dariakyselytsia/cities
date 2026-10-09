@@ -1406,8 +1406,8 @@ agree.
   test now waits 5 minutes (longer than a turn) while paused.
 - Checked on the emulator: the setup sheet shows 90 / 60 / 40 s, and a
   Medium game counts down from 60.
-- The friends' build `v1.0.0-beta.1` still has the old timers. A new build
-  needs a version bump and a new tag (`RELEASE.md`).
+- Released to friends as `v1.0.0-beta.2` (build `1.0.0+2`). It installs
+  over beta.1 and keeps progress.
 
 ### T29 · Publish: Play + App Store testing (needs accounts) · M
 **Blocked: needs the Play Console and Apple Developer accounts. Not
