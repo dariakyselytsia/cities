@@ -112,11 +112,35 @@ need, so they always match the app:
 | `android/…/mipmap-*/ic_launcher_foreground.png`, `…_monochrome.png` | the adaptive icon's pin and the themed-icon layer (Android 13+) |
 | `android/…/drawable-*/splash_icon.png` | the 120 dp badge in a 288 dp box: the Android 12+ splash icon, also centered on older launch screens |
 
+It also writes `store/play-icon-512.png`, the Play Store icon (T22).
+
 The XML around them is written by hand: `mipmap-anydpi-v26/ic_launcher.xml`
 (adaptive icon), `values/colors.xml` (coral, cream), `values*/styles.xml`
 (splash themes), `drawable/launch_background.xml` and iOS
 `LaunchScreen.storyboard`. Run the script again after changing the brand
 mark or its sizes (the constants at the top of the script).
+
+## `render_store_images.dart`: store screenshots (T22)
+
+```bash
+flutter test tool/render_store_images.dart
+```
+
+Renders the store screenshots (Home, a duel, a win, Statistics) for Google
+Play (1080 × 1920) and the App Store's 6.9″ iPhone (1320 × 2868), and the
+Play feature graphic (1024 × 500), in both languages, into `store/`. It runs
+the real screens with the real fonts and city data; the duel is scripted
+and the statistics are sample data, so every run gives the same images.
+Rerun it after UI changes.
+
+## `check_listing.dart`: store text limits (T22)
+
+```bash
+dart run tool/check_listing.dart
+```
+
+Checks every field in `store/listing-*.md` against the character limit in
+brackets after its heading, and fails if one is too long.
 
 ## Fixing names: `overrides.json`
 

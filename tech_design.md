@@ -7,7 +7,7 @@
 
 | Concern | Choice | Why |
 |---|---|---|
-| Framework | Flutter (Dart 3) | Already chosen; platform folders are kept (bundle id `com.daria.cities`). |
+| Framework | Flutter (Dart 3) | Already chosen; platform folders are kept (bundle id `com.kyselytsia.cities`). |
 | State | `flutter_bloc` — **Cubits** | Simple, testable. Events add ceremony we don't need yet. |
 | Value equality | `equatable` + Dart 3 `sealed` classes | Exact-state asserts in tests, without codegen. |
 | Navigation | `go_router` | Carried over. Only 4 routes + a sheet. |
@@ -310,3 +310,23 @@ Everything else is rebuilt.
 7. Playtest, then tune the tier sizes and timers.
 8. Rewrite `CLAUDE.md` and the project skills to match (`flutter-codegen` is
    obsolete; update `feature-scaffold`).
+
+## 10. Release (T22)
+The steps are in [`RELEASE.md`](RELEASE.md); the decisions are here.
+- **App id:** `com.kyselytsia.cities` on Android and iOS. It can never
+  change once published.
+- **Versions:** `version: X.Y.Z+N` in `pubspec.yaml`, with `N` bumped for
+  every build anyone else installs. Tags: `vX.Y.Z-beta.K` for friends,
+  `vX.Y.Z` for the stores.
+- **Signing:** one Android upload key (kept outside the repo, backed up),
+  read through the gitignored `android/key.properties`; in CI it comes from
+  GitHub Secrets. iOS builds are unsigned until T29 (Apple account).
+- **Portrait only**, on phones and iPads: a chat with the keyboard open
+  leaves no room for the board in landscape.
+- **No permissions:** the release build asks for none (no INTERNET); the
+  privacy policy relies on it.
+- **CI (GitHub Actions):** every push runs `flutter analyze`, `flutter test`
+  and an unsigned iOS build. A `v*` tag builds the signed APK and an
+  unsigned IPA and publishes them as a GitHub Release for friends (Android:
+  install the APK; iPhone: sideload the IPA with Sideloadly and a free Apple
+  ID, see [`INSTALL.md`](INSTALL.md)).

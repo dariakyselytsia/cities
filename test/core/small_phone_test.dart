@@ -6,9 +6,9 @@ import 'package:cities/engine/bot.dart';
 import 'package:cities/features/game/widgets/chat_bubble.dart';
 import 'package:cities/features/game/widgets/game_header.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/fonts.dart';
 import '../helpers/test_app.dart';
 
 /// The real text of [key] (`home.play`) in [locale]'s translations.
@@ -28,26 +28,10 @@ const _screen = Size(320, 568);
 /// A phone keyboard: about 260 points tall.
 const _keyboard = 260.0;
 
-/// Loads the bundled fonts, so text is as wide as on a phone (the test
-/// font's square glyphs are much wider).
-Future<void> _loadFonts() async {
-  for (final (family, files) in [
-    ('Nunito', ['SemiBold', 'Bold', 'ExtraBold']),
-    ('Rubik', ['Regular', 'Medium', 'SemiBold']),
-  ]) {
-    final loader = FontLoader(family);
-    for (final file in files) {
-      final bytes = File('assets/fonts/$family-$file.ttf').readAsBytesSync();
-      loader.addFont(Future.value(ByteData.sublistView(bytes)));
-    }
-    await loader.load();
-  }
-}
-
 void main() {
   setUpAll(() async {
     await setUpLocalization();
-    await _loadFonts();
+    await loadAppFonts();
   });
 
   for (final locale in const [Locale('uk'), Locale('en')]) {

@@ -24,6 +24,10 @@ Future<void> _back(WidgetTester tester) async {
 }
 
 Future<void> _tapText(WidgetTester tester, String text) async {
+  // Twice: the lazy list learns its full length only as it builds the
+  // children it scrolls to, so the first call can stop short.
+  await tester.ensureVisible(find.text(text));
+  await tester.pump();
   await tester.ensureVisible(find.text(text));
   await tester.tap(find.text(text));
   await tester.pumpAndSettle();

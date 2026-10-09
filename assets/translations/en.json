@@ -28,6 +28,7 @@
     "about": "About",
     "version": "Version {version}",
     "geonames": "City names and data: GeoNames ({site}), licensed under CC BY 4.0 ({license}). Filtered and corrected for this game.",
+    "privacy": "Privacy: the game collects no data, and your progress stays on this device. Full policy: {url}",
     "licenses": "Licenses"
   },
   "game": {

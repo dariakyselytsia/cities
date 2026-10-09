@@ -1,4 +1,4 @@
-package com.daria.cities
+package com.kyselytsia.cities
 
 import io.flutter.embedding.android.FlutterActivity
 

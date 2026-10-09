@@ -7,3 +7,7 @@ const String appVersion = '1.0.0';
 /// attribution the license requires (tech_design §4).
 const String geoNamesSite = 'geonames.org';
 const String ccByLicense = 'creativecommons.org/licenses/by/4.0';
+
+/// Where the privacy policy is published (GitHub Pages, from
+/// `docs/privacy/`). The stores ask for this address too (T22).
+const String privacyPolicyUrl = 'dariakyselytsia.github.io/cities/privacy';

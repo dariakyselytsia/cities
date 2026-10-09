@@ -6,18 +6,19 @@
 //   flutter test tool/render_icons.dart
 //
 // It overwrites the PNGs under android/app/src/main/res and
-// ios/Runner/Assets.xcassets. The XML around them (adaptive icon, splash
+// ios/Runner/Assets.xcassets, and store/play-icon-512.png. The XML around them (adaptive icon, splash
 // themes, launch storyboard) is hand-written; see tool/README.md.
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:cities/core/brand.dart';
 import 'package:cities/core/theme.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'src/png.dart';
 
 /// Android density buckets and their scale from dp to px.
 const _densities = {
@@ -73,21 +74,15 @@ void main() {
             '$_xcassets/AppIcon.appiconset/$filename',
             px,
             opaque: true,
-            (canvas, side) {
-              canvas.drawRect(
-                Rect.fromLTWH(0, 0, side, side),
-                Paint()..color = AppColors.coral,
-              );
-              BrandMark.paintPin(
-                canvas,
-                Offset(side / 2, side / 2),
-                side * _iosPin,
-              );
-            },
+            _fullBleed,
           );
         }
       }
     }
+
+    // The Play Store's 512 × 512 icon (T22): full-bleed like iOS; Play
+    // rounds it itself. Play asks for a 32-bit PNG, so it keeps alpha.
+    await _write('store/play-icon-512.png', 512, _fullBleed);
 
     // iOS launch image, used by LaunchScreen.storyboard.
     for (final (suffix, scale) in [('', 1), ('@2x', 2), ('@3x', 3)]) {
@@ -104,11 +99,8 @@ void main() {
       await _write(
         '$_res/mipmap-$bucket/ic_launcher.png',
         (_legacyCanvas * scale).round(),
-        (canvas, side) => _centeredBadge(
-          canvas,
-          side,
-          side * _legacyBadge / _legacyCanvas,
-        ),
+        (canvas, side) =>
+            _centeredBadge(canvas, side, side * _legacyBadge / _legacyCanvas),
       );
       // Adaptive icon: the white pin over a coral background (a color
       // resource); the monochrome layer is the same pin, tinted by the
@@ -128,23 +120,26 @@ void main() {
       await _write(
         '$_res/drawable-$bucket/splash_icon.png',
         (_splashCanvas * scale).round(),
-        (canvas, side) => _centeredBadge(
-          canvas,
-          side,
-          side * _splashBadge / _splashCanvas,
-        ),
+        (canvas, side) =>
+            _centeredBadge(canvas, side, side * _splashBadge / _splashCanvas),
       );
     }
   });
 }
 
+/// The coral square edge to edge with the pin: the iOS and store icons.
+void _fullBleed(Canvas canvas, double side) {
+  canvas.drawRect(
+    Rect.fromLTWH(0, 0, side, side),
+    Paint()..color = AppColors.coral,
+  );
+  BrandMark.paintPin(canvas, Offset(side / 2, side / 2), side * _iosPin);
+}
+
 /// The badge [badge] wide in the middle of a [side]-wide canvas.
 void _centeredBadge(Canvas canvas, double side, double badge) {
   final inset = (side - badge) / 2;
-  BrandMark.paintBadge(
-    canvas,
-    Rect.fromLTWH(inset, inset, badge, badge),
-  );
+  BrandMark.paintBadge(canvas, Rect.fromLTWH(inset, inset, badge, badge));
 }
 
 /// Paints a [px]-square image and saves it to [path] as a PNG: RGB when
@@ -158,72 +153,6 @@ Future<void> _write(
   final recorder = ui.PictureRecorder();
   paint(Canvas(recorder), px.toDouble());
   final image = await recorder.endRecording().toImage(px, px);
-  final data = await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba);
+  await writePng(image, path, opaque: opaque);
   image.dispose();
-  if (data == null) throw StateError('Could not read pixels for $path');
-  final file = File(path)..parent.createSync(recursive: true);
-  file.writeAsBytesSync(
-    _encodePng(data.buffer.asUint8List(), px, px, alpha: !opaque),
-  );
-}
-
-/// A minimal PNG encoder: 8-bit RGB or RGBA, no filtering. dart:ui only
-/// writes RGBA, and an iOS app icon must have no alpha channel.
-Uint8List _encodePng(Uint8List rgba, int width, int height,
-    {required bool alpha}) {
-  final channels = alpha ? 4 : 3;
-  final stride = 1 + width * channels;
-  final raw = Uint8List(stride * height);
-  for (var y = 0; y < height; y++) {
-    var o = y * stride + 1; // byte 0 of each row: filter type "none"
-    for (var x = 0; x < width; x++) {
-      final i = (y * width + x) * 4;
-      for (var c = 0; c < channels; c++) {
-        raw[o++] = rgba[i + c];
-      }
-    }
-  }
-
-  final out = BytesBuilder()..add(const [137, 80, 78, 71, 13, 10, 26, 10]);
-  void chunk(String type, List<int> data) {
-    final typed = [...ascii.encode(type), ...data];
-    out
-      ..add(_uint32(data.length))
-      ..add(typed)
-      ..add(_uint32(_crc32(typed)));
-  }
-
-  chunk('IHDR', [
-    ..._uint32(width),
-    ..._uint32(height),
-    8, // bit depth
-    alpha ? 6 : 2, // color type: RGBA or RGB
-    0, 0, 0, // compression, filter, interlace
-  ]);
-  chunk('IDAT', ZLibCodec(level: 9).encode(raw));
-  chunk('IEND', const []);
-  return out.takeBytes();
-}
-
-List<int> _uint32(int value) => [
-  (value >> 24) & 0xFF,
-  (value >> 16) & 0xFF,
-  (value >> 8) & 0xFF,
-  value & 0xFF,
-];
-
-final _crcTable = List<int>.generate(256, (n) {
-  var c = n;
-  for (var k = 0; k < 8; k++) {
-    c = (c & 1) != 0 ? 0xEDB88320 ^ (c >> 1) : c >> 1;
-  }
-  return c;
-});
-
-int _crc32(List<int> bytes) {
-  var crc = 0xFFFFFFFF;
-  for (final b in bytes) {
-    crc = _crcTable[(crc ^ b) & 0xFF] ^ (crc >> 8);
-  }
-  return crc ^ 0xFFFFFFFF;
 }

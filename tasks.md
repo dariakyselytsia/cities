@@ -64,8 +64,9 @@
 | T20 | Balance simulator + tuning pass | M6 Release | M | [x] |
 | T28 | Playtest: turn timers + open questions | M6 Release | S | [ ] |
 | T21 | Polish pass | M6 Release | M | [x] |
-| T22 | Release prep without store accounts: friends can install it | M6 Release | L | [ ] |
+| T22 | Release prep without store accounts: friends can install it | M6 Release | L | [~] |
 | T29 | Publish: Play + App Store testing (needs accounts, not scheduled) | M6 Release | M | [ ] |
+| T30 | Data: a Yampil listed with Kremenchuk as its alias | M1 Data | S | [ ] |
 
 ---
 
@@ -1253,8 +1254,8 @@ Needs T21 (app icon, splash) first: the screenshots and the friends' build
 should show the final app.
 
 **1. Release build and Android signing**
-- **Lock the app id.** `com.daria.cities` on Android and iOS can never
-  change once published. Confirm it, or change it now.
+- **Lock the app id.** It can never change once published: now
+  `com.kyselytsia.cities` (was `com.daria.cities`).
 - **Version scheme:** `1.0.0+1` in `pubspec.yaml`, with the build number
   bumped on every build given to anyone. Write the rule down in
   tech_design.
@@ -1331,6 +1332,58 @@ should show the final app.
 - the privacy policy is live and linked in the app, and every store text,
   form answer and image exists in both languages;
 - the signing and release steps are written down so they can be repeated.
+
+**Progress (2026-10-09): everything that can be done here is done; the
+rest needs Daria (GitHub settings, a push and a tag) and real phones.**
+- **Release build:**
+  - The app id is now `com.kyselytsia.cities`, on Android and iOS.
+  - Version rule in tech_design §10 and `RELEASE.md`.
+  - The upload key is `D:\Android\keys\cities-upload.jks`, outside the
+    repo; `android/key.properties` is gitignored. Gradle signs release
+    builds with it, or warns and uses the debug key without it.
+  - The release APK is signed `CN=Dariia Kyselytsia`. It's universal
+    (50 MB), asks for **no permissions**, and is labelled «Міста» in
+    Ukrainian.
+  - Portrait only on Android and iOS. `ITSAppUsesNonExemptEncryption = NO`.
+- **Workflows** (`.github/workflows/`):
+  - `ci.yml`: analyze, tests and the unsigned iOS build on every push.
+  - `release.yml`: a `v*` tag builds the signed APK and the unsigned IPA,
+    publishes a GitHub (pre-)release and keeps the Play bundle as an
+    artifact. It checks the tag against `pubspec.yaml`.
+  - **Not run yet:** they need the push, and the release also needs the
+    key secrets (`RELEASE.md`).
+- **Friends:** `INSTALL.md` in UA/EN (Android APK; iPhone with Sideloadly).
+- **Store material:**
+  - Privacy policy in `docs/privacy/` (GitHub Pages, **not enabled yet**),
+    also stated in Settings → About.
+  - `store/`: listing text (checked by `tool/check_listing.dart`), the form
+    answers, and the screenshots, feature graphic and Play icon. They're
+    rendered by `tool/render_store_images.dart` and `render_icons.dart`.
+- **Emulator check:** the release build cold-loads the cities in 1.1–1.16 s.
+  That's slower than T10's 0.65–0.87 s, because the list grew to 31,964
+  names. The real mid-range phone check is still to do.
+- **Left:**
+  1. Back up the key and password.
+  2. Add the two secrets.
+  3. Turn on Pages.
+  4. Push. CI must be green, including the first real iOS build of T21's
+     changes.
+  5. Tag `v1.0.0-beta.1`.
+  6. Friends install it.
+  7. Real-phone checks.
+
+### T30 · Data: a Yampil listed with Kremenchuk as its alias · S
+Found in T22 while writing the store text. In `cities.json`, Yampil 693020
+(Ukraine list, pop. 10,957) has the aliases «Кременчук» / "Kremenchuk",
+probably a GeoNames alternate-name error. Typing Кременчук could then match
+this Yampil as well as Kremenchuk 704147.
+- Check GeoNames (is it a real former name?) and, if wrong, drop the alias
+  in `tool/overrides.json`, rebuild, and add a regression test.
+- Look for other aliases that equal another city's display name in the
+  same list.
+
+**Done when:** the alias is fixed or confirmed, and the build reports any
+alias that collides with another city's name.
 
 ### T29 · Publish: Play + App Store testing (needs accounts) · M
 **Blocked: needs the Play Console and Apple Developer accounts. Not

@@ -83,8 +83,8 @@ class _SectionLabel extends StatelessWidget {
   );
 }
 
-/// The app and its version, the GeoNames CC BY 4.0 attribution, and the
-/// open-source licenses.
+/// The app and its version, the GeoNames CC BY 4.0 attribution, the
+/// privacy note with the policy's address, and the open-source licenses.
 class _About extends StatelessWidget {
   const _About();
 
@@ -117,6 +117,11 @@ class _About extends StatelessWidget {
             'settings.geonames'.tr(
               namedArgs: {'site': geoNamesSite, 'license': ccByLicense},
             ),
+            style: textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          SelectableText(
+            'settings.privacy'.tr(namedArgs: {'url': privacyPolicyUrl}),
             style: textTheme.bodyMedium,
           ),
           const SizedBox(height: 8),
