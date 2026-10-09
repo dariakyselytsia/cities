@@ -67,6 +67,7 @@
 | T22 | Release prep without store accounts: friends can install it | M6 Release | L | [~] |
 | T29 | Publish: Play + App Store testing (needs accounts, not scheduled) | M6 Release | M | [ ] |
 | T30 | Data: a Yampil listed with Kremenchuk as its alias | M1 Data | S | [ ] |
+| T31 | Double the turn timers (90 / 60 / 40 s) | M6 Release | S | [x] |
 
 ---
 
@@ -1177,8 +1178,8 @@ a comment.
 ### T28 · Playtest: turn timers + open questions · S
 Split from T20: it needs 2–3 real players, not code.
 - Play a few games per difficulty, in both lists and both languages, and
-  time real turns. Are 45 / 30 / 20 s right, now that Hard games run 40–100
-  cities?
+  time real turns. Are 90 / 60 / 40 s right (doubled from 45 / 30 / 20 in
+  T31), now that Hard games run 40–100 cities?
 - Settle game_design §6 "Open questions":
   - the alias-letter rule;
   - whether players understand "«В» or «А»" after Полтава;
@@ -1333,8 +1334,7 @@ should show the final app.
   form answer and image exists in both languages;
 - the signing and release steps are written down so they can be repeated.
 
-**Progress (2026-10-09): everything that can be done here is done; the
-rest needs Daria (GitHub settings, a push and a tag) and real phones.**
+**Progress (2026-10-09): built and published; real phones left.**
 - **Release build:**
   - The app id is now `com.kyselytsia.cities`, on Android and iOS.
   - Version rule in tech_design §10 and `RELEASE.md`.
@@ -1362,15 +1362,18 @@ rest needs Daria (GitHub settings, a push and a tag) and real phones.**
 - **Emulator check:** the release build cold-loads the cities in 1.1–1.16 s.
   That's slower than T10's 0.65–0.87 s, because the list grew to 31,964
   names. The real mid-range phone check is still to do.
-- **Left:**
-  1. Back up the key and password.
-  2. Add the two secrets.
-  3. Turn on Pages.
-  4. Push. CI must be green, including the first real iOS build of T21's
-     changes.
-  5. Tag `v1.0.0-beta.1`.
-  6. Friends install it.
-  7. Real-phone checks.
+- **Published:**
+  - The key and its password are backed up off this PC.
+  - The secrets are in GitHub, and Pages serves the privacy policy.
+  - CI is green on GitHub, including the first iOS build: T21's hand edits
+    compile.
+  - [`v1.0.0-beta.1`](https://github.com/dariakyselytsia/cities/releases/tag/v1.0.0-beta.1)
+    is a pre-release with the APK (52.6 MB, signed with the upload key,
+    verified) and the IPA (8.1 MB, with both `InfoPlist.strings`). The
+    published APK installed over a local build on the emulator, so updates
+    keep progress.
+- **Left:** friends install it (Android and iPhone via `INSTALL.md`), and
+  the real-phone checks (part 4).
 
 ### T30 · Data: a Yampil listed with Kremenchuk as its alias · S
 Found in T22 while writing the store text. In `cities.json`, Yampil 693020
@@ -1384,6 +1387,27 @@ this Yampil as well as Kremenchuk 704147.
 
 **Done when:** the alias is fixed or confirmed, and the build reports any
 alias that collides with another city's name.
+
+### T31 · Double the turn timers · S
+Daria's call on 2026-10-09, before the playtest: the first guesses (45 / 30
+/ 20 s) were never timed.
+- `Difficulty.turnTime`: Easy 90 s, Medium 60 s, Hard 40 s. The setup
+  sheet and the game read it, so nothing else in the app changes.
+- game_design §2.5 and §6, T28, and the store descriptions say 90 / 60 /
+  40. The store's game screenshots are re-rendered.
+
+**Done when:** every mode gives twice the time, and the docs and store text
+agree.
+
+**Result (done 2026-10-09):**
+- The values and their reasoning are in `difficulty.dart`.
+- The game screen tests now derive the timer from `Difficulty.medium`, so
+  the next change touches only `difficulty.dart` and `bot_test`. The pause
+  test now waits 5 minutes (longer than a turn) while paused.
+- Checked on the emulator: the setup sheet shows 90 / 60 / 40 s, and a
+  Medium game counts down from 60.
+- The friends' build `v1.0.0-beta.1` still has the old timers. A new build
+  needs a version bump and a new tag (`RELEASE.md`).
 
 ### T29 · Publish: Play + App Store testing (needs accounts) · M
 **Blocked: needs the Play Console and Apple Developer accounts. Not

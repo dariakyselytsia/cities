@@ -1,24 +1,24 @@
 /// How hard a game is (game_design §2.5, §2.8).
 ///
 /// Every value here is a **tuning value**. The vocabulary was set with the
-/// balance simulator (`tool/simulate.dart`, T20); the turn times wait for a
-/// real playtest (T28).
+/// balance simulator (`tool/simulate.dart`, T20); the turn times were
+/// doubled before the playtest (T31) and are timed there (T28).
 enum Difficulty {
   easy(
     maxTier: 1,
-    turnTime: Duration(seconds: 45),
+    turnTime: Duration(seconds: 90),
     winMultiplier: 1,
     minCitiesPerLetter: 2,
   ),
   medium(
     maxTier: 2,
-    turnTime: Duration(seconds: 30),
+    turnTime: Duration(seconds: 60),
     winMultiplier: 2,
     minCitiesPerLetter: 6,
   ),
   hard(
     maxTier: 3,
-    turnTime: Duration(seconds: 20),
+    turnTime: Duration(seconds: 40),
     winMultiplier: 3,
     minCitiesPerLetter: 10,
   );
@@ -37,9 +37,10 @@ enum Difficulty {
   /// How long the player has for each turn. The timer doesn't reset on a
   /// wrong answer.
   ///
-  /// Still the first guesses: the simulator measures what a player knows,
-  /// not how fast they recall it, so these are timed in the playtest
-  /// (T28).
+  /// Doubled from the first guesses (45 / 30 / 20 s), which were never
+  /// timed, on 2026-10-09 (T31, Daria's call before the playtest). The
+  /// simulator measures what a player knows, not how fast they recall it,
+  /// so real turns are timed in the playtest (T28).
   final Duration turnTime;
 
   /// The win bonus is `winBonus × winMultiplier` (see `scoring.dart`, T09).

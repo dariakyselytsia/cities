@@ -45,9 +45,9 @@ TWO CITY LISTS
 • World: more than 30,000 cities from over 240 countries.
 
 THREE DIFFICULTIES
-• Easy: CityBot knows only the best-known cities, and you get 45 seconds a turn.
-• Medium: a bigger vocabulary and 30 seconds.
-• Hard: CityBot knows even little-known cities, and you get 20 seconds.
+• Easy: CityBot knows only the best-known cities, and you get 90 seconds a turn.
+• Medium: a bigger vocabulary and 60 seconds.
+• Hard: CityBot knows even little-known cities, and you get 40 seconds.
 
 PLAYED FAIRLY
 • Old and alternative names count: Kiev, Bombay, Saigon…

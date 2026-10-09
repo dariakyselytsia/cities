@@ -114,9 +114,9 @@ allows, plus the best-known few cities of **every letter**:
 
 | Difficulty | Bot knows | …and per letter at least | Player turn timer |
 |---|---|---|---|
-| Easy   | tier 1 only (≈ the best-known cities) | 2  | 45 s |
-| Medium | tiers 1–2                             | 6  | 30 s |
-| Hard   | tiers 1–3                             | 10 | 20 s |
+| Easy   | tier 1 only (≈ the best-known cities) | 2  | 90 s |
+| Medium | tiers 1–2                             | 6  | 60 s |
+| Hard   | tiers 1–3                             | 10 | 40 s |
 
 Tier sizes are per list and are **tuning values**, set with the balance
 simulator (`tool/simulate.dart`, T20):
@@ -285,8 +285,9 @@ Rules that were decided provisionally. Each one is easy to change in
   trap letters, on every difficulty (T25, T20); CityBot uses the skipped
   letters as a fallback. In the playtest, check that players understand
   "«В» or «А»" after Полтава.
-- **Turn timers (§2.5).** 45 / 30 / 20 s are still the first guesses: the
-  simulator measures what a player knows, not how fast they recall it.
-  Time real turns in the playtest; Hard games now run 40–100 cities.
+- **Turn timers (§2.5).** 90 / 60 / 40 s: the first guesses (45 / 30 /
+  20 s) doubled before the playtest (T31). The simulator measures what a
+  player knows, not how fast they recall it, so time real turns in the
+  playtest; Hard games now run 40–100 cities.
 - **Who starts by default (§2.2).** CityBot, with a setting to open
   yourself. Check which default new players prefer.

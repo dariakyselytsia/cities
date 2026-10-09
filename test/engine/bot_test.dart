@@ -229,7 +229,7 @@ void main() {
       expect([for (final d in Difficulty.values) d.maxTier], [1, 2, 3]);
       expect(
         [for (final d in Difficulty.values) d.turnTime.inSeconds],
-        [45, 30, 20],
+        [90, 60, 40],
       );
       expect([for (final d in Difficulty.values) d.winMultiplier], [1, 2, 3]);
     });

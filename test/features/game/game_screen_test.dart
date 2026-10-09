@@ -27,6 +27,9 @@ import '../../helpers/scripted_bot.dart';
 // Without EasyLocalization set up, `.tr()` returns the key, so the tests
 // find the keys.
 
+/// The turn time of the difficulty these games use (Medium).
+final _turn = Difficulty.medium.turnTime.inSeconds;
+
 /// A game view with a scripted bot, pushed over a "home" page.
 Widget _app(List<City> botScript) => MaterialApp(
   theme: buildAppTheme(),
@@ -115,7 +118,7 @@ void main() {
       'v',
     ], reason: 'the next letter is teal');
     expect(find.text('game.your_turn_letter'), findsOneWidget);
-    expect(find.text('30'), findsOneWidget, reason: 'the timer badge');
+    expect(find.text('$_turn'), findsOneWidget, reason: 'the timer badge');
 
     // A wrong answer is shown inline and stays in the field to fix.
     await tester.enterText(find.byType(TextField), 'Paris');
@@ -219,7 +222,7 @@ void main() {
     await _openGame(tester, [kyiv]);
     await _botThinks(tester);
 
-    await tester.pump(const Duration(seconds: 25));
+    await tester.pump(Duration(seconds: _turn - 5));
     expect(find.text('5'), findsOneWidget);
     await tester.pump(const Duration(seconds: 5));
     expect(find.byType(OutOfTimeView), findsOneWidget);
@@ -317,7 +320,7 @@ void main() {
       await _openGame(tester, [kyiv]);
       await _botThinks(tester);
       await tester.pump(const Duration(seconds: 3));
-      expect(find.text('27'), findsOneWidget);
+      expect(find.text('${_turn - 3}'), findsOneWidget);
 
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
       // The state reaches the view a frame later than in-app taps do.
@@ -328,15 +331,15 @@ void main() {
 
       // Back in the app: still paused, and no time has passed.
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-      await tester.pump(const Duration(minutes: 1));
+      await tester.pump(const Duration(minutes: 5));
       expect(find.byType(PauseOverlay), findsOneWidget);
-      expect(find.text('27'), findsOneWidget);
+      expect(find.text('${_turn - 3}'), findsOneWidget);
 
       await tester.tap(find.byType(PauseOverlay));
       await tester.pump();
       expect(find.byType(PauseOverlay), findsNothing);
       await tester.pump(const Duration(seconds: 1));
-      expect(find.text('26'), findsOneWidget);
+      expect(find.text('${_turn - 4}'), findsOneWidget);
 
       await _close(tester);
     },
